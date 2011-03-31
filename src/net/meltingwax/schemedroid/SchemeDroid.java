@@ -15,13 +15,14 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import jscheme.JScheme;
 
+
 /**
  * An Android App Wrapper to JScheme.
  * 
  * @author daniel@meltingwax.net (Daniel da Silva)
  */
 public class SchemeDroid extends Activity {
-	private static String VERSION = "0.1";
+	private static String VERSION = "0.2";
 	private static int EVAL_BUTTON_WIDTH = 60;
 	
 	private JScheme js;
@@ -130,6 +131,10 @@ public class SchemeDroid extends Activity {
     			resp = js.eval(code).toString();
     		} catch (jscheme.SchemeException e) {
     			resp = e.getMessage();
+    		} catch (jsint.BacktraceException e) {
+    			resp = e.getMessage();
+    		} catch (Exception e) {
+    			resp = "Generic Error: " + e.toString();
     		}
     		
     		console.append("\n>" + code + "\n" + resp);
