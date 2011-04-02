@@ -64,10 +64,32 @@ public class SchemeDroid extends Activity {
 				if (keyCode == KeyEvent.KEYCODE_ENTER) {
 					processEntry();
 					return true;
-				}				
+				}
+				
+				/** Begin parenthesis matching **/
+				/*
+				String currentText = entry.getText().toString();
+				final int n = entry.getSelectionStart();
+				
+				if ( n > 0 && currentText.charAt(n - 1) == ')') {
+					int k = -1;
+					for (int i = n - 2; i >= 0; i++) {
+						if (currentText.charAt(i) == '(') {
+							k = i;
+							break;
+						}
+					}
+					
+					if (k != -1) {
+					}
+				}
+				*/
+				/** end parenthesis matching **/				
+				
 				return false;
 			}
 		});
+        
         bottomPanel.addView(entry);
         
         Button evalButton = new Button(this);
