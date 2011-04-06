@@ -4,8 +4,6 @@ import java.util.HashMap;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -52,16 +50,5 @@ public class SchemeDroid extends Activity {
     	} else {
     		mWebView.loadUrl(homeHtmlPath);
     	}
-    }
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	super.onCreateOptionsMenu(menu);    	
-    	// menu.add("Reset");
-    	return true;
-    }
-    
-    public boolean onOptionsItemSelected(MenuItem item) {
-    	return true;
     }
 }
