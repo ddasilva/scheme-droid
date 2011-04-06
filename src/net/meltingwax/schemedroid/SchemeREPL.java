@@ -1,7 +1,6 @@
 package net.meltingwax.schemedroid;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.os.Bundle;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -22,7 +21,7 @@ import jscheme.JScheme;
  * @author daniel@meltingwax.net (Daniel da Silva)
  */
 public class SchemeREPL extends Activity {
-	private static String VERSION = "0.2";
+	private static String ACTIVITY_TITLE = "Scheme Droid REPL";
 	private static int EVAL_BUTTON_WIDTH = 60;
 	
 	private JScheme js;
@@ -39,7 +38,7 @@ public class SchemeREPL extends Activity {
         js = new JScheme();
         
         /*
-         * Initialize the View 
+         * Initialize the UI 
          */
         Display display = getWindowManager().getDefaultDisplay();
         
@@ -52,7 +51,7 @@ public class SchemeREPL extends Activity {
         console = new TextView(this);
         parentLayout.addView(console);
         
-        // The bottom panel that holds the input entry and eval button
+        // The bottom panel that holds the input entry and eval button        
         LinearLayout bottomPanel = new LinearLayout(this);
         bottomPanel.setOrientation(LinearLayout.HORIZONTAL);
         
@@ -68,7 +67,6 @@ public class SchemeREPL extends Activity {
 				return false;
 			}
 		});
-        
         bottomPanel.addView(entry);
         
         Button evalButton = new Button(this);
@@ -82,16 +80,15 @@ public class SchemeREPL extends Activity {
         bottomPanel.addView(evalButton);
         
         parentLayout.addView(bottomPanel);
- 
         parentScroller.addView(parentLayout);
         setContentView(parentScroller);
+        setTitle(ACTIVITY_TITLE);
     }
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
     	super.onCreateOptionsMenu(menu);    	
     	menu.add("Reset");    	
-    	menu.add("About");
     	return true;
     }
     
@@ -102,18 +99,6 @@ public class SchemeREPL extends Activity {
     		js = new JScheme();
     		console.setText("");
     		entry.setText("");
-    	}
-    	else if (item.getTitle().equals("About")) {
-    		AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
-    		dialogBuilder.setMessage("Scheme Droid v" + VERSION + "\n"
-    				+ "\n"
-    				+ "Assembled by Daniel da Silva (meltingwax). However "
-    				+ "real credit for the interpretter goes to the JScheme "
-    				+ "authors.\n"
-    				+ "\n"
-    				+ "Send comments and feedback to daniel@meltingwax.net");
-    		dialogBuilder.setCancelable(true);
-    		dialogBuilder.create().show();
     	}
     	
     	return true;

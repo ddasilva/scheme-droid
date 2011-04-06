@@ -12,6 +12,12 @@
             </intent-filter>
         </activity>
 
+		<activity android:name=".SchemeREPL" android:label="@string/app_name" >
+		</activity>
+
+		<activity android:name=".About" android:label="@string/app_name" >
+		</activity>
+
     </application>
     <uses-sdk android:minSdkVersion="8" />
 

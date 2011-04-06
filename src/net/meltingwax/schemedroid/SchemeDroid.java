@@ -24,7 +24,7 @@ public class SchemeDroid extends Activity {
 		@SuppressWarnings("unchecked")
 	    public boolean shouldOverrideUrlLoading(WebView view, String url) {	    	
 			HashMap<String, Class> map = new HashMap<String, Class>();
-			map.put("schemedroid://about", SchemeREPL.class);
+			map.put("schemedroid://about", About.class);
 			map.put("schemedroid://help", SchemeREPL.class);
 			map.put("schemedroid://new", SchemeREPL.class);
 			map.put("schemedroid://open", SchemeREPL.class);			
@@ -32,10 +32,11 @@ public class SchemeDroid extends Activity {
 			
 			if (map.containsKey(url)) {
                 Intent myIntent = new Intent(view.getContext(), map.get(url));
-                startActivityForResult(myIntent, 0);
+                startActivity(myIntent);
+                return true;
 			}
-	    	
-	        return true; // TODO: see what should be returned
+
+			return false;
 	    }
 	}
 	
