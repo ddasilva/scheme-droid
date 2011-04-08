@@ -114,7 +114,7 @@ public class SchemeREPL extends Activity {
     		String resp;
     		
     		try {
-    			resp = js.eval(code).toString();
+    			resp = jsint.U.stringify(js.eval(code));
     		} catch (jscheme.SchemeException e) {
     			resp = e.getMessage();
     		} catch (jsint.BacktraceException e) {
@@ -123,7 +123,7 @@ public class SchemeREPL extends Activity {
     			resp = "Generic Error: " + e.toString();
     		}
     		
-    		console.append("\n>" + code + "\n" + resp);
+    		console.append("\n> " + code + "\n" + resp);
     		
     		entry.setText("");
     	}
