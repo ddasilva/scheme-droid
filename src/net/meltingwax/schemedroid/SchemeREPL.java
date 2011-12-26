@@ -1,7 +1,13 @@
 package net.meltingwax.schemedroid;
 
 import android.app.Activity;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -32,9 +38,6 @@ public class SchemeREPL extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        /*
-         * Initialize JScheme 
-         */
         js = new JScheme();
         
         /*
@@ -83,6 +86,7 @@ public class SchemeREPL extends Activity {
         parentScroller.addView(parentLayout);
         setContentView(parentScroller);
         setTitle(ACTIVITY_TITLE);
+
     }
     
     @Override
@@ -93,6 +97,7 @@ public class SchemeREPL extends Activity {
     	return true;
     }
     
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	// I am pretty sure item.getTile().equal(x) is not the proper way
     	// to do this, but there have been worse sins committed.    	
@@ -103,8 +108,9 @@ public class SchemeREPL extends Activity {
     	}
     	
     	return true;
-    }
-    
+    }      
+   
+   
     /**
      * Processes the code in the entry EditText and updates the UI. 
      */
@@ -115,7 +121,8 @@ public class SchemeREPL extends Activity {
     		String resp;
     		
     		try {
-    			resp = jsint.U.stringify(js.eval(code));
+    			Object o = js.eval(code);
+    			resp = jsint.U.stringify(o);
     		} catch (jscheme.SchemeException e) {
     			resp = e.getMessage();
     		} catch (jsint.BacktraceException e) {

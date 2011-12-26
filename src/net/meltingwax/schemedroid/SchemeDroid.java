@@ -4,7 +4,9 @@ import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
@@ -17,10 +19,12 @@ import android.webkit.WebViewClient;
  * @author daniel@meltingwax.net (Daniel da Silva)
  */
 public class SchemeDroid extends Activity {
-    private WebView mWebView;
+    private ServiceConnection intConn;
+	private WebView mWebView;
 	private String homeHtmlPath = "file:///android_asset/home.html";	
 	private static final int PICK_REQUEST_CODE = 0;
-
+	
+	
 	private class HomeWebView extends WebViewClient {		
 		@Override
 		@SuppressWarnings("unchecked")
@@ -49,6 +53,7 @@ public class SchemeDroid extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    
     	mWebView = new WebView(this);
     	setContentView(mWebView);
         mWebView.setWebViewClient(new HomeWebView());
@@ -69,12 +74,13 @@ public class SchemeDroid extends Activity {
     		if (uri != null) {
 			    String path = uri.toString();
 			    if (path.toLowerCase().startsWith("file://")) {
-			    	path = (new File(URI.create(path))).getAbsolutePath();			    	
-			    	android.util.Log.d("DEBUG", Uri.parse(path).toString());
+			    	//path = (new File(URI.create(path))).getAbsolutePath();			    	
+			    	//android.util.Log.d("DEBUG", Uri.parse(path).toString());
+			    	Intent myIntent = new Intent(Intent.ACTION_VIEW, uri, SchemeDroid.this, FileEditor.class);			    	
+			    	startActivity(myIntent);
 			    	//loadFile(Uri.parse(path), "text/html");
 			    }
 		    }
-		    else{}
 	    }
     }
 
