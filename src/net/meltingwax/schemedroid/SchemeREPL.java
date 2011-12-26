@@ -50,8 +50,8 @@ public class SchemeREPL extends Activity {
         
         // The bottom panel that holds the input entry and eval button        
         LinearLayout bottomPanel = new LinearLayout(this);
-        bottomPanel.setOrientation(LinearLayout.HORIZONTAL);
-        
+        bottomPanel.setOrientation(LinearLayout.VERTICAL);
+                
         entry = new EditText(this);
         entry.setWidth(display.getWidth() - EVAL_BUTTON_WIDTH);
         entry.setOnKeyListener(new View.OnKeyListener() {
@@ -64,17 +64,18 @@ public class SchemeREPL extends Activity {
 				return false;
 			}
 		});
-        bottomPanel.addView(entry);
+        bottomPanel.addView(entry);        
+        
         
         Button evalButton = new Button(this);
         evalButton.setWidth(EVAL_BUTTON_WIDTH);
-        evalButton.setText("Eval");
+        evalButton.setText("Evaluate");
         evalButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				processEntry();
 			}
 		});
-        bottomPanel.addView(evalButton);
+        bottomPanel.addView(evalButton);      
         
         parentLayout.addView(bottomPanel);
         parentScroller.addView(parentLayout);
