@@ -1,7 +1,12 @@
 package net.meltingwax.schemedroid;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 /**
@@ -11,23 +16,40 @@ import android.widget.TextView;
  */
 public class About extends Activity {
 	private static String VERSION = "0.2";
-	private static String ACTIVITY_TITLE = "Scheme Droid About";
-	private TextView aboutText;
+	private static String ACTIVITY_TITLE = "Scheme Droid About";	
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        aboutText = new TextView(this);
-        aboutText.setText("Scheme Droid v" + VERSION + "\n"
+        LinearLayout parent = new LinearLayout(this);
+        parent.setOrientation(LinearLayout.VERTICAL);
+        parent.setVerticalScrollBarEnabled(true);               
+                
+        TextView aboutText = new TextView(this);
+        aboutText.setText("Scheme Droid v" + VERSION + " http://code.google.com/p/scheme-droid/ \n"
+        		 	+ jsint.Version.VERSION + "\n"
     				+ "\n"
     				+ "Assembled by meltingwax (Daniel da Silva). However "
     				+ "real credit for the interpretter goes to the JScheme "
     				+ "authors.\n"
     				+ "\n"
     				+ "Send comments and feedback to:\n"
-    				+ "daniel@meltingwax.net");
+    				+ "daniel@meltingwax.net\n");
         
-        setContentView(aboutText);
+        parent.addView(aboutText);
+       
+        Button projectPageButton = new Button(this);
+        projectPageButton.setText("Open Project Page");
+        projectPageButton.setOnClickListener(new View.OnClickListener() {		
+			public void onClick(View v) {
+				Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://code.google.com/p/scheme-droid/"));
+				startActivity(browserIntent);
+
+			}
+        });
+        parent.addView(projectPageButton);
+        
+        setContentView(parent);
         setTitle(ACTIVITY_TITLE);
     }
 }
