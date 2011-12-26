@@ -1,12 +1,8 @@
 package net.meltingwax.schemedroid;
 
-import java.io.File;
-import java.net.URI;
 import java.util.HashMap;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
 import android.webkit.WebView;
@@ -19,28 +15,22 @@ import android.webkit.WebViewClient;
  * @author daniel@meltingwax.net (Daniel da Silva)
  */
 public class SchemeDroid extends Activity {
-    private ServiceConnection intConn;
 	private WebView mWebView;
 	private String homeHtmlPath = "file:///android_asset/home.html";	
 	private static final int PICK_REQUEST_CODE = 0;
 	
 	
 	private class HomeWebView extends WebViewClient {		
+		
 		@Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings("rawtypes")
 	    public boolean shouldOverrideUrlLoading(WebView view, String url) {	    	
 			HashMap<String, Class> map = new HashMap<String, Class>();
 			map.put("schemedroid://about", About.class);
 			map.put("schemedroid://help", SchemeREPL.class);
-			map.put("schemedroid://new", SchemeREPL.class);
 			map.put("schemedroid://repl", SchemeREPL.class);
 			
-			if (url.equals("schemedroid://open")) {
-		    	Intent fileIntent = new Intent(SchemeDroid.this, FileBrowser.class);
-		    	startActivityForResult(fileIntent, PICK_REQUEST_CODE);
-		    	return true;
-			}
-			else if (map.containsKey(url)) {
+			if (map.containsKey(url)) {
                 Intent myIntent = new Intent(view.getContext(), map.get(url));                
                 startActivity(myIntent);
                 return true;

@@ -1,13 +1,7 @@
 package net.meltingwax.schemedroid;
 
 import android.app.Activity;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.ServiceConnection;
-import android.os.IBinder;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -86,7 +80,6 @@ public class SchemeREPL extends Activity {
         parentScroller.addView(parentLayout);
         setContentView(parentScroller);
         setTitle(ACTIVITY_TITLE);
-
     }
     
     @Override
