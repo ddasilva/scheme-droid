@@ -49,6 +49,17 @@ public class About extends Activity {
         });
         parent.addView(projectPageButton);
         
+        Button marketPageButton = new Button(this);
+        marketPageButton.setText("Market Page");
+        marketPageButton.setOnClickListener(new View.OnClickListener() {		
+			public void onClick(View v) {
+				Intent marketIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=net.meltingwax.schemedroid"));
+				startActivity(marketIntent);
+
+			}
+        });
+        parent.addView(marketPageButton);
+        
         setContentView(parent);
         setTitle(ACTIVITY_TITLE);
     }

@@ -12,7 +12,7 @@ import android.widget.Button;
 
 
 public class Resources extends Activity {		
-	private String ACTIVITY_TITLE = "Scheme Droid Links";
+	private String ACTIVITY_TITLE = "Scheme Droid Resources";
 	
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
