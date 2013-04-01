@@ -1,55 +1,33 @@
 package net.meltingwax.schemedroid;
 
-import java.util.HashMap;
-import android.app.Activity;
-import android.content.Intent;
+import net.meltingwax.schemedroid.activity.fragment.ReplFragment;
 import android.os.Bundle;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
+import android.support.v4.app.FragmentActivity;
 
 
 /**
  * The main Scheme Droid home screen activity.
  * 
  * @author daniel@meltingwax.net (Daniel da Silva)
+ * @author Olexandr Tereshchuk - <a href="http://stanfy.com.ua">Stanfy LLC</a>
  */
-public class SchemeDroid extends Activity {
-	private WebView mWebView;
-	private String homeHtmlPath = "file:///android_asset/home.html";	
+public class SchemeDroid extends FragmentActivity {
 
-	
-	private class HomeWebView extends WebViewClient {		
-		
-		@Override
-		@SuppressWarnings("rawtypes")
-	    public boolean shouldOverrideUrlLoading(WebView view, String url) {	    	
-			HashMap<String, Class> map = new HashMap<String, Class>();
-			map.put("schemedroid://about", About.class);
-			map.put("schemedroid://resources", Resources.class);
-			map.put("schemedroid://repl", SchemeREPL.class);
-			
-			if (map.containsKey(url)) {
-                Intent myIntent = new Intent(view.getContext(), map.get(url));                
-                startActivity(myIntent);
-                return true;
-			}
+  @Override
+  public void onCreate(final Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
 
-			return false;
-	    }
-	}
-	
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-    	super.onCreate(savedInstanceState);
-    
-    	mWebView = new WebView(this);
-    	setContentView(mWebView);
-        mWebView.setWebViewClient(new HomeWebView());
-        
-    	if (savedInstanceState != null) {
-    		mWebView.restoreState(savedInstanceState);
-    	} else {
-    		mWebView.loadUrl(homeHtmlPath);
-    	}
+    setTitle(R.string.title_repl);
+
+    if (getSupportFragmentManager().findFragmentByTag(ReplFragment.TAG) == null) {
+      final Bundle args = new Bundle(1);
+      if (getIntent().getData() != null) {
+        args.putString(ReplFragment.ARG_FILE, getIntent().getData().getPath());
+      }
+      final ReplFragment f = new ReplFragment();
+      f.setArguments(args);
+      getSupportFragmentManager().beginTransaction().replace(android.R.id.content, f, ReplFragment.TAG).commit();
     }
+  }
+
 }

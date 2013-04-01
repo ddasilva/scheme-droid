@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+    <item
+        android:id="@+id/menu_reset"
+        android:title="@string/menu_reset"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:showAsAction="withText|ifRoom"
+        />
+    
+    <item
+        android:id="@+id/menu_resources"
+        android:title="@string/menu_resources"
+        android:icon="@android:drawable/ic_menu_help"
+        android:showAsAction="withText|ifRoom"
+        />
+
+</menu>

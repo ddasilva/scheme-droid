@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename local variable &apos;item&apos; in &apos;net.meltingwax.schemedroid.SchemeDroid.onCreateOptionsMenu(...)&apos; to &apos;resetItem&apos;&#x0A;- Original project: &apos;SchemeDroid&apos;&#x0A;- Original element: &apos;net.meltingwax.schemedroid.SchemeDroid.onCreateOptionsMenu(Menu).item&apos;&#x0A;- Renamed element: &apos;item&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;item&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src&lt;net.meltingwax.schemedroid{SchemeDroid.java[SchemeDroid~onCreateOptionsMenu~QMenu;@item!2586!2619!2595!2598!QMenuItem;" name="resetItem" references="true" stamp="1278590871427" version="1.0"/>
-</session>

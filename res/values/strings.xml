@@ -1,5 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, SchemeDroid!</string>
     <string name="app_name">Scheme Droid</string>
+    
+    <string name="file_load_success">File loaded successfully</string>
+    
+    <string name="input_code_hint">Write your code here</string>
+    <string name="input_code_loading_hint">Loading script&#8230;</string>
+    
+    <string name="button_evaluate">Evalute</string>
+    <string name="button_eval">Eval</string>
+    <string name="button_repl">REPL</string>
+    <string name="button_resources">Resources</string>
+    <string name="button_about">About</string>
+    
+    <string name="title_repl">Scheme Droid REPL</string>
+    <string name="title_resources">Scheme Droid Resources</string>
+    
+    <string name="menu_reset">Reset</string>
+    <string name="menu_resources">Resources</string>
+    
+    <string name="error_code_empty">Input something pls</string>
+    <string name="error_file_load">Can\'t load given file</string>
 </resources>

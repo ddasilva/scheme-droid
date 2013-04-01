@@ -1,0 +1,16 @@
+# Optimizations
+-optimizations !code/simplification/arithmetic,!code/simplification/cast,!field/*,!class/merging/
+-optimizationpasses 6
+-allowaccessmodification
+
+# JScheme
+-keep class dclass.** { *; }
+-keep interface dclass.** { *; }
+-keep class elf.** { *; }
+-keep interface elf.** { *; }
+-keep class jlib.** { *; }
+-keep interface jlib.** { *; }
+-keep class jscheme.** { *; }
+-keep interface jscheme.** { *; }
+-keep class jsint.** { *; }
+-keep interface jsint.** { *; }

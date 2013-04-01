@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+   android:id="@+id/console_scroll"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   android:fillViewport="true">
+   
+  <LinearLayout 
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="10dp"
+      android:id="@+id/repl_container">
+      
+        <TextView
+          android:id="@+id/console"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:textIsSelectable="true"
+          android:gravity="left|top"
+          />
+      
+       <EditText
+          android:id="@+id/code_input"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:inputType="text|textNoSuggestions"
+          android:imeOptions="actionDone"
+          android:imeActionLabel="@string/button_eval"
+          android:hint="@string/input_code_hint"
+          android:singleLine="true"
+          android:gravity="left|center_vertical"
+          android:layout_marginTop="10dp"
+          />
+      
+      <Button
+          android:id="@+id/button_eval"
+          android:text="@string/button_evaluate"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="10dp"
+          android:gravity="center"
+          />
+  
+  </LinearLayout>
+
+</ScrollView>
