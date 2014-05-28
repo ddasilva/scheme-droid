@@ -11,6 +11,7 @@ import net.meltingwax.schemedroid.R;
 import net.meltingwax.schemedroid.activity.SchemeResources;
 import net.meltingwax.schemedroid.util.BaseAsyncTaskLoader;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
@@ -82,6 +83,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		if (oldConsole != null) {
 			console.setText(oldConsole.getText());
 		}
+		console.setTypeface(Typeface.MONOSPACE);
 
 		final EditText oldEntry = entry;
 		entry = (EditText) view.findViewById(R.id.code_input);
@@ -93,13 +95,14 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 			public boolean onEditorAction(final TextView v, final int actionId,
 					final KeyEvent event) {
 				if (EditorInfo.IME_ACTION_DONE == actionId
-						|| event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+						|| (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					processEntry();
 					return true;
 				}
 				return false;
 			}
 		});
+		entry.setTypeface(Typeface.MONOSPACE);
 
 		view.findViewById(R.id.button_eval).setOnClickListener(
 				new View.OnClickListener() {
