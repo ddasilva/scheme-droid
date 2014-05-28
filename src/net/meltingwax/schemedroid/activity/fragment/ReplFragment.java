@@ -108,25 +108,25 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before,
 					int count) {
-				String text = entry.getText().toString();
+				CharSequence text = entry.getText();
 				int textLength = text.length();
+				int cursorPos = start + count - 1;
 
 				if (textLength > 0
-						&& start + 1 == textLength
-						&& entry.getText().charAt(textLength - 1) == ')') {
+						&& entry.getText().charAt(cursorPos) == ')') {
 
 					/* search for last unbalanced left parenthesis */
 					LinkedList<Integer> openParens = new LinkedList<Integer>();
 					boolean inQuotes = false;
 					boolean escaped = false;
 
-					for (int i = 0; i < textLength - 1; i++) {
+					for (int i = 0; i < cursorPos; i++) {
 						char currentChar = text.charAt(i);
 
-						if (currentChar == '"' && ! escaped) {
+						if (escaped) {
+							escaped = false;
+						} else if (currentChar == '"' && ! escaped) {
 							inQuotes = ! inQuotes;
-						} else if (escaped) {
-							escaped = ! escaped;
 						} else if (currentChar == '(' && ! inQuotes) {
 							openParens.addLast(Integer.valueOf(i));
 						} else if (currentChar == ')' && ! inQuotes && ! openParens.isEmpty()) {
@@ -141,7 +141,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 								Color.parseColor(HIGHLIGHT_REGION_COLOR));
 						final Handler handler = new Handler();
 
-						entry.getText().setSpan(span, idxLastOpenParen, textLength,
+						entry.getText().setSpan(span, idxLastOpenParen, cursorPos + 1,
 								Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
 						handler.postDelayed(new Runnable() {
