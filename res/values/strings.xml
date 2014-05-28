@@ -19,6 +19,6 @@
     <string name="menu_reset">Reset</string>
     <string name="menu_resources">Resources</string>
     
-    <string name="error_code_empty">Input something pls</string>
+    <string name="error_code_empty">Input something please</string>
     <string name="error_file_load">Can\'t load given file</string>
 </resources>
