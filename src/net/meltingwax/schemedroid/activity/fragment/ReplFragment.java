@@ -5,17 +5,24 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 
 import jscheme.JScheme;
 import net.meltingwax.schemedroid.R;
 import net.meltingwax.schemedroid.activity.SchemeResources;
 import net.meltingwax.schemedroid.util.BaseAsyncTaskLoader;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
+import android.text.Editable;
+import android.text.Spannable;
+import android.text.TextWatcher;
+import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -49,6 +56,12 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 
 	/** Init file. */
 	private static final String INIT_FILE = "jscheme.init";
+
+	/** Time to highlight recently closed parenthesis region (ms) */
+	private static final long HIGHLIGHT_REGION_TIME = 500;
+
+	/** Color to highlight recently closed parenthesis region */
+	private static final String HIGHLIGHT_REGION_COLOR = "#2461bd";
 
 	/** JScheme core. */
 	private JScheme js;
@@ -90,18 +103,81 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		if (oldEntry != null) {
 			entry.setText(oldEntry.getText());
 		}
+
+		entry.addTextChangedListener(new TextWatcher() {
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before,
+					int count) {
+				String text = entry.getText().toString();
+				int textLength = text.length();
+
+				if (textLength > 0
+						&& start + 1 == textLength
+						&& entry.getText().charAt(textLength - 1) == ')') {
+
+					/* search for last unbalanced left parenthesis */
+					LinkedList<Integer> openParens = new LinkedList<Integer>();
+					boolean inQuotes = false;
+					boolean escaped = false;
+
+					for (int i = 0; i < textLength - 1; i++) {
+						char currentChar = text.charAt(i);
+
+						if (currentChar == '"' && ! escaped) {
+							inQuotes = ! inQuotes;
+						} else if (escaped) {
+							escaped = ! escaped;
+						} else if (currentChar == '(' && ! inQuotes) {
+							openParens.addLast(Integer.valueOf(i));
+						} else if (currentChar == ')' && ! inQuotes && ! openParens.isEmpty()) {
+							openParens.removeLast();
+						}
+					}
+
+					/* highlight parenthesis region just closed */
+					if (openParens.size() > 0) {
+						final int idxLastOpenParen = openParens.getLast().intValue();
+						final BackgroundColorSpan span = new BackgroundColorSpan(
+								Color.parseColor(HIGHLIGHT_REGION_COLOR));
+						final Handler handler = new Handler();
+
+						entry.getText().setSpan(span, idxLastOpenParen, textLength,
+								Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+						handler.postDelayed(new Runnable() {
+							@Override
+							public void run() {
+								entry.getText().removeSpan(span);
+							}
+						}, HIGHLIGHT_REGION_TIME);
+					}
+				}
+			}
+
+			@Override
+			public void afterTextChanged(Editable s) {
+			}
+
+			@Override
+			public void beforeTextChanged(CharSequence s, int start,
+					int count, int after) {
+			}
+		});
+
 		entry.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
 			public boolean onEditorAction(final TextView v, final int actionId,
 					final KeyEvent event) {
-				if (EditorInfo.IME_ACTION_DONE == actionId
-						|| (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+				if (EditorInfo.IME_ACTION_DONE == actionId || (event != null
+						&& event.getAction() == KeyEvent.ACTION_DOWN
+						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
 					processEntry();
 					return true;
 				}
 				return false;
 			}
 		});
+
 		entry.setTypeface(Typeface.MONOSPACE);
 
 		view.findViewById(R.id.button_eval).setOnClickListener(
