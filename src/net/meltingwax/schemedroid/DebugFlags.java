@@ -5,10 +5,11 @@ package net.meltingwax.schemedroid;
  */
 public final class DebugFlags {
 
-  /** Debug GUI. */
-  public static final boolean DEBUG_GUI = true;
-  /** Debug utilities. */
-  public static final boolean DEBUG_UTIL = true;
+	/** Debug GUI. */
+	public static final boolean DEBUG_GUI = true;
+	/** Debug utilities. */
+	public static final boolean DEBUG_UTIL = true;
 
-  private DebugFlags() { /* hidden */ }
+	private DebugFlags() { /* hidden */
+	}
 }
