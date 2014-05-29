@@ -20,8 +20,6 @@ import android.widget.TextView;
  */
 public class SchemeResources extends Activity implements View.OnClickListener {
 
-	final static int LINKS_TEXT_PADDING = 50;
-
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -33,14 +31,9 @@ public class SchemeResources extends Activity implements View.OnClickListener {
 		container.setFillViewport(true);
 
 		final TextView linksText = new TextView(this);
-		linksText.setText("Links (open in browser)");
+		linksText.setText("\nLinks (open in browser)\n");
 		linksText.setGravity(Gravity.CENTER);
 		linksText.setTextSize(18);
-		linksText.setPadding(
-				LINKS_TEXT_PADDING,
-				LINKS_TEXT_PADDING,
-				LINKS_TEXT_PADDING,
-				LINKS_TEXT_PADDING);
 		parent.addView(linksText);
 
 		addLinkButtonToLinearLayout(parent,
