@@ -5,24 +5,18 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
 
 import jscheme.JScheme;
 import net.meltingwax.schemedroid.R;
 import net.meltingwax.schemedroid.activity.SchemeResources;
+import net.meltingwax.schemedroid.ui.EntryHighlighter;
 import net.meltingwax.schemedroid.util.BaseAsyncTaskLoader;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
-import android.text.Editable;
-import android.text.Spannable;
-import android.text.TextWatcher;
-import android.text.style.BackgroundColorSpan;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -57,12 +51,6 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 	/** Init file. */
 	private static final String INIT_FILE = "jscheme.init";
 
-	/** Time to highlight recently closed parenthesis region (ms) */
-	private static final long HIGHLIGHT_REGION_TIME = 500;
-
-	/** Color to highlight recently closed parenthesis region */
-	private static final String HIGHLIGHT_REGION_COLOR = "#2461bd";
-
 	/** JScheme core. */
 	private JScheme js;
 	/** Console output. */
@@ -91,78 +79,36 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 	@Override
 	public void onViewCreated(final View view, final Bundle savedInstanceState) {
 		super.onViewCreated(view, savedInstanceState);
-		final TextView oldConsole = console;
+		
+		/*
+		 * Console Configuration
+ 		 * - Set font to MonoSpace
+		 * - Restore text from old saved instance, it one exists
+		 */
+		TextView oldConsole = console;
 		console = (TextView) view.findViewById(R.id.console);
+		console.setTypeface(Typeface.MONOSPACE);
+
 		if (oldConsole != null) {
 			console.setText(oldConsole.getText());
 		}
-		console.setTypeface(Typeface.MONOSPACE);
-
-		final EditText oldEntry = entry;
+		
+		/*
+		 * Entry (input) Configuration
+		 * - Set font to MonoSpace
+		 * - Restore text from old saved instance, if one exists
+		 * - Attach new EntryHighlighter instance to response to changes
+		 * - Attach anonymous listeners to respond to enter press
+		 */
+		EditText oldEntry = entry;
 		entry = (EditText) view.findViewById(R.id.code_input);
+		entry.setTypeface(Typeface.MONOSPACE);
+
 		if (oldEntry != null) {
 			entry.setText(oldEntry.getText());
 		}
 
-		entry.addTextChangedListener(new TextWatcher() {
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
-				CharSequence text = entry.getText();
-				int textLength = text.length();
-				int cursorPos = start + count - 1;
-
-				if (textLength > 0
-						&& entry.getText().charAt(cursorPos) == ')') {
-
-					/* search for last unbalanced left parenthesis */
-					LinkedList<Integer> openParens = new LinkedList<Integer>();
-					boolean inQuotes = false;
-					boolean escaped = false;
-
-					for (int i = 0; i < cursorPos; i++) {
-						char currentChar = text.charAt(i);
-
-						if (escaped) {
-							escaped = false;
-						} else if (currentChar == '"' && ! escaped) {
-							inQuotes = ! inQuotes;
-						} else if (currentChar == '(' && ! inQuotes) {
-							openParens.addLast(Integer.valueOf(i));
-						} else if (currentChar == ')' && ! inQuotes && ! openParens.isEmpty()) {
-							openParens.removeLast();
-						}
-					}
-
-					/* highlight parenthesis region just closed */
-					if (openParens.size() > 0) {
-						final int idxLastOpenParen = openParens.getLast().intValue();
-						final BackgroundColorSpan span = new BackgroundColorSpan(
-								Color.parseColor(HIGHLIGHT_REGION_COLOR));
-						final Handler handler = new Handler();
-
-						entry.getText().setSpan(span, idxLastOpenParen, cursorPos + 1,
-								Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-						handler.postDelayed(new Runnable() {
-							@Override
-							public void run() {
-								entry.getText().removeSpan(span);
-							}
-						}, HIGHLIGHT_REGION_TIME);
-					}
-				}
-			}
-
-			@Override
-			public void afterTextChanged(Editable s) {
-			}
-
-			@Override
-			public void beforeTextChanged(CharSequence s, int start,
-					int count, int after) {
-			}
-		});
+		entry.addTextChangedListener(new EntryHighlighter(entry));
 
 		entry.setOnEditorActionListener(new OnEditorActionListener() {
 			@Override
@@ -177,9 +123,11 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 				return false;
 			}
 		});
-
-		entry.setTypeface(Typeface.MONOSPACE);
-
+		
+		/*
+		 * Eval Button Configuration
+		 * - Attach anonymous listener to respond to click
+		 */
 		view.findViewById(R.id.button_eval).setOnClickListener(
 				new View.OnClickListener() {
 					@Override
@@ -246,7 +194,8 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 			String resp;
 
 			try {
-				resp = jsint.U.stringify(js.eval(code));
+				Object ret = js.eval(code);
+				resp = jsint.U.stringify(ret);
 			} catch (final jscheme.SchemeException e) {
 				resp = e.getMessage();
 			} catch (final jsint.BacktraceException e) {
@@ -255,7 +204,8 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 				resp = "Generic Error: " + e.toString();
 			}
 
-			console.append("\n> " + code + "\n" + resp);
+			console.append("\n> " + code + "\n");
+			console.append(resp);
 
 			entry.setText("");
 		} else {
