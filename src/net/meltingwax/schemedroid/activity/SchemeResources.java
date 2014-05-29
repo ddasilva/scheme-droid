@@ -48,6 +48,8 @@ public class SchemeResources extends Activity implements View.OnClickListener {
 				"http://jscheme.sourceforge.net/jscheme/doc/refman.html");
 		addLinkButtonToLinearLayout(parent, "Schemers.org",
 				"http://schemers.org/");
+		addLinkButtonToLinearLayout(parent, "Scheme Droid GitHub Repository",
+				"http://github.com/ddasilva/scheme-droid");
 
 		setContentView(container);
 		setTitle(R.string.title_resources);
