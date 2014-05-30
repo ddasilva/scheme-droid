@@ -245,15 +245,15 @@ public class Listener11swing extends Listener11 implements javax.swing.event.Und
         handler.apply(U.list(e));
       }
     
+  public void ancestorMoved(javax.swing.event.AncestorEvent e) {
+        handler.apply(U.list(e));
+      }
+    
   public void ancestorAdded(javax.swing.event.AncestorEvent e) {
         handler.apply(U.list(e));
       }
     
   public void ancestorRemoved(javax.swing.event.AncestorEvent e) {
-        handler.apply(U.list(e));
-      }
-    
-  public void ancestorMoved(javax.swing.event.AncestorEvent e) {
         handler.apply(U.list(e));
       }
     
