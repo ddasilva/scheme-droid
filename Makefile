@@ -10,7 +10,6 @@ all:
 
 clean:
 	rm -rf bin/*
-	find jscheme -name '*.class' | xargs rm -f
 
 jscheme:
 	cd jscheme && ./bin/make.sh
@@ -25,6 +24,6 @@ install: debug
 
 test:
 	${ANDROID_HOME}/platform-tools/adb shell am instrument -w \
-		net.meltingwax.schemedroid.test/android.test.InstrumentationTestRunner
+		net.meltingwax.schemedroid/android.test.InstrumentationTestRunner
 
 .PHONY: all clean jscheme debug install test
