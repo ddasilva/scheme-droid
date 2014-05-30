@@ -1,0 +1,10 @@
+#! /bin/sh
+# you must have java and javac in your path
+H=`dirname $0`/..
+D=":"
+case `uname` in
+  CYGWIN* )
+    H=`cygpath -w $H`
+    D=";" ;;
+esac
+java -jar "$H/lib/jscheme.jar" "$@"

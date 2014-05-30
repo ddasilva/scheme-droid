@@ -1,0 +1,12 @@
+#! /bin/sh
+# you must have java and javac in your path
+# for documentation run: bin/make -help  
+H=`dirname $0`/..
+D=":"
+case `uname` in
+  CYGWIN* )
+    H=`cygpath -w $H`
+    D=";" ;;
+esac
+javac -classpath $H/src $H/src/jscheme/REPL.java
+java -classpath "$H/src" jscheme.REPL build/make.scm -main commandMain "$@"
