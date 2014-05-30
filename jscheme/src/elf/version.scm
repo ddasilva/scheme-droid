@@ -1,0 +1,16 @@
+(import "java.lang.System")
+(define (java-version)
+  ;; Display version information like "java -version ...".
+  (define (show . args)
+    (if (null? args) (newline)
+	(let ((arg (car args))
+	      (args (cdr args)))
+	  (let ((value (System.getProperty arg)))
+	    (display (if (eq? value #null) arg value))
+	    (apply show args)))))
+
+  (show "java version \"" "java.specification.version" "\"")
+  (show "java.runtime.name" " (build " "java.runtime.version" ")")
+  (show "java.vm.name" " (build " "java.vm.version" ", " "java.vm.info" ")")
+)
+(java-version)

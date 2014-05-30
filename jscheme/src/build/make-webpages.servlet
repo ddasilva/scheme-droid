@@ -1,0 +1,12 @@
+(begin
+
+ ; load in the page definitions relative to where java was started ...
+ ; In the standard tomcat webapp case they are here ...
+ (load (getRealPath "src/build/initwebapp.servlet")) ; load the page definitions
+ (load (getRealPath "src/build/make-webpages.scm")) ; load the code for making the pages
+
+ (define z (make-pages (getRealPath "/"))) ; "webapps/jscheme"))  ;run the code with the webapps/jscheme context
+
+ {html files created  on <br/> [(Date.)]<br/>for <br/>[(ol z)]<br/>}
+)
+

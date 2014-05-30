@@ -1,0 +1,348 @@
+<html>
+  <head><title>Scheme User Manual</title>
+<link rel="stylesheet" href="man.css">
+  <style type="text/css">
+   <!--
+
+   h1 {background:rgb(200,200,255);color:black;padding:3px;border:thin solid black;
+      font: bold 32pt Helvetica,sans-serif; text-align:center}
+   h2 {background:rgb(200,200,255);color:black;padding:3px;border:thin solid black;
+      font: bold 24pt Helvetica,sans-serif; text-align:center}
+   pre {background:rgb(255,255,255); color:black; font: monospace; padding: 1em; margin: 1em; 
+        border: thick solid black}
+
+   -->
+  </style>
+  </head>
+<body>
+<div class="main">
+<img src="../images/jscheme-icon2.gif" align="right">
+<h1>JScheme User manual</h1>
+<br>
+<br>
+13 April 2002
+<p>
+<font color=red><em>This manual is in preparation</em></font>
+<p>
+<ul>
+<li> <a href="#download">Downloading Jscheme</a>
+<ul>
+<li> <a href="#downloadjar">downloading the jar file</a></li>
+<li> <a href="#downloadcvs">downloading and compiling the source code</a></li>
+</ul><br>
+</li>
+<li> <a href="#jss">The JScheme Command Line </a></li>
+<li> <a href="#compiler">The JScheme compiler</a> </li>
+<li> <a href="#applet">The JScheme Applet</a></li>
+<li> <a href="#si">Calling JScheme from Java</a></li>
+</ul>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+<br>
+<a name="download"><h2>Downloading JScheme</h2></a>
+
+<a name="downloadjar"><h3>Downloading the jscheme.jar file</h3></a>
+
+The simplest way to access Jscheme is just to download the
+<a href="../lib/jscheme.jar">jscheme.jar</a> or
+<a href="../lib/jscheme.zip">jscheme.zip</a> 
+file and put it on
+your classpath. <br>
+(<em>This is usually down with a shift-click or right-click or 
+some other operating-system/browser dependent click variant
+on the <a href="../lib/jscheme.jar">jscheme.jar</a> or
+<a href="../lib/jscheme.zip">jscheme.zip</a> 
+link.</em>)
+<p>
+Once <code>jscheme.jar</code> is downloaded, you can put it in
+your classpath, and run it as an interpreter:
+<pre>
+  % java jscheme.REPL
+  > (* 12345679 8)
+  98765432
+  > (exit)
+  %
+</pre>
+or as a Scheme->Java compiler:
+<pre>
+  % cat > Hello.scm
+  (display "Hello World") (newline)
+  ^D
+  % java jsint.Compile Hello.scm
+  % javac Hello.java
+  % java Hello
+  Hello World
+  %
+</pre>
+
+<p>
+<a name="downloadcvs"><h3>Downloading the source distribution from the CVS server</h3></a>
+
+If you want the entire source distribution, then you can use the anonymous
+CVS download facilities at sourceforge.net to download and build Jscheme.
+<a href="http://sourceforge.net/projects/jscheme">Jscheme sourceforge site</a>
+You can download the source code directly using anonymous CVS as follows:
+ <pre>
+  % cvs -d:pserver:anonymous@jscheme.cvs.sourceforge.net:/cvsroot/jscheme login
+   <font color=green>(when prompted for a password for anonymous, simply press the Enter key)</font>
+  % cvs -z3 -d:pserver:anonymous@jscheme.cvs.sourceforge.net:/cvsroot/jscheme co jscheme
+</pre>
+<p>Occasionally, Sourceforge changes the name of the cvs host (its
+happened twice so far).  If the above instructions don't work, try the
+official <a
+	    href="http://sourceforge.net/cvs/?group_id=50593">sourceforge instructions</a>.
+You can then build jscheme.jar from the source as follows:
+<ul>
+<li> <b>Under Linux or Mac OS X:</b>
+<br>
+Run the src/build/bootstrap script from the toplevel of the jscheme
+folder, after making sure that the JDK has been installed on your system:
+<pre>
+  % cd jscheme
+  % bin/make
+  %
+  % java -cp lib/jscheme.jar jscheme.REPL
+  > (java.util.Date.)
+  Mon Jan 07 14:53:23 EST 2002
+  > ....
+ 
+</pre>
+<p>
+<li> <b>Under Windows:</b>
+<br>
+Run the build/bootstrap.bat script from the toplevel of the jscheme
+folder, after making sure that the JDK has been installed on your system:
+<pre>
+  % cd jscheme
+  % bin/make
+  %
+  % java -cp lib/jscheme.jar jscheme.REPL
+  ....
+
+</pre>
+</ul>
+This creates a file jscheme.jar in the jscheme/lib folder.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+<br>
+<a name="jss"><h2>The JScheme Command Line</h2></a>
+Assuming that jscheme.jar is on your classpath, you can invoke
+a Scheme interpreter using
+<pre>
+    % java jscheme.REPL file1 file2 file3 ... '(expr1)' '(expr2)'
+    &gt; ...
+</pre>
+Jscheme can also be supplied command line arguments that will
+load several files (<code>file1, file2, ...</code>) and evaluate
+several expressions (<code> (expr1) (expr2) ...</code>). The
+files and expressions are loaded  or evaluated in the order they
+appear on the command line. Thus the following command
+<pre>
+    % java jscheme.REPL file1 '(expr1)' file2 '(expr2)' file3 ...
+    &gt;
+</pre>
+is equivalent to
+<pre>
+    % java jscheme.REPL 
+    &gt; (load "file1")
+    &gt; (expr1)
+    &gt; (load "file2")
+    &gt; (expr2)
+    &gt; (load "file3")
+    &gt; ...
+</pre>
+Finally, you can make pass command line arguments to a Scheme procedure
+using the "-main" argument to specify the procedure name and the sequence
+of arguments, as follows:
+<pre>
+    % java jscheme.REPL test.scm -main rundemo a "this is a test" 123
+    &gt;
+</pre>
+The arguments are passed as an array of strings to the procedure whose name
+ specified after the "-main" argument. That is, this is equivalent to:
+<pre>
+    % java jscheme.REPL
+    &gt; (load "test.scm")
+    &gt; (rundemo a "this is a test" 123)
+</pre>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+<br>
+<a name="compiler"><h2> The JScheme compiler </h2></a>
+The JScheme compiler provides one way of compiling a Scheme program
+<code>Prog.scm</code> into a Java class, <code>Prog.java</code>
+The compiled program can be loaded into another program using
+<br>
+<code>(packagename.Prog.load)</code> 
+<br>
+which behaves exactly the
+same as 
+<br>
+<code>(load "packagepath/Prog.scm")</code>
+<br>
+You can also specify a <code>main</code> procedure in the Scheme program
+which will get compiled into a <code>main</code> method of the Java
+program. We now give an example to illustrate this process.
+<br>
+First we create a test file to compile. Note that the compiler
+requires you to explicitly import all classes, even the java.lang
+classes (you could also use the full name <code>java.lang.System.out$</code>).
+Also note that you can access the command line args by writing a procedure
+<code>main</code> with one paramter <code>args</code>. This will be compiled
+into the <code> public static void main</code> method of the class
+and provides a way of accessing the argument array.
+<pre>
+  % cd demo/test
+  % cat > Prog.scm
+    (import "java.lang.System")
+    (import "java.lang.reflect.Array")
+    (define (main args)
+      (.println System.out$ (java.util.Date.))
+      (.println System.out$ (Array.get args 0))
+      (System.exit 0)
+     )
+    ^D
+  % cd ../..
+</pre>
+Now we compile the program (using the -p switch to set the package
+and the -v switch to specify verbose output). After compiling to
+java, we compile the java to byte codes and then run the program
+<pre>
+  % java jsint.Compile -v -p demo.test Prog.scm
+  % javac Prog.java
+  % java demo.test.Prog "Hello, World"
+    Sat Apr 13 10:42:25 EDT 2002
+    Hello, World
+  %
+</pre>
+Compiler switches:<br>
+<ul>
+<li> "-p PACKAGE" is the switch
+for setting the package name for the compiled Jscheme program.</li>
+<li> "-v" ... verbose mode
+</ul>
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+<br>
+
+<a name="applet"><h2> The JScheme Applet</h2></a>
+If you download the source distribution, then you can visit the file
+<pre>
+   <a href="../src/contrib/jswebapp/jscheme/demo/JSchemeEvaluator.html">
+src/contrib/jswebapp/jscheme/demo/JSchemeEvaluator.html</a>
+</pre>
+which provides an applet for writing and running Scheme code.
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+<br>
+
+<a name="si"><h2> Calling JScheme from Java</h2></a>
+<p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<hr>
+<p>
+<h3>Using a Single Static JScheme Evaluator</h3>
+Jscheme can be called from Java using the JS class which evaluate expressions in a
+single statically defined JScheme evaluator.</p>
+   <p>For example, you can:
+   <ul>
+    <li> Initialize an application by loading Scheme expressions from a file:
+    <pre>
+      JS.load(new java.io.FileReader("app.init"));
+    </pre>
+    <li> Run the Scheme procedure
+    <tt>(describe)</tt> to describe the current object like this:
+    <pre>
+    JS.call("describe", this);
+    </pre>
+    If you need to call a procedure with more than three arguments use apply().
+    <li>Evalute a string as an expression:
+    <pre>
+    String query = "(+ (expt (Math.sin 2.0) 2) (expt (Math.cos 2.0) 2))";
+    System.out.println(query + " = " + JS.eval(query));
+    </pre>
+   </ul>
+   
+</p>
+   <p> Unit test:
+   <pre>
+   (assert (equal? (+ 2 3) (JS.eval '(+ 2 3))))
+   (assert (= (+ 2 3) (JS.eval "(+ 2 3)")))
+   (assert (= (+ 2 3) (JS.call "+" 2 3)))
+   (assert (= (+ 2 3) (JS.call + 2 3)))
+   (assert (= (+ 2 3) (JS.apply "+" (JS.list 2 3))))
+   (JS.load "(define (f x) (+ x (g x))) (define (g x) (* x 3))")
+   (assert (= (f 3) 12))
+   </pre>
+</p>
+<br/><br/><br/><br/><br/><br/>
+<h3>Using an Independent JScheme Evaluator</h3>
+<p>
+A better approach is to use the new jscheme.JScheme class
+which allows you to create an independent JScheme evaluator
+that can use used just as the static JS class above....
+<pre>
+  jscheme.JScheme js = new jscheme.JScheme();
+
+  js.eval("....")
+  js.call(a, b,c,d,e);
+  ...
+</pre>
+</p>
+<br/><br/><br/><br/>
+<br>
+<hr>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</ul>
+</div>
+</body>
+</html>

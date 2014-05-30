@@ -1,0 +1,66 @@
+(servlet(cmd)
+ (use-module "elf/basic.scm" 'import 'all)
+ (use-module "using/run.scm" 'import 'all)
+   (basic-webpage "demo.servlet"
+     {<h1>This is a servlet security demo</h1>
+
+    <h2>Running shell commands from the server</h2>
+     Lets try to run the "pwd" command in the shell:
+     
+      [
+       (tryCatch 
+        {<pre style="background:black; color:red; font-weight:bold;padding:0.2in;font-size:120%; margin-left:1in">
+         [(let ((s (java.io.StringWriter.)))
+              (out (run (cmd pwd)) (java.io.PrintWriter. s))
+              (.toString s))]<br/></pre>
+      If this servlet can execute a "pwd" command, then the servlets in this webapp  probably have all of the capabilities
+      of the one who started the server, that is, they can view (or delete) any files owned
+      by the one who started the server!<br/><br/>
+
+      NOTE: this is the same level of (in)security that one gets using cgi scripts 
+      written in PERL, C, C++, Python, etc, but since we are running in Java,
+      we can do better.<br/><br/>
+
+      To get more security, try running the servlets in a security sandbox  -- just start the server using the
+      <code>src/build/secure.sh</code> script and look over the <code>src/build/server.policy</code>
+      security policy to determine if it gives you the level of security you want....<br/><br/>
+
+
+}
+          (lambda(e) 
+           {<pre style="background:black; color:red; font-weight:bold;padding:0.2in;font-size:120%; margin-left:1in"
+              >[e]</pre>})
+       )
+      ]
+     <br/><br/>
+     If the secure server is running, then you will get a java.security exception about not
+     having the execute FilePermission.
+     <br/><br/>
+
+    <h2>Accessing the file system through Java file I/O commands</h2>
+     Now, lets first try to list all of the files in the server's "/"  directory.<br/>
+     
+      [
+       (tryCatch 
+         {
+           You probably don't want to worry about your servlets having full control of your machine,
+           so if you see a listing of files below, you should probably be running the secure shell instead.
+           (Note: java servlets by default have the standard permissions of any Java program, but since
+           servlets interact directly with users over the web, you may want to add some extra security!).
+           <br/><br/>
+          <pre style="background:black; color:red; font-weight:bold;padding:0.2in;font-size:120%; margin-left:1in"> 
+          [(ol(map* (lambda(x) x) (.list (java.io.File. "/"))))]</pre>}
+          (lambda(e) 
+             {<pre style="background:black; color:red; font-weight:bold;padding:0.2in;font-size:120%; margin-left:1in"
+                >[e]</pre>}
+          ))
+      ]
+     </pre>
+     A java.security exception should appear above if you have started the server using the script
+     <code>src/build/secure.sh</code>
+     which uses the policy file at <code>src/build/server.policy</code> to restrict access.
+     <br/><br/>
+     <br/><br/>
+      Here is the code for this servlet <a href="security.servletV">security.servletV</a>
+    })
+)

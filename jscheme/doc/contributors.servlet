@@ -1,0 +1,24 @@
+(begin
+
+ (jswebpage ".." "JScheme Contributors" ""
+  #{
+<div class="main">
+<p>
+<b>JScheme</b> has benefitted over the years from support of
+many users, <br/> including (in alphabetical order)
+<ul>
+<li> Adrian Boyko (BacktraceExceptions ... )</li>
+<li> David May (command line arguments ...)</li>
+<li> Derek Upham (modules, multi-return values, ...)</li>
+<li> Geoffrey Knauth (many bug reports and helpful commentary)</li>
+<li> Jonathan Rees (atan, mod, good advice, ...)</li>
+<li> Joerg-Cyril Hoehle (R5RS apply ...)</li>
+<li> Kirill Lisovsky (define-macro syntax extension)</li>
+<li> Renu Bostwick (bug fixes and MD5)</li>
+<li> Rusty Bobrow (feature requests) </li>
+<li> Toby Allsopp (serialization, multiple independent JScheme interpeters)</li>
+</ul>
+</div>
+  }#
+ ) 
+)

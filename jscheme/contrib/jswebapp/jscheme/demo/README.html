@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Demo</title>
+    <style type="text/css">
+      body {background:rgb(0,0,100)}
+      pre {background:rgb(240,255,245); 
+           border:thin solid green; 
+           padding:0.2in; margin:0.4in}
+      div {background:rgb(240,245,255); 
+          padding-left:1in; padding-right:1in;
+          margin-left:1in; margin-right:1in; 
+          border:thick solid blue}
+    </style>
+  </head>
+  <body>
+   <div>
+     <h1>The demos folder</h1>
+    <p>
+   This folder contains several examples of JScheme servlets and applets.
+   <ul>
+ <li><a href="security.servlet">security.servlet</a> (<a href="security.servletV">src</a>)<br/>this servlet tries to list the files
+     in your root directory. It will generate a error if the server was started with the src/build/secure.sh
+     script that uses the src/build/server.policy security policy file<br/><br/></li><li><a href="date.servlet">date.servlet</a> (<a href="date.servletV">src</a>)<br/> The simplest servlet -- returns the local time/date<br/><br/></li><li><a href="headers.servlet">headers.servlet</a> (<a href="headers.servletV">src</a>)<br/>shows user's HTTP headers<br/><br/></li><li><a href="counter.servlet">counter.servlet</a> (<a href="counter.servletV">src</a>)<br/>demonstrates use of a file-based counter<br/><br/></li><li><a href="ssi.servlet">ssi.servlet</a> (<a href="ssi.servletV">src</a>)<br/>example of server-side includes<br/><br/></li><li><a href="ssi.html">ssi.html</a><br/>this will run as a servlet if the htmlhandler is enabled in WEB-INF/web.xml<br/><br/></li><li><a href="classbrowser.servlet">classbrowser.servlet</a> (<a href="classbrowser.servletV">src</a>)<br/>Servlet to let you browse methods/fields/constructors of classes<br/><br/></li><li><a href="classbrowser.scm">classbrowser.scm</a> (<a href="classbrowser.scmV">src</a>)<br/>Scheme code for a applet-based class browser. You access the applet
+    by changing the suffix from ".scm" to ".scmapp", e.g. <a href="classbrowser.scmapp">classbrowser.scmapp</a><br/><br/></li><li><a href="JSchemeEvaluator.scm">JSchemeEvaluator.scm</a> (<a href="JSchemeEvaluator.scmV">src</a>)<br/>Scheme code for a applet-based JScheme evaluator. Try it:
+    <a href="JSchemeEvaluator.scmapp">JSchemeEvaluator.scmapp</a><br/><br/></li><li><a href="wiki.servlet">wiki.servlet</a> (<a href="wiki.servletV">src</a>)<br/>a database-backed wiki in 96 lines of code (3331 characters)<br/><br/></li>
+   </ul>
+</div>
+

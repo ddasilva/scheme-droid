@@ -1,0 +1,12 @@
+#{
+<html>
+  <head><title>ia-solver</title></head>
+<body>
+  <h1>ia-solver applet</h1>
+  <a href="http://jscheme.sourceforge.net/jscheme-contrib/ia_solver">home page</a><br/>
+  <a href="ia-solver.scm">source code</a><br/>
+ <hr/>
+ #[(multi-jar-applet request 500 500 ".." '(contrib/ia/lib/ia_math lib/applet) 'ia_solver/ia_solver.scm)]#
+</body>
+</html>
+}#

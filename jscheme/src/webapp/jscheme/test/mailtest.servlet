@@ -1,0 +1,13 @@
+(begin
+  (load "webapps/jscheme/lib/mylib.scm")
+  (load "webapps/jscheme/lib/mail.scm")
+  (send-mail request "tim@cs.brandeis.edu" "tjhickey@brandeis.edu" "test"
+         {The time was [(Date.)] the IP address was [(.getRemoteHost request)]})
+  (generic-page
+    "mail test"
+    ""
+    {<h1>Hi, I sent mail about your visit</h1>
+      at time [(Date.)] an your IP address is
+      [(.getRemoteHost request)]<br> Bye.
+    }
+  ))

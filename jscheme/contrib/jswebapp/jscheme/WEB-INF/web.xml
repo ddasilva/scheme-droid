@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2.3.dtd">
+
+<web-app>
+
+    <!-- Servlet handlers - associating handlers to their scheme code -->
+
+      <servlet>
+        <servlet-name>    schemehandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  WEB-INF/scheme/scheme.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    snlphandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  WEB-INF/scheme/snlp.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    applethandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  WEB-INF/scheme/applet.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    scmapphandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  WEB-INF/scheme/app.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    defaultservlethandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  WEB-INF/scheme/default.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    umethodhandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/umethod.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    umethoduploadhandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/umethod-upload.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    validatehandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/validate.sss  </param-value> </init-param>
+      </servlet>
+
+
+
+
+
+  <!-- Servlet mappings  - assigning handlers to URL patterns -->
+
+  <!-- this evaluates the scheme code in the file.servlet, converts the result to a string, and sends it to the user -->
+      <servlet-mapping>
+        <servlet-name> schemehandler </servlet-name> <url-pattern> *.servlet </url-pattern>
+      </servlet-mapping>
+
+  <!-- this evaluates the scheme code in the file.servlet, converts the result to a string, and sends it to the user -->
+<!--
+      <servlet-mapping>
+        <servlet-name> schemehandler </servlet-name> <url-pattern> *.html </url-pattern>
+      </servlet-mapping>
+-->
+
+  <!-- this evaluates the file.jnlp as a servlet (it's used to set the mime-type using servlet calls) -->
+      <servlet-mapping>
+        <servlet-name> schemehandler </servlet-name> <url-pattern> *.jnlp </url-pattern>
+      </servlet-mapping>
+
+  <!-- this creates an HTML page containing a JWS application  whose code is in this file.snlp file -->
+      <servlet-mapping>
+        <servlet-name> snlphandler </servlet-name> <url-pattern> *.snlp </url-pattern>
+      </servlet-mapping>
+
+  <!-- this creates an HTML page containing an applet whose code is in this file.applet file -->
+      <servlet-mapping>
+        <servlet-name> applethandler </servlet-name> <url-pattern> *.applet </url-pattern>
+      </servlet-mapping>
+
+
+  <!-- this creates an HTML page containing an applet that runs the corresponding file.scm code -->
+      <servlet-mapping>
+        <servlet-name> scmapphandler </servlet-name> <url-pattern> *.scmapp </url-pattern>
+      </servlet-mapping>
+
+
+  <!-- this displays the HTTP headers when users try to view a "hidden file"  -->
+      <servlet-mapping>
+        <servlet-name> defaultservlethandler </servlet-name> <url-pattern> *.hide </url-pattern>
+      </servlet-mapping>
+
+  <!-- uncomment this if you want to allow browsers to view the scm source code for applets and servlets
+   -->
+      <servlet-mapping>
+        <servlet-name> validatehandler </servlet-name> <url-pattern> *.scmV </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> validatehandler </servlet-name> <url-pattern> *.servletV </url-pattern>
+      </servlet-mapping>
+
+
+ <!-- uncomment this if you want to enable the "U-method" for web-based uploading,
+      but be wary as you are openning your machine up to anyone who knows the password!
+
+      <servlet-mapping>
+        <servlet-name> umethodhandler </servlet-name> <url-pattern> *. </url-pattern>
+      </servlet-mapping>
+
+  -->
+
+ <!-- uncomment this if you want to enable the "U-method" for web-based uploading,
+      but be wary as you are opening your machine up to anyone who knows the password!
+-->
+      <servlet-mapping>
+        <servlet-name> umethoduploadhandler </servlet-name> <url-pattern> *.U </url-pattern>
+      </servlet-mapping>
+
+<!--  -->
+
+ <!-- uncomment this if you want browsers to use the U-method to upload/edit specific types of files
+ -->
+      <servlet-mapping>
+        <servlet-name> umethodhandler </servlet-name> <url-pattern> *.htmlU </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> umethodhandler </servlet-name> <url-pattern> *.scmU </url-pattern>
+      </servlet-mapping>
+
+ <!--
+      <servlet-mapping>
+        <servlet-name> umethodhandler </servlet-name> <url-pattern> *.servletU </url-pattern>
+      </servlet-mapping>
+ -->
+
+</web-app>

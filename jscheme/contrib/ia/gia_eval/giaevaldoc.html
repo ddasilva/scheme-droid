@@ -1,0 +1,86 @@
+<html>
+<head>
+<title>Explanatory Notes for the General Interval Arithmetic Evaluator</title>
+</head>
+<body bgcolor=#f0f0ff>
+<h1>Explanatory Notes for the General Interval Arithmetic Evaluator</h1>
+<em>Copyright &copy; 2001, Timothy J. Hickey, All Rights Reserved</em>
+<p>
+<h2>Generalized Intervals</h2>
+</h2>
+This demo allows one to perform various operations on certain kinds of sets
+of reals. 
+<ul>
+<li> <strong>Decimal constants. </strong>
+     (We use java.math.BigDecimal objects to represent decimals.)
+<li> <strong>Intervals</strong> (We use the standard parenthesis/bracket notation for intervals.)
+<ul>
+<li> closed intervals: <code>[1,2]</code>
+<li> open intervals: <code>(-inf,-2) (-1,1) (2,inf)</code>
+<li> half-open intervals: <code> (-inf,2] [1.1,2.2) [4,inf)</code>
+</ul>
+<li> <strong>Finite unions of points and intervals</strong> (We use curly braces to denote
+a union of sets).
+<ul>
+<li> <code>{-1,0,1}</code>
+<li> <code>{0,1,[2,3),(3,4], (5,6), (7,inf)}
+</ul>
+</ul>
+<p>
+<h2>
+Operations
+</h2>
+<ul>
+<li> <strong> Arithmetic operations on intervals:</strong> <code> +,-,*,/,sq,unary -</code>
+<br>
+These all return an interval that contains all results, that is, if I and J are sets of
+reals as above, then
+<pre>
+  I+J contains {x+y: x in X and y in Y}
+  I*J contains {x*y: x in X and y in Y}
+  I-J contains {x-y: x in X and y in Y and y<>0}
+  I/J contains {x/y: x in X and y in Y}
+  sq(I) contains {x*x: x in X}
+  -I contains {-x: x in X}
+</pre>
+<li> <strong> Assignment statements separated by semicolons:</strong>
+<br>
+Each assignment must have the form
+<pre>
+   VARIABLE := EXPRESSION
+</pre>
+<li> <strong> Function definitions</strong>
+<pre>
+   FUNNAME(V1,...,Vn) := EXPRESSION
+</pre>
+
+<li> <strong>Piecewise function definitions</strong>
+<pre>
+  FUNNAME(V) := 
+  {
+    EXPR1 if V in I1 ,
+    EXPR2 if V in I2 ,
+    ...
+    EXPRN if V in In
+ }
+</pre>
+This definition intersects the interval argument V with each I_j to get V_j.
+If V_j is not empty, then it uses it to evaluate EXPRj to get a result interval
+R_j. The union of all R_j is returned. Note that one can use this to define
+functions recursively, but must take care to avoid infinite loops. The interpreter
+should probably memoize recursive calls to catch infinite loops, but it does not.
+</ul>
+<p>
+<h2>Options</h2>
+The user can modify the internal state by selecting options from the control panel on the GUI, including:
+<ul>
+<li> <strong>the scale choice</strong> determines the maximum number of decimal digits to maintain when computing interval bounds
+<li> <strong>the reset button</strong> removes all variable definitions
+<li> <strong>the clear button</strong> clears the two textareas
+<li> <strong>the fontsize choice</strong> ... self-evident
+<li> <strong>the detach/attach buttons</strong> pop the applet off/on the webpage
+<li> <strong>the help button</strong> pops up a window with a little bit of online help
+including a list of the operators that can be used in arithmetic expressions
+</ul>
+</body>
+</html>

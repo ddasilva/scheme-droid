@@ -1,0 +1,40 @@
+<html>
+<head>
+<title>An Interval Arithmetic Evaluator Demo in 
+<a href="http://jscheme.sourceforge.net">JScheme</a></title>
+</head>
+<body bgcolor=#f0f0ff>
+<h1>An Interval Arithmetic Evaluator Demo in Scheme</h1>
+The source code for this applet is in the files
+<ul>
+<li> <a href="iaevaldemo.scm"> iaevaldemo.scm</a> -- the GUI
+<li> <a href="iaeval.scm"> iaeval.scm</a> -- the Interval Arithmetic Evaluator
+<li> <a href="opparse.scm">opparse.scm</a> -- an Operator Precedence parser
+</ul>
+In addition, this uses the ia_math package of Java classes which implement
+interval arithmetic versions of the standard Math operators and functions.
+This package will soon be available at <a href="http://interval.sourceforge.net">
+interval.sourceforge.net</a>.
+<p>
+Todo:
+<ul>
+<li> add programming interface (variables, assignment statements, tests)
+<li> add more operands (currently abs, sqrt, sq, %  are not implemented).
+</ul>
+<p>
+<hr>
+<p>
+<center>
+<table border=10 bgcolor=#c8c8fa cellspacing=15 cellpadding=25><tr><td>
+<applet  code="jsint.SchemeApplet"
+     codebase=".."
+     archive = "lib/jscheme.jar,lib/ia_math.jar"
+     height=800  width=600>
+    <param name="prog" value="ia_eval/iaevaldemo.scm">
+    <param name="init" value="init">
+You need a Java-enabled browser to run this applet.
+</applet>
+</td></tr></table>
+</center>
+</body>
+</html>

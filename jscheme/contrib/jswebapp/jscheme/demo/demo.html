@@ -1,0 +1,49 @@
+<html>
+  <head>
+    <title>Demo</title>
+    <style type="text/css">
+      body {background:rgb(0,0,100)}
+      pre {background:rgb(240,255,245); 
+           border:thin solid green; 
+           padding:0.2in; margin:0.4in}
+      div {background:rgb(240,245,255); 
+          padding:1in; margin:1in; 
+          border:thick solid blue}
+    </style>
+  </head>
+  <body>
+   <div>
+     <h1>demo.html</h1>
+    <p>
+      This is a straight HTML file 
+      with a CSS style-sheet embedded in the head.
+    </p>
+    <p>
+     If the htmlhandler is uncommented 
+     in the WEB-INF/web.xml file, 
+     then the date will appear below:
+     <pre>
+       #[(Date.)]#
+     </pre>
+     Otherwise you would just see 
+     the code needed to invoke the date.
+    </p>
+   Here is the source code for this page:
+   <pre style="background:lightgreen; 
+               border:thin solid green; 
+               padding:0.2in">
+     \n#[(html_quote 
+        (include-file 
+          (.getServletPath request)
+      ))]#
+   </pre>
+  <!-- This is an HTML comment:
+    Author: Tim Hickey
+    Date: 8/2/2004
+  -->
+  Have fun!
+  </div>
+
+ </body>
+</html>
+

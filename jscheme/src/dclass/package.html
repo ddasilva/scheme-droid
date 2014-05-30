@@ -1,0 +1,142 @@
+<html>
+<head>
+<title>(define-class)</title>
+</head>
+<body>
+
+<p>The macro <tt>(define-class)</tt> lets you define Java class in
+Scheme.  To Java, such a class looks just like and other Java class.
+The only difference is that its behavior is implemented in Scheme.
+
+<p>The classes in this directory are simple metaclasses used by
+<tt>(define-class)</tt>.  These classes are organized more
+consistantly than the java.lang.reflect classes are.  Their behavior
+is written in JScheme.
+
+<h2>Example</h2>
+
+<p> For example, to sort a vector of integers, say, #(5 2 1 3 9 6 2 7
+1)
+using <tt>Arrays.sort</tt>, you need an implementation of
+<tt>java.util.Comparator</tt>.  This can defined like:
+
+<pre>
+  (define-class
+    (package frog)
+    (import java.util.Comparator)
+    (public class Compare implements Comparator)
+    ;; Design issue, fields must be public for Jscheme code to access.
+
+    (public Procedure predicate)	
+
+    (public Compare (Procedure predicate)
+     (.predicate$ this predicate))
+
+    (public boolean predicate (Object a Object b)
+     ((.predicate$ this) a b))
+
+    (public int compare (Object a Object b)
+     (cond ((.predicate this a b) -1)
+	   ((.predicate this b a) 1)
+	   (else 0)))
+
+    (public boolean equals (Object that)
+     (and (eq? (.getClass this) (.getClass that))
+	  (eq? (.predicate$ this) (.predicate$ that))))
+
+    (public int hashCode () 0))</pre>
+
+<p>You can then sort the vector with:
+<pre>
+(let ((a #(5 2 1 3 9 6 2 7 1)))
+  (Arrays.sort a (frog.Compare. <))
+  a)
+</pre>
+<p>which produces:
+<pre>
+#(1 1 2 2 3 5 6 7 9)
+</pre>
+
+<p>The <tt>(define-class)</tt> macro looks similar to the equivalent
+Java class.  It consists of a sequence of clauses.  
+The clauses can occur in any order, though it is convention to follow
+an order close to Java's.
+
+<h3>define-class syntax</h3>
+<pre>
+define-class = "(" "define-class" head member<sup>*</sup> ")"
+
+head         = package import<sup>*</sup> class|interface
+package      = "(" "package" PACKAGENAME ")"
+import       = "(" "import" FULLCLASSNAME|PACKAGENAME ".*" ")"
+
+class        = "(" modifier<sup>*</sup> "class" extends<sup>?</sup> implements<sup>?</sup> ")"
+interface    = "(" modifier<sup>*</sup> "interface" extends<sup>?</sup> ")"
+extends      = "(" "extends" CLASSNAME<sup>+</sup> ")"
+implements   = "(" "implements" CLASSNAME<sup>+</sup> ")"
+
+member    = constructor|field|method|static
+constructor  = "(" modifiers<sup>*</sup> name "(" arg<sup>*</sup> ")"
+exp<sup>*</sup> ")"
+field        = "(" modifiers<sup>*</sup> type name (= value)<sup>?</sup> ")"
+method       = "(" modifers<sup>*</sup> type "(" arg<sup>*</sup> ")" exp<sup>*</sup>")"
+static       = "(" static exp<sup>*</sup> ")"
+
+type         = Java type.
+value        = exp
+arg          = type name
+exp          = {Scheme expression}
+name         = {Java identifier}
+</pre>
+
+<h2>Issues</h2>
+<ul>
+ <li>(this) and (super) in constructor.
+ <li>(.foo super ...) in methods.
+ <li>Unnecessary recompilation.
+ <li>Java class redefinition.
+ <li>Debugging errors.  Adding comments to  java file?
+</ul>
+
+<h2>Scheme files</h2>
+<p>Scheme files in this directory include:
+
+<ul>
+
+ <li> <a href=../../../src/dclass/dclass.scm>src/dclass/dclass.scm</a>
+the <tt>(define-class)</tt> macro.
+
+ <li> <a href=../../../src/dclass/emit.scm>src/dclass/emit.scm</a>
+a simple Java code generator.
+
+ <li> <a href=../../../src/dclass/record.scm>src/dclass/record.scm</a>
+Provides a <tt>(define-record)</tt> macro for defining simple record classes.
+ <li> <a href=../../../src/dclass/SaxExp.scm>src/dclass/SaxExp.scm</a> 
+A SaxHandler that turns XML into s-expressions as McCarthy intended.
+
+
+ <li> <a
+	 href=../../../src/dclass/SAXHandler.scm>src/dclass/SAXHandler.scm</a> A simple SAXHandler you can extend.  See SaxExp.scm.
+
+
+</ul>
+
+</body>
+</html>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:nil
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

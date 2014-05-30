@@ -1,0 +1,39 @@
+(servlet (the-class-name)
+  (define null #null)
+  (define module-loaded (use-module "elf/basic.scm"))
+  (define (toList X) (map* (lambda(x) x)  X))
+  (define (get-superclasses X)
+    (if (equal? X #null) ()
+        (cons X (get-superclasses (.getSuperclass X)))))
+  (define (describe-class the-class)
+      (define the-class
+        (tryCatch 
+           (let ((x (string->expr (string-append the-class-name ".class"))))
+              (if (symbol? x) (eval x) java.lang.Object.class))
+           (lambda(e) java.lang.Object.class)))
+      {<html><h1>Description of [the-class]</h1>
+         <h2>Superclassses</h2>[(ol (toList (get-superclasses the-class)))]<br>
+         <h2>Interfaces</h2>[(ol (toList (.getInterfaces the-class)))]<br>
+         <h2>Constructors</h2> [(ol (toList (.getConstructors the-class)))]<br>
+         <h2>Methods:</h2>[(ol (toList (.getMethods the-class)))]<br>
+         <h2>Fields</h2>[(ol (toList (.getFields the-class)))]<br>
+         </html>
+      }
+   )
+
+
+  #{<html>
+      <head>
+         <title>classbrowser</title>
+         <style type="text/css">
+           body {background:rgb(200,200,255); padding:0.5in}
+         </style>
+      </head>
+    <body>#[
+   (string-append
+     {<h1>ClassBrowser Servlet</h1>}
+     (make-form "classbrowser.servlet" '(the-class-name)))
+     {<br/><br/>}
+     (if (equal? #null the-class-name) "" (describe-class the-class-name))
+    ]#</body></html>}#
+)

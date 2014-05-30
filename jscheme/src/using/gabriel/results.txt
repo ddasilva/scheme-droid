@@ -1,0 +1,47 @@
+JScheme 7.0 5/26/04  using Primitives.load() on 
+  1GHz Powerbook G4 with 1MB L3 cache, 1 GB SDRAM, Mac OS X, 10.3.4, jdk1.4 
+
+		CPSTAK CTAK	 Dderiv	 Deriv	Destructive Div-iter   Div-rec	     FFT    Fprint	Fread	Puzzle	TAK	TAKL	TAKR 
+Mac G4/std      1839   26520	 2682	 1833	5407	    1834       1887	     10712  116		480	241	1072	8584	1162 
+Mac G4/prims	8162   134623 	 21427	 22026	39038	    5885       5701	     FAIL   FAIL	FAIL	650	6946	27842	7381
+
+So the jscheme/prims.scm is much too slow, by a factor of 8....
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+Raw Data: 
+
+JScheme 7.0 5/26/04  using Primitives.load() on 
+  1GHz Powerbook G4 with 1MB L3 cache, 1 GB SDRAM, Mac OS X, 10.3.4, jdk1.4 
+
+with Primitives.load()
+CPSTAK::(1839 msec)
+CTAK::(26520 msec)
+Dderiv::(2682 msec)
+Deriv::(1833 msec)
+Destructive::(5407 msec)
+Div-iter::(1834 msec)
+Div-rec::(1887 msec)
+FFT::(10712 msec)
+Fprint::(116 msec)
+Fread::(480 msec)
+Puzzle::(241 msec)
+TAK::(1072 msec)
+TAKL::(8584 msec)
+TAKR::(1162 msec)
+
+
+with jscheme/prims.scm
+CPSTAK::(8162L msec)
+CTAK::(134623L msec)
+Dderiv::(21427L msec)
+Deriv::(22026L msec)
+Destructive::(39038L msec)
+Div-iter::(5885L msec)
+Div-rec::(5701L msec)
+FFT:: (FAIL msec)
+Fprint::(FAIL msec)
+Fread::(FAIL msec)
+Puzzle::(650L msec)
+TAK::(6946L msec)
+TAKL::(27842L msec)
+TAKR::(7381L msec)

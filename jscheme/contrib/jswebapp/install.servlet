@@ -1,0 +1,23 @@
+(jswebpage "../.." "Installing the JScheme Webapp" jswebapp-menu
+#{
+<div class="main">
+To install a JScheme-webapp you 
+<ol>
+<li>Download and install a 
+servlet container such as
+<a href="http://jakarta.apache.org/tomcat">tomcat</a>,
+<a href="http://jetty.mortbay.org">jetty</a>,
+or
+<a href="http://www.caucho.com">resin</a>, then </li>
+<li>Download <a href="jscheme-webapp.zip">jscheme-webapp.zip</a>
+and unzip it in the <code>webapps</code> folder of the servlet container</li>
+<li> Restart the servlet container (or use one of the servlet administration tools
+to start the jscheme servlet...)</li>
+</ol>
+<br/><br/>
+You may also want to <a href="webxml.html">configure the webapp</a> by modifying the 
+<a href="jscheme/WEB-INF">WEB-INF</a>/<a href="jscheme/WEB-INF/web.xml">web.xml</a> file.
+
+</div>
+}#
+)

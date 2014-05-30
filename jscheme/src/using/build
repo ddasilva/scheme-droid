@@ -1,0 +1,11 @@
+#!/bin/sh
+# you must have java in your path.
+H=`dirname $0`/../..
+D=":"
+case `uname` in
+  CYGWIN* )
+  H=`cygpath -w $H`
+  D=";" ;;
+esac
+echo $H
+java -classpath "$H/src${D}$H/lib/jscheme.jar" jscheme.REPL $H/src/using/build.scm -main commandMain "$@"

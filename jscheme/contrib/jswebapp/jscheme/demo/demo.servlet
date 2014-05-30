@@ -1,0 +1,34 @@
+(servlet(cmd)
+ (use-module "elf/basic.scm" 'import 'all)
+ (let* ((counter-file (servlet-file request "counter"))
+        (count (read-from-file counter-file 0))
+        (newcount (+ 1 count)))
+   (write-to-file counter-file newcount)
+
+   (basic-webpage "demo.servlet"
+     {<h1>This is a servlet demo</h1>
+      It has been visited [newcount] times (including this visit!)<br/><br/>
+     Lets try to list all of the files in the server's root directory:<br/><br/>
+     <pre style="background:black; color:red; font-weight:bold;padding:0.2in;font-size:120%; margin-left:1in">    
+      [
+       (tryCatch 
+          (ol(map* (lambda(x) x) (.list (java.io.File. "/")))) 
+          (lambda(e) 
+             {can't list files, error is <pre>[e]</pre><br/>
+                   The security policies are in effect!}
+          ))
+      ]
+     </pre>
+     An error should appear above if you have started the server using the script
+     <pre>src/build/secure.sh</pre>
+     which uses the policy file at <pre>src/build/server.policy</pre> to restrict access.
+     <br/><br/>
+      Here is the code for this servlet
+     <pre style="background:lightgreen;font-weight:bold; color:black;padding:0.2in; margin-left:1in">
+      \n[(html_quote (include-file (.getServletPath request)))]
+     </pre>
+     The html_quote is needed to allow the tags to be displayed rather than
+     interpreted as HTML commands...<br/><br/>
+    })
+ )
+)

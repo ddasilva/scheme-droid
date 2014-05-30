@@ -1,0 +1,60 @@
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;  db.hide (this assumes db.scm has been loaded)
+;;  This contains sensitive information about the database connection
+;;  and so is protected by a ".hide" suffix.
+;;
+;;  When loaded this opens a connection to the database 
+;;  and defines the which can be accessed by the
+;;        (dbquery QUERY) 
+;;  procedure which accesses the db using that connection.
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Default database connection
+;;  Here we specify the default database connection
+;;  This is a connection to a database which is
+;;  initialized when the servlet container starts up
+;;  and which can be shutdown nicely or abruptly
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+(define (open-dbconnection)
+ (case database
+  ((hsqldb)
+   (let (
+         (host/db {jdbc:hsqldb:[(getRealPath {/WEB-INF/hsqldb/wikidb})]})  ;; this corresponds to an "in process" database
+         (user "sa") 
+         (pw ""))
+     (connect host/db user pw)))
+  ((mysql)
+   (let ((host  "YOUR.DATABASE.DOMAIN.NAME") ;; we assume the database is running locally
+         (port "3306")
+         (db "YOUR_DATABASE_NAME")
+         (user "YOUR_DB_USERNAME") 
+         (pw "YOUR_DB_PASSWORD"))
+     (java.sql.DriverManager.getConnection
+          {jdbc:mysql://[host]:[port]/[db]} user pw)))
+ ))
+
+
+; open a connection to the database
+(define dbconnection  
+ (begin (tryCatch (.close dbconnection)(lambda(e) #t)) ;; try to close any open connection
+   (open-dbconnection) ;; open a new connection
+ ))
+
+
+;; this sends a query along the already open connection.
+;; and it synchronizes the call so that only one call is made at a time ..
+(define dbquery 
+    (lambda (Q)
+     (if (.isClosed dbconnection) (set! dbconnection (open-dbconnection)))
+     (synchronize dbquery
+       (lambda(_)
+         (tryCatch
+           (handlequery dbconnection Q)
+           (lambda(e) `((,e)) )
+         )))))
+
+

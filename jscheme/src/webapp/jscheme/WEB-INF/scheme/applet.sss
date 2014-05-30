@@ -1,0 +1,99 @@
+;; applet.sss
+;;
+
+(lambda (httpservlet)
+
+ (define (read-all in)
+    (define (drain in sbuffer)
+      (let ((line (.readLine in)))
+        (if (eq? line #null) 
+            (.toString sbuffer)
+            (drain in (.append (.append sbuffer line) "\n")))))
+    (drain in (java.lang.StringBuffer.)))
+
+
+  (define (doGet request response)
+    (tryCatch 
+     (let ()
+      (define (getRealPath servlet File)
+          (.getRealPath (.getServletContext (.getServletConfig servlet)) File))
+      (define filename (getRealPath httpservlet (.getServletPath request)))
+      (define file (java.io.BufferedReader. (java.io.FileReader. filename)))
+      (define title (.readLine file))
+      (define vendor (.readLine file))
+      (define homepage (.readLine file))
+      (define desc (.readLine file))
+      (define icon (.readLine file))
+      (define codestring (read-all file))
+
+      (define (html_quote x) 
+        (define s (java.util.StringTokenizer. x "<>&\"" #t))
+        (define (maketokens s)
+           (if (not (.hasMoreTokens s)) ()
+               (let ((x (.nextToken s)))
+                 (cons
+                   (case x
+                      (("<")  "&lt;")
+                      ((">") "&gt;")
+                      (("\"") "&quot;")
+                      (("&") "&amp;")
+                      (else x))
+                   (maketokens s)))))
+         (apply string-append (maketokens s)))
+
+       (tryCatch
+        (begin
+          (.setContentType response "text/html")
+          (let*
+            ((codebase {http://[(.getServerName request)]:[(.getServerPort request)]})
+             (href (.getRequestURI request)))
+           (.println (.getWriter response) 
+{
+<html><head><title>Applet Demo</title></head>
+<body>
+  <h1>Applet Demo Page</h1>
+  <applet
+     code="jsint.SchemeApplet"
+     codebase="."
+     archive="/jscheme/lib/applet.jar"
+     height=100
+     width=100>
+   <param name=expr value="(define (init thisApplet) [(html_quote codestring)] )">
+   <param name=init value="init">
+  </applet>
+<ul>
+<li> title: [(string->expr title)] </li>
+<li> vendor: [(string->expr vendor)]</li>
+<li> homepage:<a href="[ (string->expr homepage) ]"> 
+            [(string->expr homepage)] </a></li>
+<li> description: [(string->expr desc)]</li>
+<li> icon: <img valign=center src=" [(string->expr icon)] "> 
+</ul>
+</body>
+</html>
+}
+   )
+   ))
+     (lambda(e) 
+        (.setContentType response "text/plain")
+        (display (list "ERROR: " e) (.getWriter response))))
+  )
+    (lambda(ee)
+          (.setContentType response "text/plain")
+          (display (list "ERROR: " ee) (.getWriter response))))
+   )
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+)
+
+
+
+
+
+
+

@@ -1,0 +1,50 @@
+INSTALLATION of JScheme
+
+1. First download the JScheme source tree and cd into the toplevel directory
+
+2. Build everything.
+  % sh bin/make
+
+3. To see other build options try
+  % sh bin/make -help
+which currently produces:
+
+make command*
+
+The default command is -all
+command ::= -key arg*
+
+Where command is one of:
+-help
+  Print help message
+
+-all
+  Build everything.
+
+-clean
+  Remove all .class files.
+
+-javac
+  Compile Java classes.
+
+-jar
+  Make lib/jscheme.jar lib/jscheme.zip applet.jar and lib/jschemelite.jar
+
+-test
+  Run tests on lib/jscheme.jar
+
+-javadoc
+  Make Java api documentation.
+
+-contrib
+  Build the contributed applications.
+
+-repl
+  Start a Read Eval Print Loop
+
+-server
+  Start the web server.
+
+-webpages
+  Make web pages for http://jscheme.sourceforge.net
+

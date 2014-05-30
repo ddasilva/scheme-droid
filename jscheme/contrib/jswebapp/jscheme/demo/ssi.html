@@ -1,0 +1,24 @@
+<html>
+  <head><title>test</title>
+   <style type="text/css">
+      body {background:rgb(200,200,255)}
+      pre {padding:0.2in; margin:0.5in; 
+                background:lightgreen; border:10px solid yellow}
+   </style>
+ </head>
+ <body>
+   <h1>This is a test of the server-side-include facility</h1>
+    The servlet path for this file is
+<pre> #[(.getServletPath request)]#
+</pre><br/><br/>
+    Now I'll insert myself as html_quote'd text
+    <pre>
+     \n#[
+         (html_quote 
+            (include-file 
+               (.getServletPath request) ; the path of this file from inside the webapp
+            ))
+      ]#
+   </pre>
+ </body>
+</html>

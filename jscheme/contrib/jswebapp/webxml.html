@@ -1,0 +1,112 @@
+ 
+<html>
+  <head>
+     <title>Configuring the JScheme Webapp</title>
+     <link rel="icon" href="/jscheme/favicon.ico">
+     <style type="text/css">
+       div.navbar {padding:0.1in; font:12pt/18pt sans-serif;background:rgb(20,20,120);color:rgb(180,255,180)}
+       div.navbar a {text-decoration:none;color:white}
+       div.navbar a:link {}
+       div.navbar a:visited {}
+       div.navbar a:active {}
+       div.navbar a:hover {background:rgb(220,255,220);color:blue}
+       div {padding:0.5in; margin:0.2in; background:rgb(240,240,255)}
+       body {background:rgb(0,0,100)}
+       div.main {border:thick solid blue}
+       div.heading {padding:0.2in; font:bold 24pt Helvetica,sans-serif;background:rgb(200,220,255)}
+
+     </style>
+  </head>
+<body>
+
+<div class="heading" 
+   <!-- style="padding:0.2in; font:bold 32pt Helvetica,sans-serif;background:rgb(50,50,150);color:rgb(250,240,130); text-align:center"> -->
+Configuring the JScheme Webapp
+<img src="../../images/jscheme-icon2.gif" align="left"></Div>
+<br/>
+<table>
+
+<tr><td width="25%" style="vertical-align:top">
+
+<div class="navbar">
+Downloads<br/>
+<a href="/jscheme/downloads/jswebapp.zip">jswebapp.zip</a><br/>
+<br/>
+Documentation<br/>
+<a href="install.html">Installation</a><br/>
+<a href="webxml.html">Configuring web.xml</a><br/>
+<a href="jscheme/demo/">Demo folder</a><br/>
+<a href="../main.html">Back to Contrib</a><br/>
+<!--
+  <a href="servlets.html">Writing Servlets</a><br/>
+  <a href="util.html">Utility procedures</a><br/>
+  <a href="text.html">Textbook for novices</a><br/>
+  <a href="architecture.html">Webapp Architecture</a><br/>
+-->
+</div>
+
+</td>
+<td style="vertical-align:top">
+
+<div class="main">
+<p>
+To configure a JScheme-webapp you 
+need to modify the 
+<a href="jscheme/WEB-INF">WEB-INF</a>/<a href="jscheme/WEB-INF/web.xml">web.xml</a> file.
+This will allow you to select which servlets to support (and to add new servlets).
+</p>
+<p>
+The list of servlets currently supported by the JScheme webapp are listed below:
+<h2>Servlets</h2>
+<pre>
+*.servlet       schemehandler           scheme.sss            installed
+*.html          schemehandler           scheme.sss            commented out
+*.jnlp          schemehandler           scheme.sss            commented out
+</pre>
+*.servlet files are evaluated in a single Scheme environment (even in different
+threads of the servlet container). The environment is initialized when the first
+servlet is visited by loading in the WEB-INF/scheme/servletlib/init.scm code.
+The *.html files are processed by first enclosing the text in a hash-curly expression
+so one can escape to Scheme by using a hash-bracket expression.
+<xmp>
+      \#\[  'scheme-code  \]\#
+</xmp>
+
+<h2>Applets</h2>
+<pre>
+*.snlp          snlphandler             snlp.sss              installed
+*.applet        applethandler           applet.sss            installed
+*.scmapp        scmapphandler           app.sss               installed
+</pre>
+.snlp and .applet files ...
+
+<h2>Default Bouncer</h2>
+<pre>
+*.hide          defaultservlethandler   default.sss           installed
+</pre>
+<h2>Form-based uploading</h2>
+<pre>
+*.              umethodhandler          umethod.sss           commented out
+*.U             umethoduploadhandler    umethod-upload.sss    commented out
+</pre>
+<h2>Scheme applet/servlet validation</h2>
+<pre>
+*.scmV          validatehandler         validate.sss          commented out
+*.serlvetV      validatehandler         validate.sss          commented out
+</pre>
+     
+
+</div>
+
+</td>
+</tr>
+</table>
+</a>
+<br/><br/>
+<br/><br/>
+
+.
+</div>
+</body>
+</html>
+

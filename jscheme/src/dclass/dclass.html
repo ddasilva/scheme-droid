@@ -1,0 +1,198 @@
+<html>
+<head>
+<title>(define-class)</title>
+</head>
+<body>
+<h1>(define-class)</h1>
+
+<hr>
+<h2>Fitting in with Java</h2>
+<ul>
+ <li> Calling Scheme from Java.
+ <li> Wrapper Classes.
+
+ <li> Proxy classes
+
+ <li> Java classes written in Scheme.
+</ul>
+<hr>
+<h2>Calling Scheme from Java</h2>
+<p>The <tt>jscheme.JS</tt> (for Java - Scheme Interface) provides a simple API
+for invoking Scheme code from Java.
+
+<p>Loading Scheme code:
+<pre>
+  JS.load("elf/basic.scm");
+</pre>  
+
+<p>Invoking a procedure:
+<pre>
+  System.out.println(JS.call("+", JS.toObject(2), JS.toObject(3)));
+</pre>
+
+<p>Eval:
+
+<pre>
+  output.setText(JS.eval(input.getText()).toString());
+</pre>
+<hr>
+<h2>Wrapper Classes</h2>
+<p>A Wrapper class is a Java class that invokes Scheme procedures.
+<p>JScheme provides Applet and Servlet wrappers.
+<p>Listener interface implements 35 Swing listeners.
+<p>Example: Comparator:
+
+<pre>
+import java.util.Comparator;
+import jsint.Procedure;
+import jscheme.JS;
+
+public class Compare1 implements Comparator {
+  private Procedure predicate;
+
+  public Compare1(Procedure predicate) {
+    this.predicate = predicate;
+  }
+
+  private boolean p(Object a, Object b) {
+    return JS.booleanValue(JS.call(this.predicate, a, b));
+  }
+
+  public int compare(Object a, Object b) {
+    return p(a, b) ? -1 : p(b, a) ? 1 : 0;
+  }
+}
+</pre>
+<p>Sorting an array:
+<pre>
+> (let ((a #(5 2 1 3 9 6 2 7 1)))
+    (Arrays.sort a (Compare1. <))
+    a)
+#(1 1 2 2 3 5 6 7 9)
+</pre>
+
+<hr>
+<h2>Proxy classes</h2>
+<p>In JDK 1.3 you can generate proxy classes on the fly that implement
+several interaces.
+<p>The proxy calls an InvocagtionHandler to handle each method invocation.
+<pre>
+package elf;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import jsint.Procedure;
+import jscheme.JS;
+
+public class SchemeInvocationHandler implements InvocationHandler {
+
+  Procedure proc;
+
+  public SchemeInvocationHandler(Procedure proc) { this.proc = proc; }
+
+  public Object invoke(Object proxy, Method method, Object[] args)
+    throws Throwable {
+    return JS.call(proc, proxy, method, args);
+  }
+}
+</pre>
+
+<hr>
+<h2>Tracing a Java object</h2>
+<pre>
+<font color=red></font>
+(import "elf.SchemeInvocationHandler")
+(define (delegate-to delegate handler)
+  ;; Returns a proxy that delegates all its interface methods through handler
+  ;; to delegate.  See (trace-object) for example.
+(Proxy.newProxyInstance
+   (.getClassLoader (.getClass delegate))
+   (.getInterfaces (.getClass delegate))
+   (SchemeInvocationHandler.
+    (lambda (proxy method argv)
+      (handler delegate method argv)))))
+
+(define (trace-handler delegate method argv)
+  (print (list 'call: delegate (.getName method) argv))
+  (let ((result (.invoke method delegate argv)))
+    (print (list 'return: result))
+    result))
+
+(define (trace-object x)
+  ;; Returns a proxy object for x that traces all interface methods.
+  (delegate-to x trace-handler))
+
+<pre>
+<hr>
+<h2>Tracing a Hashtable.</h2>
+<pre>
+> (define h (Hashtable. 10))
+{}
+> (define th (trace-object h))
+(call: {} "toString" #null)
+(return: "{}")
+{}
+> (.put th 'a 3)
+(call: {} "put" #(a 3))
+(return: #null)
+#null
+> (.put th 'b 4)
+(call: {a=3} "put" #(b 4))
+(return: #null)
+#null
+> th
+(call: {b=4, a=3} "toString" #null)
+(return: "{b=4, a=3}")
+{b=4, a=3}
+
+</pre>
+
+<hr>
+<h2>Java classes written in Scheme</h2>
+<p>The macro <tt>(define-class)</tt> defines a Java class using a syntax
+that blends Java and Scheme together.
+
+<pre>
+  (define-class
+    (package frog)
+    (import java.util.Comparator)
+    (public class Compare implements Comparator)
+    ;; Design issue, fields must be public for Jscheme code to access.
+
+    (public Procedure predicate)	
+
+    (public Compare (Procedure predicate)
+     (.predicate$ this predicate))
+
+    (public boolean predicate (Object a Object b)
+     ((.predicate$ this) a b))
+
+    (public int compare (Object a Object b)
+     (cond ((.predicate this a b) -1)
+	   ((.predicate this b a) 1)
+	   (else 0)))
+
+    (public boolean equals (Object that)
+     (and (eq? (.getClass this) (.getClass that))
+	  (eq? (.predicate$ this) (.predicate$ that))))
+
+    (public int hashCode () 0))</pre>
+
+<hr>
+<h2>Issues</h2>
+
+<p>  Fields must be declared public for Scheme to access them in an
+applet.
+<p> Fields accessed using reflector syntax
+<p><tt>(this ...)</tt> and <tt>(super ...)</tt> in a constructor is
+treated specially.
+<p><tt>(.method super ...)</tt>: super treated as a special word.
+No way to invoke super in Reflection API.  Scheme must generate a
+method.
+<p>No debugging support.
+<p>Allowing internal <tt>(define...)</tt> might provide a nice
+modularity mechanism.
+<p>How to avoid unnecessary recompilation.
+
+</body>
+</html>

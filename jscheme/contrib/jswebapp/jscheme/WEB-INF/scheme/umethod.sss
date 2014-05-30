@@ -1,0 +1,430 @@
+   ;; file: umethod.sss
+   ;; author: Tim Hickey
+   ;; date: 9/15/2001
+   ;; modified 9/6/2002 by TJH
+   ;; modified 7/2/2004 by TJH
+   ;; NOTES -- this needs to be drastically revised. It used to be a .servlet file
+   ;; but has now been turned into a .sss file and this requires a complete rewriting...
+
+(lambda (httpservlet)
+
+
+  ;; file: umethod.servlet
+  ;; author: Tim Hickey
+  ;; date: 9/15/2001
+  ;; modified: 9/8/2002, by TJH
+  ;;           9/13/2003 by TJH
+  ;;           2/21/2004 by TJH
+  ;;           8/3/2004  by TJH
+  ;; When the user selects any file that ends in  .htmlU .servletU .appletU or just "."
+  ;; or one of the other suffixes specified in WEB-INF/web.xml,
+  ;; the servlet is WEB-INF/scheme/upload.sss is called and this redirects
+  ;; the browser to this servlet with the filename as a parameter.
+  ;; 
+  ;; This servlet does some authorization (making sure the pathname is one that can be U-modified)
+  ;; and generates two forms that send the data back to umethod.servlet with different values of
+  ;; the parameter "cmd", e.g.
+  ;;   cmd = edithandler -- this allows the user to view and edit the source code
+  ;;      it collects the users authorization data and sends the form back with cmd="edit"
+  ;;   cmd = edit -- this verifies that the user is authorized to edit the file and if so stores the new file
+  ;;   cmd = upload -- this uploads the specified file from the client to the server
+  ;;   cmd = delete -- this deletes the file
+  ;;
+  ;;
+  ;; This needs to be rewritten again!
+  ;; We need to use https for the authorization and it is sending the password in the clear....
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+ ; here filename is the full path to the file on the server
+ ; It is the file that will be created or editted on the server
+ (define (do-umethod request response  )
+
+      ;; these allow us to store the password on the server
+      (define (getAttribute name)
+         (.getAttribute (.getSession request) name))
+      (define (setAttribute name value)
+         (.setAttribute (.getSession request) name value))
+
+      ; this tries to get the value of name from a servlet parameter
+      ; if it there is such a parameter, then it stores the value in a session variable
+      ; if there is no such parameter, then it looks up the value as a session variable
+      ; this allows us to pass in a user/pw once as a servlet parameter and have them
+      ; persist throughout the session
+      (define (getSessionValue name)
+         (let ((x (.getParameter request name)))
+           (if (equal? x #null)
+               (getAttribute name)
+               (begin
+                  (setAttribute name x)
+                  x))))
+
+
+
+    (let* ((servletPath (getRealPath (.toString (.getServletPath request))))
+           (filename  ;; strip off the trailing U from the request URI
+              (.substring servletPath 0 (+ -1 (.length servletPath))))
+          )
+
+
+  (tryCatch
+    (let* (
+          (filename0 (getRealPath (.toString (.getServletPath request)))) ; the (pseudo) name of the file with an extra "." or "U" at the end
+          (filename (.substring filename0 0 (+ -1 (.length filename0)))) ; the name of the file on the server, e.g. /tmp/jscheme/demo/test.servlet
+          (context (.getContextPath request))     ;; e.g. /jscheme
+          (servletPath (.getServletPath request)) ;; e.g. /demo/test.servlet.  where ufil is /demo/test.servlet
+          (requestURI (.getRequestURI request))   ;; e.g. /jscheme/demo/test.servlet.
+          (fileURI                                ;; e.g. /jscheme/demo/test.servlet
+                (.substring requestURI 0 (+ -1 (.length requestURI))))
+          (cmd (.getParameter request "cmd"))
+          (pw (getSessionValue "pw"))
+          (user (getSessionValue "user"))
+         )
+    
+    
+    
+      ;; the umethod-password is defined at the bottom of this file
+      ;; here we get the password from the "pw" parameter
+      ;; or as a servlet attribute.
+
+      (define (getPassword)
+         (let ((pw (.getParameter request "pw")))
+           (if (equal? pw #null)
+               (getAttribute "umethod-pw")
+               (begin
+                  (setAttribute "umethod-pw" pw)
+                  pw))))
+    
+      (define ignore (lambda R "ignoring..."))
+    
+      ; create the form to get the username/password from the user
+      (define (generateUserPwForm)
+             {
+               [(if (equal? pw #null)
+                    {} 
+                    {<span style="color:red;font:bold larger">Incorrect password -- 
+                     Try Again</span><br><br><br>}
+                 )]
+                <br>
+                <h2>File: "[fileURI]"</h2>
+                <form method="post" action="[requestURI]">  
+                  <table border=1>
+                    <tr>
+                       <td>Your User Name:</td><td><input type="textfield" name="user"></td>
+                       <td>Your Pass Phrase:</td><td><input type="password" name="pw"></td>
+                    </tr>
+                  </table>
+                 <input type="submit" value="Validate Me!">
+               </form>}
+         )
+    
+
+       ; generate the form to upload a file from the client
+       (define (generate-upload-form)
+              (setAttribute "vstatus" filename)
+              (tryCatch
+               (let* ()
+                  {
+               
+                     <h1>Uploading Utility Form</h1>
+               
+                     <FORM METHOD=post action="[fileURI].U" ENCTYPE="multipart/form-data">
+                        <input type="hidden" name="cmd" value="doupload">
+    
+                        <table border=10 bgcolor=lightgreen cellpadding=10 cellspacing=10>
+                         <tr>     
+                            <td>Filename on server</td>
+                            <td> <b><code>[filename]</code></b></td></tr>
+                         <tr>
+                            <td >Local file to upload:</td>
+                            <td><INPUT TYPE=file NAME="file" SIZE=40 ACCEPT="text/html"></td></tr>
+                         <tr>    
+                            <td>User</td><td> <b><code>[user]</code></b></td></tr>
+                       </table>
+                       <INPUT TYPE=submit VALUE="Upload"></P>
+                     </FORM>
+               
+                }
+              )
+               (lambda(e)
+                   {
+                    <h1>ERROR<br><xmp>[e]</xmp>
+                       The file [filename] can not be uploaded.
+                       </h1>
+                      })
+               ))
+
+       ; generate form to delete a filename from the server
+       (define (generate-delete-form)
+               {<form method="post" action="[requestURI]">  
+                 Are you sure you want to delete <br><br><b>[filename]</b><br><br>
+                 <input type="hidden" name="cmd" value="dodelete">
+                 <input type="submit" value="Yes, delete the file from the server">
+               </form><br>
+                If you don't want to delete then just hit the back button}
+          )
+
+
+         ; delete filename from the server
+         (define (do-delete)
+                   (let* (
+                          (folderURI (.substring fileURI 0 (.lastIndexOf fileURI "/")))
+                          (file (java.io.File. filename)))
+                      (tryCatch (begin 
+                                     (.delete file) 
+                                                {
+                                                <h1>[filename] deleted</h1>
+                                                <a href="[folderURI]">
+                                                   view folder</a>
+                                              })
+                                   (lambda(e)
+                                       {
+                                                <h1>Can't delete [filename]</h1>
+                                         })))
+            )
+
+
+
+         ; this generates a form containing the contents of the test file in a text area.
+         ; it allows the user to modify the file
+         (define (create-edit-textarea-form)
+              (tryCatch
+               (let ()
+                  {
+                     <h1>File Edit Form</h1>
+               
+                     <FORM METHOD=post  action="[requestURI]">  
+                      <input type="hidden" name="cmd" value="edit">     
+    
+                      <table>
+                         <tr>     
+                            <td>Filename on server</td>
+                            <td> <b><a href="[fileURI]"><code>[fileURI]</a></code></b></td></tr>
+                         <tr>    
+                            <td>User</td><td> <b><code>[user]</code></b></td></tr>
+                      </table>
+               
+                     [ (if (not (or (.endsWith filename ".jpg")(.endsWith filename ".gif")(.endsWith filename ".bmp")))
+                      {
+                         <INPUT TYPE=submit VALUE="Upload"></P>
+               
+                        <table border=10 bgcolor=lightgreen cellpadding=10 cellspacing=10>
+                         <tr>
+                            <td>
+                               <textarea name="file" rows=40 cols=80
+                                 [(let ((size (.getParameter request "size"))) 
+                                    (if (or (equal? size #null) (equal? size "default")) "" 
+                                     {style="font: [size] monospace"}))]
+                               >[  
+                               (tryCatch
+                                (let ((F (java.io.BufferedReader. (java.io.FileReader. filename))))
+                                  (let ((s
+                                   (let loop ((B (java.lang.StringBuffer.)))
+                                       (let ((x (.readLine F)))
+                                         (if (equal? x #null) (.toString B)
+                                             (begin (.append B x) (.append B "\n") (loop B)))))))
+                                   (.close F)
+                                   s))
+                                (lambda(e) (string-append "Could not read the file " filename  )))
+                                ]</textarea></td></tr>
+                       </table>
+                     }
+                      "<p>Can not edit jpg, gif, or bmp files....<p>")
+                    ]
+                     </FORM>
+                })
+               (lambda(e)
+                   {
+                    <h1>ERROR in uploading 2<br><xmp>[e]</xmp>
+                       The file [filename] can not be uploaded
+                       </h1>
+                      })
+              ))
+               
+    
+
+
+    (define (store-edits)
+              ;; this stores the editted file on the server and generates a response page
+              (tryCatch
+               (let  ()
+    
+                 (define (open-output-file context restpath)
+                   (let ((path (string-append context restpath)))
+                    (tryCatch
+                      (java.io.PrintWriter. (java.io.FileWriter. path))
+                     (lambda(e)
+                        (let loop ((pos (.indexOf path "/" (+ 2 (.length context)))))
+                          (display (list 'loop path pos (.substring path 0 (.indexOf path "/" pos))))(newline)
+                          (if (= pos -1)
+                               (java.io.PrintWriter. (java.io.FileWriter. path))
+                              (let* (
+                                 (dir (.substring path 0 pos))
+                                 (F (java.io.File. dir)))
+                               (display (list 'ifloop dir F)) (newline)
+                               (if (tryCatch (not (.exists F)) (lambda(e) #f))
+                                   (.mkdir F))
+                               (loop (.indexOf path "/" (+ 1 pos))))))))))
+               
+                                       
+                      
+               
+               
+                  ;; Now, we get the filename and extract the user
+                  ;; and lookup the password for the user
+                 (let*  ((pw "yes"))
+               
+                    (let* (
+                      (folderPath (.substring requestURI 0 (.lastIndexOf requestURI "/")))
+                      (outfile (open-output-file "" filename))
+                      (file (.getParameter request "file"))
+                      (archiveoutfile 
+                         (tryCatch 
+                              (open-output-file (getRealPath {/backup[servletPath].txt}))
+                           (lambda(e) #t)))
+                         )
+                   
+                      ;; here we fail out if the file has not been uploaded...
+                      (if (equal? file #null) (throw (java.lang.RuntimeException. "Can't upload that file")))
+               
+                      ;; otherwise we store the uploaded file and close it
+                      (.print outfile file)
+                      (.close outfile)
+                      (tryCatch (begin (.print archiveoutfile file) (.close archiveoutfile)) (lambda(e) #t))
+                   
+                      ;; finally, we display the confirmation
+                      {
+                         <center>
+                          <h1> Congratulations!</h1>
+                          <h1><code>[filename]</code> </h1>
+                          <h1>
+                              has been successfully uploaded!</h1><p><hr><p>
+                          </center>
+                          <ul>
+                            <li>
+                             View uploaded file: 
+                                 <code> <a href="[fileURI]">
+                                          [fileURI]</a></code>
+                             </li>
+                            <li>
+                             View upload directory:
+                             <code>
+                             <a href="[folderPath]">
+                                    [folderPath]</a> </code>
+                             </li>
+                            [(if (not (.endsWith servletPath ".html")) ""
+                             {<li> 
+                               <form method="GET" action="http://validator.w3.org/check">
+                                <input type="hidden" name="uri" size=80 
+                                     value="http://tat.cs.brandeis.edu:8090[filePath]">
+                                <input type="hidden" name="doctype" value="XHTML 1.0 Transitional">
+                                <input type="hidden" name="charset" value="us-ascii basic English">
+                                <input type="hidden" name="ss" value="1">
+                                <input type="hidden" name="outline" value="1">
+                                <input type="hidden" name="sp" value="1">
+                                <input type="hidden" name="verbose" value="1">
+                                <input type="submit" value="Validate this file"></form>
+                              </li>})]
+                            <li>
+                             View backup directory:
+                             <code>
+                             <a href="[context]/backup[folderPath]">[folderPath]</a></code><br/>
+                               (You can access these using the U-method...)
+                             </li>
+                          </ul>
+                      } )))
+               (lambda(e) {
+                  <h1>ERROR -- please try again</h1><xmp>[e]</xmp>
+                   }
+             ) ; close lambda
+            ); close tryCatch
+           ); close "store-edits"
+
+
+     ; generate a form getting the user's command (edit/delete/upload)
+     (define  (generate-main-menu-page)
+             (let ((file (java.io.File. filename)))
+              {
+                [(if (.exists file)
+                   {<table border=1 cellpadding=10 style="background:lightgreen">
+                        <tr><td>file</td><td>[filename]</td></tr>
+                        <tr><td>last modified</td><td>[(Date. (.lastModified file))]</td>
+                     </table>}
+                   {[file] does not yet exist})]<br><br>
+                
+                   <form method="post"  action="[requestURI]">
+                   <table border=1 bgcolor=lightgreen cellspacing=5 cellpadding=2>
+                    <tr>
+                       <td><input type=radio name="cmd" value="edithandler"> 
+                           [(if (.exists file) {edit} {create})] file with
+                             font size:<select name="size">
+                               <option>default</option>
+                               <option>12</option>
+                               <option>18</option><option>24</option></select>
+                       </td>
+                       [(if (.exists file) 
+                          {<td><input type=radio name="cmd" value="delete"> delete file</td>}
+                          { })]
+                       <td><input type=radio name="cmd" value="upload"> upload new file to server</td>
+                    </tr></table><br><br>
+                   <input type="submit">
+                  </form>
+               }
+            ) ; close let
+           ) ; close else
+
+
+
+
+     {<html>
+       <head><title>Umethod servlet</title></head>
+       <body style="background:rgb(250,220,190)">
+     [(let ()
+       (if (not (equal? pw umethod-password))  ; here we have a pretty weak validation that ignores the user name...
+           (generateUserPwForm)
+
+           (case cmd        ;; from this point on the user has been authorized to access this file
+            (("upload") (generate-upload-form))
+            (("delete") (generate-delete-form))
+            (("dodelete") (do-delete))
+            (("edithandler") (create-edit-textarea-form))
+            (("edit") (store-edits))
+            (else  (generate-main-menu-page))
+
+          ) ; close case
+         ) ; close if  for passwd check....
+        ) ; let
+       ]
+    </body>
+    </html>
+    }
+    )
+  (lambda(e) {Error in (do-umethod [filename]) is <xmp>
+    [e]</xmp>})
+ )))
+    
+
+  (define (doGet request response)
+      (let ((out (.getWriter response)))
+         (.setContentType response "text/html")
+         (.println out
+            (.toString (do-umethod request response)))))
+             
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  (set! umethod-password "jscheme") ;; SET THE PASSWORD
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+  (set! getRealPath  ;; put getRealPath into the servlet environment
+    (lambda (File)
+      (.getRealPath (.getServletContext (.getServletConfig httpservlet)) File)))
+  (set! the-httpservlet httpservlet) ;; put the http servlet into the environment ..
+
+)
+    
+    
+    
+    
+    

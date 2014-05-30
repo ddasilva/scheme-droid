@@ -1,0 +1,56 @@
+;; scheme.sss
+;;
+(lambda (httpservlet)
+
+ (define (read-all in)
+    (define (drain in sbuffer)
+      (let ((line (.readLine in)))
+        (if (eq? line #null) 
+            (.toString sbuffer)
+            (drain in (.append (.append sbuffer line) "\n")))))
+    (drain in (java.lang.StringBuffer.)))
+
+  (define (doGet request response)
+      (define filename (getRealPath (.getServletPath request)))
+      (define body0 (read-all (java.io.BufferedReader. (java.io.FileReader. filename))))
+      ;; if a servlet ends in html we enclose the code inside hash-curlies before parsing it
+      ;; this allows dynammic content to easily be inserted into regular html files
+      (define body (string->expr (if (.endsWith filename ".html") {\#\{[body0]\}\#} body0)))
+      (define proc `(lambda(request response httpservlet) 
+           (let ((b ,body)) 
+             (if (not (equal? #null b)) (.println (.getWriter response) b)))))
+      (let ()
+         (.setContentType response "text/html")
+         (jsint.Procedure.catching
+           (lambda()
+            (string-append   ; this handles the #null case nicely ...
+             ((eval proc)
+                request response httpservlet)))
+           (lambda(e) 
+            (let ((out (.getWriter response)))
+              (.setContentType response "text/html")
+              (display (list "<html><body>SERVLET ERROR<br><xmp>") out)
+              (.printStackTrace e out)
+             (display (list "</xmp></body></html>") out)
+              )))))
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+  (set! getRealPath  ;; put getRealPath into the servlet environment
+    (lambda (File)
+      (.getRealPath (.getServletContext (.getServletConfig httpservlet)) File)))
+  (display (getRealPath "WEB-INF/scheme/servletlib/init.scm"))(newline)
+  (load (getRealPath "WEB-INF/scheme/servletlib/init.scm"))
+  (set! the-httpservlet httpservlet) ;; put the http servlet into the environment ..
+
+
+  (initialize httpservlet)
+)
+
+
+
+

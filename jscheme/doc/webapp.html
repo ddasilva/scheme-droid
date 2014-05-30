@@ -1,0 +1,158 @@
+<html>
+<head><title>Jscheme webapp</title></head>
+<body bgcolor=white>
+<h1 style="text-align:center">The Jscheme Webapp Guide</h1>
+<br>
+In this note we provide a brief introduction to
+downloading and installing the the jakarta-tomcat
+webserver and the jscheme webapp. 
+<br>
+<div style="border:thin solid blue; margin: 1em; padding: 1em">
+<h2>Downloading and installing jakarta-tomcat and the jscheme webapp</h2>
+<h3>Downloading the jakarta-tomcat webserver</h3>
+You can get the latest version of the jakarta-tomcat
+webserver from
+<a href="http://jakarta.apache.org/tomcat/index.html">jakarta.apache.org/tomcat</a>
+We will let <code>CATALINA_HOME</code> represent the
+folder where you have installed the jakarta-tomcat webserver.
+<br>
+<h3>Installing the jscheme webapp</h3>
+Once you've downloaded and unpacked the tomcat server.
+Download the jscheme webapp
+(<a href="/jscheme/downloads/jscheme-webapp.zip">zip</a>)
+and unpack it into the webapp folder of the tomcat server.
+
+<xmp style="background:rgb(200,200,250);color:black; padding: 2em; margin: 1em; border: thick solid blue">
+Mac OS X, Linux, or Windows98
+ % cd $CATALINA_HOME
+ % cd webapps
+ % jar xvf jschemewebapp.jar
+</xmp>
+
+This will create a folder jschemewebapp inside the <code>webapps</code> folder
+of the <code>jakarta-tomcat</code> folder<
+<br>
+<h3>Starting the jakarta-tomcat server</h3>
+Startup the server by setting <code>JAVA_HOME</code> to the
+home directory of Java on your machine and then giving the
+command to start the server. For example, in Linux with the C shell you would use:
+
+<xmp style="background:rgb(200,200,250);color:black; padding: 2em; margin: 1em; border: thick solid blue"> 
+Mac OS 10.1.3 or Linux with csh
+ % cd $CATALINA_HOME
+ % setenv JAVA_HOME /System/Library/Frameworks/JavaVM/Versions/1.3.1/Home
+ % bin/startup.sh
+
+LINUX with bash
+ % cd $CATALINA_HOME
+ % export JAVA_HOME=usr/java/jdk1.3
+ % bin/startup.sh
+
+Windows98 in dos window
+ % cd $CATALINA_HOME
+ % set JAVA_HOME=C:\jdk1.3
+ % bin/startup.sh
+</xmp>
+<em>Note that to start tomcat under Windows you may need to increase the memory allocated to the MSDOS window.
+(Do this by right clicking in the upper left corner, then select properties, then memory, then pick the
+highest available memory, both intial and default).
+</em>
+
+<br>
+<h3>Running the demos</h3>
+Now open a browser and view the demo pages by going to
+the URL
+<xmp style="background:rgb(200,200,250);color:black; padding: 2em; margin: 1em; border: thick solid blue"> 
+http://127.0.0.1:8080/jscheme/test
+or
+http://localhost:8080/jscheme/test
+or
+http://yourhost.yourdomain:8080/jscheme/test
+</xmp>
+and clicking on the "date.servlet" or "mylibdemo.servlet" links.
+
+</div>
+<br>
+<hr>
+<br>
+<div style="border:thin solid blue; margin: 1em; padding: 1em">
+<h2>Adding new content to the jscheme webapp</h2>
+The jscheme webapp is the folder <code>$CATALINA_HOME/webapps/jscheme</code>
+It contains a folder <code>WEB-INF</code> which contains the code defining
+the embedding of scheme servlets into tomcat. The files in the WEB-INF folder
+are not displayed by the tomcat server. All other files are publically
+accessible and the server determines how to process them by the suffix.
+Currently the server recognizes three scheme specific suffixes:
+<code>.servlet</code>, <code>.applet</code>, and <code>.javawebstart</code>.
+These are discussed below:
+<br>
+<h3>Servlets</h3>
+Files in the <code>$CATALINA_HOME/webapps/jscheme</code>folder 
+that end in <code>.servlet</code> are interpreted as
+Scheme programs that will be evaluated to generate the
+webpage that will be returned to the client. 
+<br>
+Jscheme features an extended syntax (called "quasi-quote")
+for simplifying this process.
+The "quasi-quote" syntax uses curly braces {}
+instead of double quotes "" to represent strings. Moreover,
+any scheme expressions inside the {} which are surrounded by
+[] are evaluated and converted to strings to be inserted into
+the surrounding string.
+<br>
+For example, the date.servlet demo is written using the following
+simple code, which shows the use of {} and [] to construct string output.
+
+<xmp style="background:rgb(200,200,250);color:black; padding: 2em; margin: 1em; border: thick solid blue">
+{<html>
+  <head><title>abc</title></head>
+  <body>
+   <h1> The date is [(Date.)]</h1>
+  </body>
+ </html>}
+</xmp>
+<br>
+A slightly more involved example is mylibdemo.servlet
+which loads in a library that defines two scheme
+procedures "generic-page" and "captioned-image",
+and then uses them to construct a page
+as follows:
+<xmp style="background:rgb(200,200,250);color:black; padding: 2em; margin: 1em; border: thick solid blue">
+(begin
+  (load "webapps/jscheme/lib/mylib.scm")
+  (generic-page
+    "Demo page for ICFP talk" 
+    "body {background:black;color:white} h1{border: thick solid red}"
+    {<h1>My Pets</h1>
+      [(captioned-image "Snappy and Pepper" "cats.jpg")]
+     <br>
+      [(captioned-image "Missy" "missy.jpg")]}))
+</xmp>
+<br>
+The mylib.scm file is just a scheme program 
+defining those two procedures as follows:
+<xmp style="background:rgb(200,200,250);color:black; padding: 2em; margin: 1em; border: thick solid blue">
+;; mylib.scm
+   (define (captioned-image C I)
+    {<table border=5>
+        <tr><td>
+          <img src="[I]" alt="[C]">
+       </td></tr>
+        <tr><td>[C]
+      </td></tr> </table>})
+
+   (define (generic-page Title CSS Body)
+     {<html>
+         <head><title> [Title]</title>
+          <style type="text/css" media="screen">
+            <!-- [CSS] --></style></head>
+       <body> [Body]</body>
+     </html>})
+</xmp>
+<br>
+You can also create applets simply by including scheme
+code in a file with the suffix .applet. We will include
+more about this later.
+</div>
+</body>
+</html>

@@ -1,0 +1,149 @@
+   ;; file: umethod-upload.sss
+   ;; author: Tim Hickey
+   ;; date: 9/15/2001
+   ;; modified 9/6/2002 by TJH
+   ;; modified 7/2/2004 by TJH
+
+(lambda (httpservlet)
+
+
+  ;; file: umethod-upload.sss
+  ;; author: Tim Hickey
+  ;; date: 9/15/2001
+  ;; modified: 9/8/2002, by TJH
+  ;;           9/13/2003 by TJH
+  ;;           2/21/2004 by TJH
+  ;;           7/22/2004 by TJH (made into a .sss file)
+  ;;           8/03/2004 by TJH
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;  
+
+ (define (do-umethod-upload request response)
+
+ (tryCatch
+  (let* ((servletPath (getRealPath (.toString (.getServletPath request))))
+         (filename  ;; strip off the trailing .U from the request URI
+              (.substring servletPath 0 (+ -2 (.length servletPath)))
+            )
+         (requestURI (.getRequestURI request))
+         (fileURI (.substring requestURI 0 (+ -2 (.length requestURI))))
+         (folderURI (.substring fileURI 0 (.lastIndexOf fileURI "/")))
+        )
+
+  (define (open-output-file context restpath)
+    (let ((path (string-append context restpath)))
+     (tryCatch
+      (java.io.FileOutputStream. path)
+      (lambda(e)
+         (let loop ((pos (.indexOf path "/" (+ 2 (.length context)))))
+           (display (list 'loop path pos (.substring path 0 (.indexOf path "/" pos))))(newline)
+           (if (= pos -1)
+               (java.io.FileOutputStream. path)
+               (let* (
+                  (dir (.substring path 0 pos))
+                  (F (java.io.File. dir)))
+                (display (list 'ifloop dir F)) (newline)
+                (if (tryCatch (not (.exists F)) (lambda(e) #f))
+                    (.mkdir F))
+                (loop (.indexOf path "/" (+ 1 pos))))))))))
+
+                        
+       
+
+
+   ;; Now, we get the filename and extract the user
+   ;; and lookup the password for the user
+  (let* 
+      (
+       (ses (.getSession request))
+       (vstatus (.getAttribute ses "vstatus"))
+       (M (.read (utils.MultipartFormReader.) request))
+      )
+  
+
+   ;; only proceed if the password and coursepath match
+   ;; the coursepath identifies the course
+   ;;; I've disabled this temporarily....
+   (if (not (equal? vstatus filename)) "ERROR: you can't upload the file without permission"
+     (let (
+       (outfile (open-output-file "" filename))
+       (file (.get M "file"))
+          )
+    
+       ;; here we fail out if the file has not been uploaded...
+       (if (equal? file #null) (throw (java.lang.RuntimeException. "Can't upload that file")))
+
+       ;; otherwise we store the uploaded file and close it
+       (.write outfile file 0 (java.lang.reflect.Array.getLength file))
+       (.close outfile)
+    
+       ;; finally, we print the confirmation
+       {
+        <html><head><title>Response page</title></head>
+          <body bgcolor=yellow>
+          <center>
+           <h1> Congratulations!</h1>
+           <h1><code>[filename]</code> </h1>
+           <h1>
+               has been successfully uploaded!</h1><p><hr><p>
+           </center>
+           <ul>
+             <li>
+              View uploaded file: 
+                  <code> <a href="[fileURI]">
+                           [fileURI]</a></code>
+              </li>
+             <li>
+              View upload directory:
+              <code>
+              <a href="[folderURI]">
+                       [folderURI]  </a> </code>
+              </li>
+           </ul>
+          </body>
+        </html>
+       })
+    
+      ;; here is the error page that is printed if there is a password or
+      ;; course mismatch
+     {
+       <html>
+        <head><title>Error during Uploading</title></head>
+         <body bgcolor=black text=red>
+          <h1>
+           ERROR during uploading... <xmp>...</xmp>
+           <br>
+            Go back and try again
+         </h1>
+       </body></html>
+     }
+    
+    )))
+(lambda(e) {<html><head><title>ERROR</title></head>
+ <body bgcolor=black text=red>
+   <h1>ERROR while uploading file, please try again</h1>
+   <xmp>[e]</xmp>
+  </body> </html> }
+))
+ )
+
+
+
+  (define (doGet request response)
+      (let ((out (.getWriter response)))
+         (.setContentType response "text/html")
+         (.println out
+            (.toString (do-umethod-upload request response))))
+  )
+             
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+  (set! getRealPath  ;; put getRealPath into the servlet environment
+    (lambda (File)
+      (.getRealPath (.getServletContext (.getServletConfig httpservlet)) File)))
+
+)
+

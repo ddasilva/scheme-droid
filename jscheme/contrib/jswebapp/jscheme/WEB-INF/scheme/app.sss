@@ -1,0 +1,73 @@
+;; applet.sss
+;;
+
+(lambda (httpservlet)
+
+ (define (read-all in)
+    (define (drain in sbuffer)
+      (let ((line (.readLine in)))
+        (if (eq? line #null) 
+            (.toString sbuffer)
+            (drain in (.append (.append sbuffer line) "\n")))))
+    (drain in (java.lang.StringBuffer.)))
+
+
+  (define (doGet request response)
+    (tryCatch 
+     (let ()
+      (define pathname0  (.getRequestURI request))
+      (define pathnamebase (.substring pathname0 0 (- (.length pathname0) 7)))
+      (define pathname (string-append pathnamebase ".scm"))
+
+       (tryCatch
+        (begin
+          (.setContentType response "text/html")
+          (let*
+            ((codebase {http://[(.getServerName request)]:[(.getServerPort request)]})
+             (href (.getRequestURI request)))
+           (.println (.getWriter response) 
+{
+<html><head><title>Applet Demo</title></head>
+<body>
+  <h1>Applet Demo Page</h1>
+  <ul>
+   <li><a href="[pathname]">See the source code</a></li>
+  </ul>
+ <hr/>
+  <applet
+     code="jsint.SchemeApplet"
+     codebase="."
+     archive="[(.getContextPath request)]/lib/applet.jar"
+     height=500
+     width=500>
+   <param name="prog" value="[pathname]">
+   <param name=init value="install">
+  </applet>
+</body>
+</html>
+}
+   )
+   ))
+     (lambda(e) 
+        (.setContentType response "text/plain")
+        (display (list "ERROR 1: " e) (.getWriter response))))
+  )
+    (lambda(ee)
+          (.setContentType response "text/plain")
+          (display (list "ERROR 2: " ee) (.getWriter response))))
+   )
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+)
+
+
+
+
+
+
+

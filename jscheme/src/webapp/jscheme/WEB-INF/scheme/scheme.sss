@@ -1,0 +1,47 @@
+;; scheme.sss
+;;
+
+(lambda (httpservlet)
+
+ (define (read-all in)
+    (define (drain in sbuffer)
+      (let ((line (.readLine in)))
+        (if (eq? line #null) 
+            (.toString sbuffer)
+            (drain in (.append (.append sbuffer line) "\n")))))
+    (drain in (java.lang.StringBuffer.)))
+
+  (define (doGet request response)
+      (define (getRealPath servlet File)
+          (.getRealPath (.getServletContext (.getServletConfig servlet)) File))
+      (define filename (getRealPath httpservlet (.getServletPath request)))
+      (define body (string->expr (read-all (java.io.BufferedReader. (java.io.FileReader. filename)))))
+      (define proc `(lambda(request response httpservlet out) 
+           (let ((b ,body)) 
+             (if (not (equal? #null b)) (.println out b)))))
+      (let ((out (.getWriter response)))
+         (.setContentType response "text/html")
+         (jsint.Procedure.tryCatch
+           (lambda()
+             ((eval proc)
+                request response httpservlet out))
+           (lambda(e) 
+              (.setContentType response "text/html")
+              (display (list "<html><body>SERVLET ERROR<br><xmp>") out)
+              (.printStackTrace e out)
+              (display (list "</xmp></body></html>") out)
+              ))))
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+  ;; load the library defining the "tag" procedure used in doGet
+  ;; (load "elf/basic.scm")
+)
+
+
+
+

@@ -1,0 +1,64 @@
+(begin
+
+ ;first, try to load in the initwebapp code, look in a few likely places...
+  (tryCatch 
+    (let ((F "src/build/initwebapp.servlet"))
+      (cond 
+         ((.exists (java.io.File. {webapps/jscheme/src/}))
+           ; this works when JScheme is installed as a stanndard webapp
+          (load "webapps/jscheme/src/build/initwebapp.servlet"))
+
+         ((.exists (java.io.File. F))
+           ; this works when JScheme is started using the start-server script
+          (load "src/build/initwebapp.servlet"))
+      )
+     )
+   (lambda(e) #t)
+  )
+
+ (jswebpage "." "JScheme" main-menu
+  #{
+<div class="main">
+<p>
+<b>JScheme </b> is  a dialect of Scheme
+with a very simple interface to Java, called the
+<a href="doc/javadot.html">Javadot notation </a>. 
+This notation provides a transparent access
+to all Java classes, constructors, methods, and fields on the classpath.
+</p>
+<p>
+JScheme implements all of 
+<a href="http://www-swiss.ai.mit.edu/~jaffer/r4rs_toc.html">
+R4RS Scheme</a> except that continuations can only be used as escape procedures
+and strings are not mutable.
+JScheme is an open source project hosted at sourceforge.net.
+</p>
+<p>
+JScheme was created by 
+<a href="doc/contributors/kra.html">Ken Anderson</a>,
+<a href="http://www.cs.brandeis.edu/~tim">Tim Hickey</a>, 
+<a href="http://www.norvig.com">Peter Norvig</a>, and
+<br/> 
+with help from
+several <a href="doc/contributors.html">contributors</a>.
+You may want to see
+<a href="doc/whatsnew.html">what's new</a> if you've been away for awhile.
+<br/><br/>
+</div>
+<br/><br/>
+
+<table width="100%" style="margin-left:1in"><tr><td>
+<form method="get" action="http://www.google.com/search">
+ <input type="text" name="q" style="width:200px;border-bottom:thin solid blue;margin-bottom:4px;padding:4px"><br/>
+ <input type="submit" name="sa" value="Search this site via Google" style="background:rgb(180,180,225);width:200px">
+ <input type="hidden" name="as_sitesearch" value="jscheme.sourceforge.net">
+</form>
+</td><td>
+ <a href="http://sourceforge.net"> 
+   <img src="http://sourceforge.net/sflogo.php?group_id=50593&type=5"  align="right" style="margin-right:1in"
+        width="210" height="62" border="0" alt="SourceForge Logo">
+</td></tr></table>
+
+  }#
+ ) 
+)

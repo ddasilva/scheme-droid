@@ -1,0 +1,19 @@
+README for JScheme.
+
+Copyright 200* Ken Anderson, Tim Hickey, Peter Norvig
+
+This software is licensed under the zlib/png license see
+licences/Jscheme.txt
+
+CONTENTS
+
+  README      -- this file
+  doc         -- documentation
+  lib         -- jar files used by JScheme
+  licenses    -- folder containg JScheme System license and licenses for
+                 other open-source software distributed with JScheme, though
+                 we only distribute *.jar's, not the source.
+  main.html
+               -- the main web page of The JScheme Web Programming Project
+                  browse this to get started using JScheme.
+  src          -- a folder containg all of the source code for JScheme

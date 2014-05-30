@@ -1,0 +1,23 @@
+(css-webpage 
+
+   "ssi test"  ;; title
+
+   "body {background:rgb(200,200,255);padding:0.2in;margin:0.2in}" ;; CSS-style
+
+   ;; next comes the body of the page
+  #{
+     <h1>This is a test of the server-side-include facility</h1>
+      Now we'll insert this file itself  as html_quote'd text
+     <pre 
+       style="padding:0.2in; margin:0.2in; 
+              background:lightgreen; border:10px solid yellow">
+       \n#[
+         (html_quote 
+            (include-file 
+               (.getServletPath request) ; the path of this file from inside the webapp
+            ))
+        ]#
+     </pre>
+  }#
+)
+

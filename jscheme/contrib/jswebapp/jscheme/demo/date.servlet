@@ -1,0 +1,2 @@
+; This simply evaluates the java.util.Date constructor
+(Date.)

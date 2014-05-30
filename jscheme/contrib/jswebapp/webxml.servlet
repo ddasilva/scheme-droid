@@ -1,0 +1,53 @@
+(jswebpage "../.." "Configuring the JScheme Webapp" jswebapp-menu
+#{
+<div class="main">
+<p>
+To configure a JScheme-webapp you 
+need to modify the 
+<a href="jscheme/WEB-INF">WEB-INF</a>/<a href="jscheme/WEB-INF/web.xml">web.xml</a> file.
+This will allow you to select which servlets to support (and to add new servlets).
+</p>
+<p>
+The list of servlets currently supported by the JScheme webapp are listed below:
+<h2>Servlets</h2>
+<pre>
+*.servlet       schemehandler           scheme.sss            installed
+*.html          schemehandler           scheme.sss            commented out
+*.jnlp          schemehandler           scheme.sss            commented out
+</pre>
+*.servlet files are evaluated in a single Scheme environment (even in different
+threads of the servlet container). The environment is initialized when the first
+servlet is visited by loading in the WEB-INF/scheme/servletlib/init.scm code.
+The *.html files are processed by first enclosing the text in a hash-curly expression
+so one can escape to Scheme by using a hash-bracket expression.
+<xmp>
+      \\#\\[  'scheme-code  \\]\\#
+</xmp>
+
+<h2>Applets</h2>
+<pre>
+*.snlp          snlphandler             snlp.sss              installed
+*.applet        applethandler           applet.sss            installed
+*.scmapp        scmapphandler           app.sss               installed
+</pre>
+.snlp and .applet files ...
+
+<h2>Default Bouncer</h2>
+<pre>
+*.hide          defaultservlethandler   default.sss           installed
+</pre>
+<h2>Form-based uploading</h2>
+<pre>
+*.              umethodhandler          umethod.sss           commented out
+*.U             umethoduploadhandler    umethod-upload.sss    commented out
+</pre>
+<h2>Scheme applet/servlet validation</h2>
+<pre>
+*.scmV          validatehandler         validate.sss          commented out
+*.serlvetV      validatehandler         validate.sss          commented out
+</pre>
+     
+
+</div>
+}#
+)

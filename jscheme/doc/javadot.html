@@ -1,0 +1,158 @@
+<html>
+<head><title>Java dot</title></head>
+<body bgcolor=white>
+<table bgcolor="white" border=0 cellpadding=20 cellspacing=5><tr><td>
+<center>
+<H1>
+<a name="javadot">
+The Java Dot Notation
+</a>
+</h1>
+<table width = 60%><tr><td>
+The key innovation behind Jscheme is the Java Dot Notation which allows a simple and almost
+transparent access to the methods, contructors, and fields of all Java classes on the classpath.
+</td></td></table>
+</center>
+</td></tr></table>
+
+
+<p>
+<center>
+<table border = 2 bgcolor=#eeffff cellpadding=10>
+<tr><td>Syntax</td><td>Type of Member</td><td>Example</td></tr>
+<tr><td> "." at the end </td><td> constructor</td><td><code>(Font. NAME STYLE SIZE)</code></td></tr>
+<tr><td> "." at the beginning </td><td> instance member</td><td><code>(.setFont COMP FONT)</code></td></tr>
+<tr><td> "." at beginning and "$" at the end </td><td> instance field</td>
+<td><code>(define (mycar x) (.first$ x))</code><br>
+<code>(define (myset-car! x y) (.first$ x y))</code>
+</td></tr>
+<tr><td> "." only in the middle </td><td> static member</td><td><code>(Math.round 123.456)</code></td></tr>
+<tr><td> ".class" suffix </td><td> Java class</td><td><code>Font.class</code></td></tr>
+<tr><td> "$" at the end </td><td> static field</td>
+<td><code>Font.BOLD$</code><br>
+<code>(set! U.useJavaSyntax$ #t)</code>
+</td></tr>
+<tr><td> "$" in the middle </td><td> inner class</td><td><code>java.awt.geom.Point2D$Double.class</code></td></tr>
+<tr><td> "$" at the beginning </td><td> packageless class</td><td><code>$ParseDemo.class</code></td></tr>
+<tr><td> "#" at the end </td><td> allow private access </td><td><code>(.name$# (Symbol.# "abc"))</code></td></tr>
+</table>
+</center>
+<p>
+<p>
+The <code>import</code> statement can be used as in Java to allow the
+package name to be omitted from classes. The examples in the table above assume
+that the following classes have been imported:
+<ul>
+<center>
+<table border = 2 bgcolor=#eeffff cellpadding=10>
+<tr><td>
+<pre>
+  (import "java.awt.Font")
+  (import "java.lang.Math")
+</pre>
+</td></tr></table>
+</center>
+</ul>
+
+</ul>
+<p>
+
+The following code creates a window with a close button.
+Java literals are colored with <font color=fuchsia>constructors in fuchsia, </font>
+<font color=red>instance and static methods in red, </font> 
+and
+<font color=green>class and instance variables in green:</font> 
+<p>
+<center>
+<table border=2 bgcolor=#eeffff cellpadding=5 cellspacing=5>
+<tr>
+<td>
+<pre>
+<font size=+2>;; Jscheme example </font>
+(import "java.awt.*")
+(import "java.awt.event.*")
+
+
+(define win (<font color=fuchsia>Frame.</font> "Hello"))
+(define b (<font color=fuchsia>Button.</font> "Goodbye"))
+(<font color=red>.add</font> win (<font color=fuchsia>Label.</font> "Hello")
+      <font color=green>BorderLayout.NORTH$</font>)
+(define p (<font color=fuchsia>Label.</font> 
+  (string-append "sin(PI) = " 
+    (<font color=red>Math.sin</font> <font color=green> Math.PI$</font>))))
+(<font color=red>.add</font> win b)
+(<font color=red>.add</font> win p  <font color=green>BorderLayout.SOUTH$</font>)
+(<font color=red>.addActionListener</font> b
+  (<font color=fuchsia>Listener.</font> (lambda (e)
+    (<font color=red>.hide</font> win))))
+(<font color=red>.pack</font> win)
+(<font color=red>.show</font> win)
+(<font color=red>.println</font> <font color=green>System.out$</font> "Done")
+</pre>
+<td>
+<pre>
+<font size=+2>/* Java example */</font>
+import java.awt.*;
+import java.awt.event.*;
+public class Demo {
+static public void main(String[] args) {
+  final Frame win = new <font color=fuchsia>Frame</font>("Hello");
+  Button b = new <font color=fuchsia>Button</font>("Goodbye");
+  win.<font color=red>add</font>(new <font color=fuchsia>Label</font>("Hello"),
+          <font color=green>BorderLayout.NORTH</font>);
+  Label p = new <font color=fuchsia>Label</font>(
+   "sin(PI) = "+ 
+     <font color=red>Math.sin</font>(<font color=green>Math.PI</font>));
+  win.<font color=red>add</font>(b);
+  win.<font color=red>add</font>(p,<font color=green>BorderLayout.SOUTH</font>);
+  b.<font color=red>addActionListener</font>(
+    new <font color=fuchsia>ActionListener</font>(){
+      public void actionPerformed(ActionEvent e) {
+        win.<font color=red>hide</font>();}});
+  win.<font color=red>pack</font>();  win.<font color=red>show</font>();  
+  <font color=green>System.out</font><font color=red>.println</font>("Done");}}
+</pre>
+</table>
+</center>
+<p>
+Jscheme defines some helper classes for easily specifying 
+event handlers. For Java 1.2, the expression 
+<code>(Listener. (lambda (e) EXPR))</code> returns an
+object which implements all of the Java 1.2 Listener interfaces.
+The action for all methods of these interfaces is to call the
+lambda expression on the event. Jscheme also provides constructors
+for Java1.1 listeners <code>(Listener11. F)</code> and
+Java1.1+Swing <code>(Listener11swing. F)</code>. 
+If the code should run under Java1.1, then the
+<code>Listener11</code> constructor should be used instead, as we have
+done here.
+<p>
+The Jscheme code becomes even simpler if we use a high level GUI library,
+<a href="jlib.html">JLIB</a> (written in Jscheme). This file can be loaded
+either using <code>(load "jlib/JLIB.scm")</code> or using <code>(jlib.JLIB.load)</code>.
+The latter works well inside applets. In the example below, the JLIB
+procedures are written in <font color=blue>blue</font>
+
+<center>
+<table border=2 bgcolor=#eeffff cellspacing=5 cellpadding=5>
+<tr>
+<td>
+<pre>
+<font size=+2>;; Jscheme/JLIB example </font>
+(load "jlib/JLIB.scm") ;; load jlib from jscheme.jar file
+(define win (<font color=blue>window</font> "Hello"
+  (<font color=blue>border</font>
+    (<font color=blue>north</font> (<font color=blue>label</font> "Hello"))
+    (<font color=blue>center</font> (<font color=blue>button</font> "Goodbye" (<font color=blue>action</font> (lambda(e) (<font color=red>.hide</font> win)))))
+    (<font color=blue>south</font> (<font color=blue >label</font> (string-append "sin(PI) =" (<font color=red>Math.sin</font> <font color=green>Math.PI$</font>)))))))
+(<font color=red>.pack</font> win)
+(<font color=red>.show</font> win)
+(<font color=red>.println</font> <font color=green>System.out$</font> "Done")
+</pre>
+</table>
+</center>
+<p>
+<hr>
+<p>
+</body>
+</html>

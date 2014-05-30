@@ -1,0 +1,12 @@
+(begin
+
+ (jswebpage "../.." "Ken Anderson" ""
+  #{
+<div class="main">
+<p>
+<b>Ken Anderson: (1947-2005)</b> was one of the three founding developers of JScheme
+and was an active developer until his untimely death in 2005.
+</div>
+  }#
+ ) 
+)

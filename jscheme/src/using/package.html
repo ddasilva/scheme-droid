@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<link rel="stylesheet" href="man.css">
+<title>
+Sample code
+</title>
+  <body>
+<div class="main">
+<h1>Useful Examples of JScheme code</h1>
+This package contains examples of using JScheme to enhance the Java
+experience.  The JScheme code is designed to be viewable from a web browser as
+well as executed by JScheme, so one file serves as tutorial and code.
+
+<p>Topics:
+<ul>
+ <li> <a href="run.html">run.scm</a> provides shell scripting
+ capability that is used to make JScheme.  See 
+ <a href="../build/jscheme-bootstrap.scm">src/build/jscheme-bootstrap.scm</a> for an example.
+ </li>
+
+ <li> <a href="command.html">command.scm</a> provides a simple command
+	line processor.  New commands can be defined with the 
+	<tt>(define-command)</tt> macro.  I use it for building and
+	running Java applications.
+ </li>
+
+ <li> <a href="Active.java">Active.java</a> provides active debugging capabilites
+ to your Java application.
+ </li>
+
+ <li> <a href="mailto:dfried@cs.indiana.edu">Dan Friedman</a> wrote a very nice paper: 
+  <a href="http://www.cs.indiana.edu/~dfried/ooo.pdf">Object Oriented Style</a> 
+  which shows how to use <tt>define-syntax</tt> to write a Object Oriented extention to Scheme. 
+  <a href="friedman-init.scm">friedman-init.scm</a> initializes JScheme and loads 
+  <a href="friedman6.scm">Dan's code</a>.  This is a serious example of using macros!
+ </li>
+
+ <li> <a href="siscnum.scm">siscnum.scm</a> - redefines the arithmetic
+  operators in JScheme to use the SISC numeric tower (sisc.sourceforge.net).
+  You must then explicitly converted computed numbers back to Java when
+ using them in javadot calls, e.g. 
+ </li>
+
+</ul>
+
+</div>
+  </body>
+</html>
+<!-- Keep this comment at the end of the file
+Local variables:
+mode: sgml
+sgml-omittag:t
+sgml-shorttag:t
+sgml-namecase-general:t
+sgml-general-insert-case:lower
+sgml-minimize-attributes:nil
+sgml-always-quote-attributes:t
+sgml-indent-step:2
+sgml-indent-data:nil
+sgml-parent-document:nil
+sgml-exposed-tags:nil
+sgml-local-catalogs:nil
+sgml-local-ecat-files:nil
+End:
+-->

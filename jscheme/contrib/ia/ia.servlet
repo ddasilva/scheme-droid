@@ -1,0 +1,40 @@
+(begin
+
+(define ia-menu 
+#{
+ <div class="navbar">
+  Try it!<br/>
+  <a href="ia_solver/ia_solver.html">ia-solver applet</a> <a href="ia_solver/ia_solver.scm">(src)</a><br/>
+  <a href="ia_eval/iaevaldemo.html">ia-eval applet</a> <a href="ia_eval/iaevaldemo.scm">(src)</a><br/>
+  <a href="gia_eval/giaevaldemo.html">gia-eval applet</a> <a href="gia_eval/giaevaldemo.scm">(src)</a>
+    <a href="gia_eval/giaevaldoc.html">(doc)</a></br>
+  Download IA: <a href="/jscheme/downloads/ia.zip">(zip)</a></br>
+<br/>
+  <br/>
+  Navigation<br/>
+  <a href=".">browse ia folder</a><br/>
+  <a href="../main.html">back to contrib</a><br/>
+  </div>
+}#)
+
+
+(jswebpage "../.." "Interval Arithmetic" ia-menu
+#{
+<div style="height:3in" class="main">
+<p>
+We have several interval arithmetic applications written in JScheme.
+</p><p>
+<ol>
+<li>
+IA-Solver is a solver for non-linear constraints. It is based on the Interval Arithmetic
+constraint solving package ia_math from <a href="http://intervai.sourceforge.net">
+interval.sourceforge.net</a>
+</li>
+<li>
+IA-Eval is a simple Interval Arithmetic Evaluator
+</li>
+</ol>
+</div>
+}#
+)
+)

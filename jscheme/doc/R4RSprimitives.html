@@ -1,0 +1,427 @@
+<html>
+<head>
+<link rel="stylesheet" href="man.css">
+<title> R4RS prims in JScheme
+</title>
+</head>
+<body bgcolor=white>
+<div class="main">
+<img src="../images/jscheme-icon2.gif" align="right">
+<h1>List of all Scheme Primitive Procedures</h1>
+Jscheme adopts almost all of the 
+<a href="http://www-swiss.ai.mit.edu/~jaffer/r4rs_8.html">
+standard procedures</a> of 
+<a href="http://www-swiss.ai.mit.edu/~jaffer/r4rs_toc.html">
+R4RS Scheme</a>.
+<p>
+It does not fully implement call/cc.  
+Also, while JScheme provides string mutators <tt>string-set!</tt> and
+<tt>string-fill!</tt>, JScheme strings are implemented as Java Strings
+which are considered immutable, so use these procedures carefully.
+<p>
+The only R4RS primitives that
+are not fully supported are
+<ul>
+<li><font color=teal> (<font color=blue>call-with-current-continuation</font> )</font> 
+<font color=red>ONLY PARTIALLY IMPLEMENTED</font>
+<li><font color=teal> (<font color=pink>complex?</font> )</font>
+<font color=red>NOT IMPLEMENTED</font>
+<li><font color=teal> (<font color=blue>rational?</font> )</font>  <font color=red>UNIMPLEMENTED</font>
+<li><font color=teal> (<font color=blue>real?</font> )</font> <font color=red>UNIMPLEMENTED</font> 
+</ul>
+<p>
+A list of all essential R4RS primitives is provided below.
+<hr>
+<p>
+<ul>
+<li><font color=teal> (<font color=blue>exact->inexact</font> n )</font> -- converts an exact number n to an inexact number
+<hr>
+<li><font color=teal> (<font color=blue>inexact->exact</font> x )</font> -- converts an inexact number x to an exact number
+<hr>
+<li><font color=teal> (<font color=blue>*</font> x y ... z)</font>  multiplies a sequence of numbers
+<hr>
+<li><font color=teal> (<font color=blue>+</font> x y ... z )</font> adds a sequence of numbers
+<hr>
+<li><font color=teal> (<font color=blue>-</font> x y )</font> subtracts two numbers
+<hr>
+<li><font color=teal> (<font color=blue>/</font> x y )</font> divides two numbers
+<hr>
+<li><font color=teal> (<font color=blue><</font> x y )</font> compares two numbers, returns #t if x is less than y
+<hr>
+<li><font color=teal> (<font color=blue><=</font>x y )</font>  compares two numbers, returns #t if x is less than or equal to y
+<hr>
+<li><font color=teal> (<font color=blue>=</font> x y)</font>    compares two numbers, returns #t if x is equal to y
+<hr>
+<li><font color=teal> (<font color=blue>></font> x y )</font>   compares two numbers, returns #t if x is greater than y
+<hr>
+<li><font color=teal> (<font color=blue>>=</font> x y )</font>   compares two numbers, returns #t if x is greater than or equal to y
+<hr>
+<li><font color=teal> (<font color=blue>abs</font> x )</font> the absolute value of x
+<hr>
+<li><font color=teal> (<font color=blue>acos</font> x )</font> the arc cosine of x
+<hr>
+<li><font color=teal> (<font color=blue>append</font> x y)</font> appends two lists x y to get a new list
+<hr>
+<li><font color=teal> (<font color=blue>apply</font> f arguments )</font> applies the function f to the list of arguments
+<hr>
+<li><font color=teal> (<font color=blue>asin</font> x)</font> the arc sine of x
+<hr>
+<li><font color=teal> (<font color=blue>assoc</font> x alist)</font> alist is a list of pairs (key value), if x is one of those keys, the value is returned.
+equal? is used to compare x and key.
+<hr>
+<li><font color=teal> (<font color=blue>assq</font> x alist)</font> Same as assoc, but eq? is used to compare x and key.
+<hr>
+<li><font color=teal> (<font color=blue>assv</font> x alist)</font> Same as assoc, but eqv? is used to compare x and key.
+<hr>
+<li><font color=teal> (<font color=blue>atan</font> x)</font> the arc tangent of x
+<hr>
+<li><font color=teal> (<font color=blue>boolean?</font> b )</font>  #t if b is a boolean value: #t or #f
+<hr>
+<li><font color=teal> (<font color=blue>caaaar</font> )</font>  (lambda (x) (car (car (car (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>caaadr</font> )</font> (lambda (x) (car (car (car (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>caaar</font> )</font> (lambda (x) (car (car (car x))))
+<hr>
+<li><font color=teal> (<font color=blue>caadar</font> )</font> (lambda (x) (car (car (cdr (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>caaddr</font> )</font> (lambda (x) (car (car (cdr (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>caadr</font> )</font> (lambda (x) (car (car (cdr x))))
+<hr>
+<li><font color=teal> (<font color=blue>caar</font> )</font> (lambda (x) (car (car x)))
+<hr>
+<li><font color=teal> (<font color=blue>cadaar</font> )</font> (lambda (x) (car (cdr (car (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cadadr</font> )</font> (lambda (x) (car (cdr (car (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cadar</font> )</font> (lambda (x) (car (cdr (car x))))
+<hr>
+<li><font color=teal> (<font color=blue>caddar</font> )</font> (lambda (x) (car (cdr (cdr (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cadddr</font> )</font> (lambda (x) (car (cdr (cdr (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>caddr</font> )</font> (lambda (x) (car (cdr (cdr x))))
+<hr>
+<li><font color=teal> (<font color=blue>cadr</font> )</font> (lambda (x) (car (cdr x)))
+<hr>
+<li><font color=teal> (<font color=blue>call-with-current-continuation</font> )</font> 
+<font color=red>ONLY PARTIALLY IMPLEMENTED</font>
+<hr>
+<li><font color=teal> (<font color=blue>call-with-input-file</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>call-with-output-file</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>car</font> L )</font> the first element in the list L
+<a href="prims.html#car">(src)</a>
+
+<hr>
+<li><font color=teal> (<font color=blue>cdaaar</font> )</font> (lambda (x) (cdr (car (car (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cdaadr</font> )</font> (lambda (x) (cdr (car (car (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cdaar</font> )</font> (lambda (x) (cdr (car (car x))))
+<hr>
+<li><font color=teal> (<font color=blue>cdadar</font> )</font> (lambda (x) (cdr (car (cdr (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cdaddr</font> )</font> (lambda (x) (cdr (car (cdr (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cdadr</font> )</font> (lambda (x) (cdr (car (cdr x))))
+<hr>
+<li><font color=teal> (<font color=blue>cdar</font> )</font> (lambda (x) (cdr (car x)))
+<hr>
+<li><font color=teal> (<font color=blue>cddaar</font> )</font> (lambda (x) (cdr (cdr (car (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cddadr</font> )</font> (lambda (x) (cdr (cdr (car (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cddar</font> )</font> (lambda (x) (cdr (cdr (car x))))
+<hr>
+<li><font color=teal> (<font color=blue>cdddar</font> )</font> (lambda (x) (cdr (cdr (cdr (car x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cddddr</font> )</font> (lambda (x) (cdr (cdr (cdr (cdr x)))))
+<hr>
+<li><font color=teal> (<font color=blue>cdddr</font> )</font> (lambda (x) (cdr (cdr (cdr x))))
+<hr>
+<li><font color=teal> (<font color=blue>cddr</font> )</font> (lambda (x) (cdr (cdr x)))
+<hr>
+<li><font color=teal> (<font color=blue>cdr</font> L )</font> the list obtained by removing the first element from the list L
+<hr>
+<li><font color=teal> (<font color=blue>ceiling</font> x )</font> return the smallest integer greater than or equal to x
+<hr>
+<li><font color=teal> (<font color=blue>char->integer</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-alphabetic?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>(char-ci<=? C1 C2)</font> )</font> case-insensitive comparison of characters C1,C2
+<hr>
+<li><font color=teal> (<font color=blue>char-ci<?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-ci=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-ci>=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-ci>?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-downcase</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-lower-case?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-numeric?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-upcase</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-upper-case?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char-whitespace?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>(char<=? C1 C2)</font> )</font> case-sensitive comparison of characters
+<hr>
+<li><font color=teal> (<font color=blue>char<?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char>=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char>?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>char?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>close-input-port</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>close-output-port</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=pink>complex?</font> )</font> NOT IMPLEMENTED
+<hr>
+<li><font color=teal> (<font color=blue>cons</font> x L )</font> the list obtained by adding x to the beginning of the list L 
+<a href="prims.html#cons">(src)</a>
+<hr>
+<li><font color=teal> (<font color=blue>cos</font> x)</font>  the cosine of x in radians
+<hr>
+<li><font color=teal> (<font color=blue>(current-input-port)</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>(current-output-port)</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>display</font> T )</font> print the term T on the Java console
+<hr>
+<li><font color=teal> (<font color=blue>(eof-object? X)</font> )</font> returns true if X is the end of file object returned by read
+<hr>
+<li><font color=teal> (<font color=blue>(eq? A B)</font> )</font>  returns #t when A and B are 
+both #null or when they are both the same object
+<hr>
+<li><font color=teal> (<font color=blue>equal?</font> x y)</font> 
+returns #t if x and y are both #null or 
+represent the same numbers, or are ".equals" as Java objects,
+or are lists whose corresponding elements are "equal?", or are arrays whose corresponding elements are "equal?".
+or are
+<hr>
+<li><font color=teal> (<font color=blue>(eqv? A B)</font> )</font> 
+returns #t if x and y are both #null or 
+represent the same numbers, or are ".equals" as Java objects.
+<hr>
+<li><font color=teal> (<font color=blue>(eval T)</font> )</font> this evaluates the expression T in
+the current toplevel environment. The expression T is an expression formed from symbols and objects
+cons'd together. 
+<hr>
+<li><font color=teal> (<font color=blue>even?</font> x)</font>  #t if x is an even number
+<hr>
+<li><font color=teal> (<font color=blue>(exact? x)</font> )</font> #t if x is a byte, short, or int
+<hr>
+<li><font color=teal> (<font color=blue>exp</font> x )</font> the exponential function applied to x
+<hr>
+<li><font color=teal> (<font color=blue>expt</font> n e )</font> raise n to the power e
+<hr>
+<li><font color=teal> (<font color=blue>floor</font> x)</font> return the largest integer less than x
+<hr>
+<li><font color=teal> (<font color=blue>for-each</font> P L )</font> apply the procedure P to every element of the list L
+<hr>
+<li><font color=teal> (<font color=blue>force</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>gcd</font> x y )</font> find the greatest common divisor of x and y
+<hr>
+<li><font color=teal> (<font color=blue>(inexact? x)</font> )</font> #t if x is a float or double
+<hr>
+<li><font color=teal> (<font color=blue>(input-port? x)</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>(integer->char i)</font> )</font> converts i to 16 bit unicode character
+<hr>
+<li><font color=teal>(<font color=blue>interaction-environment</font>)Return the current interaction environment.</font>
+<hr>
+<li><font color=teal> (<font color=blue>integer?</font> x )</font> #t if x is an integer
+<hr>
+<li><font color=teal> (<font color=blue>lcm</font> x y)</font>  return the least common multiple of x and y
+<hr>
+<li><font color=teal> (<font color=blue>length</font> L)</font>  return the length of the list L
+<hr>
+<li><font color=teal> (<font color=blue>list</font> x y ... z)</font>  make a list from the elements x, y, ... z
+<hr>
+<li><font color=teal> (<font color=blue>(list->string Cs)</font> )</font> converts the list Cs of characters to a string
+<hr>
+<li><font color=teal> (<font color=blue>(list->vector Os)</font> )</font> converts the list Os of objects to a vector
+<hr>
+<li><font color=teal> (<font color=blue>(list-ref</font> L N )</font> returns the (N+1)st element of L. So
+(list-ref L 0) returns the first element of L.
+
+<hr>
+<li><font color=teal> (<font color=blue>list-tail</font>L N )</font> returns the list obtained by removing the
+first N elements from L
+<hr>
+<li><font color=teal> (<font color=blue>list?</font> L)</font>  returns #t if L is a list
+<hr>
+<li><font color=teal> (<font color=blue>load</font> F)</font>  reads and interprets the Scheme expressions in
+the file F in the current toplevel environment
+<hr>
+<li><font color=teal> (<font color=blue>log</font> x)</font> the natural log function applied to x
+<hr>
+<li><font color=teal> (<font color=blue>macroexpand</font> X)</font> 
+<hr>
+<li><font color=teal> (<font color=blue>make-string</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>make-vector</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>map</font> F L)</font> return the list obtained by applying the function F to every element of the list L
+<hr>
+<li><font color=teal> (<font color=blue>max</font> a b c ... d)</font> find the largest of the numbers a, b, ..., d
+<hr>
+<li><font color=teal> (<font color=blue>member</font> x L)</font> return #t if x is a member of the list L
+<hr>
+<li><font color=teal> (<font color=blue>memq</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>memv</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>min</font> a b c ... d)</font> find the smallest of the numbers a, b, ..., d
+<hr>
+<li><font color=teal> (<font color=blue>modulo</font> n d)</font> return the remainder of n divided by d
+<hr>
+<li><font color=teal> (<font color=blue>negative?</font> x)</font>  return #t if x is a negative number
+<hr>
+<li><font color=teal> (<font color=blue>newline</font>)</font> write a newline on the Java console
+<hr>
+<li><font color=teal> (<font color=blue>not</font> b)</font> negates the truth value b 
+<hr>
+<li><font color=teal> (<font color=blue>null-environment</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>null?</font> L )</font> return #t if L is the empty list
+<hr>
+<li><font color=teal> (<font color=blue>number->string</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>number?</font> x )</font> return #t if x is a number
+<hr>
+<li><font color=teal> (<font color=blue>odd?</font> x)</font>  return #t if x is an odd number
+<hr>
+<li><font color=teal> (<font color=blue>open-input-file</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>open-output-file</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>output-port?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>pair?</font> L)</font> return #t if L is a pair.
+<hr>
+<li><font color=teal> (<font color=blue>peek-char</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>positive?</font> x)</font> return #t if x is a positive number
+<hr>
+<li><font color=teal> (<font color=blue>procedure?</font> p)</font>  return #t if p is a procedure
+<hr>
+<li><font color=teal> (<font color=blue>quotient</font> x y )</font> return the integer quotient of x divided by y
+<hr>
+<li><font color=teal> (<font color=blue>rational?</font> )</font>  <font color=red>UNIMPLEMENTED</font>
+<hr>
+<li><font color=teal> (<font color=blue>read</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>read-char</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>real?</font> )</font> <font color=red>UNIMPLEMENTED</font> 
+<hr>
+<li><font color=teal> (<font color=blue>remainder</font> x y)</font>  return the remainder of x divided by y
+<hr>
+<li><font color=teal> (<font color=blue>reverse</font> L)</font> reverse the list L
+<hr>
+<li><font color=teal> (<font color=blue>round</font> x)</font> return the nearest integer to the number x
+<hr>
+<li><font color=teal> (<font color=blue>scheme-report-environment</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>set-car!</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>set-cdr!</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>sin</font> x)</font>  the sine of x
+<hr>
+<li><font color=teal> (<font color=blue>sqrt</font> x)</font> the square root of x
+<hr>
+<li><font color=teal> (<font color=blue>string</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string->list</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string->number</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string->symbol</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-append</font> a b c ... d)</font> combine the strings a, b, ..., d into a single new string
+<hr>
+<li><font color=teal> (<font color=blue>string-ci<=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-ci<?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-ci=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-ci>=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-ci>?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-copy</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-fill!</font> )</font>
+<hr>
+<li><font color=teal> (<font color=blue>string-length</font> x)</font> return the number of characters in the string x
+<hr>
+<li><font color=teal> (<font color=blue>string-ref</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string-set!</font> )</font>
+<hr>
+<li><font color=teal> (<font color=blue>string<=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string<?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string>=?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string>?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>string?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>substring</font> s i j )</font> return the substring of s that starts at position i and ends right before position j,
+where 0 is the first position in the string.
+<hr>
+<li><font color=teal> (<font color=blue>symbol->string</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>symbol?</font> s)</font>  return #t if s is a symbol
+<hr>
+<li><font color=teal> (<font color=blue>tan</font> x)</font> tangent of x
+<hr>
+<li><font color=teal> (<font color=blue>truncate</font> x)</font> remove the fractional part of the decimal x to get an integer
+<hr>
+<li><font color=teal> (<font color=blue>vector</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>vector->list</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>vector-fill!</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>vector-length</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>vector-ref</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>vector-set!</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>vector?</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>write</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>write-char</font> )</font> 
+<hr>
+<li><font color=teal> (<font color=blue>zero?</font> z)</font> return #t if z equals 0
+</ul>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,529 @@
+   ;; file: validate.sss
+   ;; author: Tim Hickey
+   ;; date: 9/15/2001
+   ;; modified 9/6/2002 by TJH
+   ;; This servlet redirects all hits on files specified in web.xml
+   ;; to the servlet call
+   ;;    umethod.servlet?upload=FILEPATHNAME
+   ;; The umethod.servlet file handles rest of the logic
+
+(lambda (httpservlet)
+
+ (define (do-validate request response the-file)
+ (tryCatch
+  (let (
+        (the-code (.getParameter request "the-code"))
+        (zz (.getParameter request "zz"))
+       )
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; validate.scm
+;;  This program reads through a Jscheme program and 
+;; prints out a commented version of the code where it indicates
+;; paren matching errors. It also highlight quotes,
+;; quasi-quotes, expressions, and comments so they are clearly visible
+;; It prints an error summary at the top as well as embedding it
+;; in the code. 
+;;
+;; BUGS -- it does not yet handle character constants correctly
+;; such as #'{' or #'"' ...
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+ (define (read-all in)
+    (define (drain in sbuffer)
+      (let ((line (.readLine in)))
+        (if (eq? line #null) 
+            (.toString sbuffer)
+            (drain in (.append (.append sbuffer line) "\n")))))
+    (drain in (java.lang.StringBuffer.)))
+
+
+;(define file {webapps[the-file]})
+(define file the-file) ;{webapps[the-file]})
+
+(define (readfile filename)
+   (read-all (java.io.BufferedReader. (java.io.FileReader. filename))))
+
+(define (html_quote x) 
+        (define s (java.util.StringTokenizer. x "<>&\"" #t))
+        (define (maketokens s)
+           (if (not (.hasMoreTokens s)) ()
+               (let ((x (.nextToken s)))
+                 (cons
+                   (case x
+                      (("<")  "&lt;")
+                      ((">") "&gt;")
+                      (("\"") "&quot;")
+                      (("&") "&amp;")
+                      (else x))
+                   (maketokens s)))))
+         (apply string-append (maketokens s)))
+
+
+(define code (if (not (equal? #null file)) (readfile file) the-code))
+
+(define (validate code)
+  (let ((x (processcode code 0 (.length code) 0 1 0 (list (list 'code 0 0 0)) ())))
+   (newline)(newline)(newline)
+   (display "printcode\n")
+   (printcode x)
+   (newline)(newline)(newline)
+   (display "htmlprintcode\n")
+   (display (htmlprintcode (reverse (second x))))
+   (newline)(newline)(newline)
+   (display "printcode last\n")
+   (printcode (first x))    
+  )      
+)
+
+(define (get-validation code)
+  (let ((x (processcode code 0 (.length code) 0 1 0 (list (list 'code 0 0 0)) ())))
+   (list (htmlprintcode (reverse (second x))) (first x))
+  )      
+)
+
+
+(define (printcode C)
+  (if (null? C) ()
+     (begin
+       (display {[(.toString (first C))]\n})
+       (printcode (rest C))
+     )))
+
+(define blank "                                                                                                        ")
+(define (spaces N)
+   (if (< N 100)    
+       (.substring blank 0 N)
+       (string-append (.substring blank 0 100) (spaces (- N 100)))))
+
+(define (htmlprintcode Code)
+  (define z (java.lang.StringBuffer. {<span class="cr">  1 | </span>}))
+
+  (define (errorline T E)
+     {\n<span class="error">[(spaces (+ 7 (sixth T)))]^ [E]\n[(spaces (+ 8 (sixth T)))]</span>})
+
+  (define (htmlloop Code)
+   (if (null? Code) (.toString z)
+       (let ((T (first Code)))
+         (let* (
+               (OP (first T))
+               (C (second T))
+               (Token (third T))
+               (current_line (sixth T))
+               (original_line (third (fourth T)))
+              )
+          (.append z
+           (case OP
+             ((code) {<span class="code">[Token]</span>[C]})
+             ((LP)  (if (or (equal? original_line current_line) (not (equal? C RP)))
+                         {<span class="lp">[Token]</span>[C]}
+                         {<span class="lp">[Token
+                          ]</span>[(if (equal? #null zz) "" {\n[(.toString T)]})]\n[
+                          ]<span style="color:red">  [original_line] | </span>[
+                          (spaces (fourth (fourth T)))][C]}
+                    ))
+             ((LC)  {<span class="lc">[Token]</span>[C]})
+             ((HASH-LC)  {<span class="halc">[Token]</span>[C]})
+             ((LB)  {<span class="lb">[Token]</span>[C]})
+             ((HASH-LB)  {<span class="halb">[Token]</span>[C]})
+             ((DQ)  {<span class="dq">[Token]</span>[C]})
+             ((SC)  {<span class="sc">[Token]</span>[C]})
+             ((CR)  {<span class="cr">  [(+ 1 (sixth T))] | </span>})
+            ((NON-MATCHING-RP) (errorline T "THIS RIGHT PAREN DOESN'T HAVE A MATCHING LEFT PAREN"))
+            ((NON-MATCHING-RB) (errorline T "THIS RIGHT BRACE DOESN'T HAVE A MATCHING LEFT BRACKET"))
+            ((NON-MATCHING-RC) (errorline T "THIS RIGHT CURLY DOESN'T HAVE A MATCHING LEFT CURLYBRACE"))
+            ((LB-IN-EXPR) (errorline T "YOU CAN'T HAVE A LEFT BRACKET HERE"))
+             (else (display {\nunknown command [OP], ignoring [(.toString T)]\n} ""))))
+          (htmlloop (rest Code))))))
+
+  (htmlloop Code)
+ )
+
+(define (htmlprintstack stack)
+  (define z (java.lang.StringBuffer.))
+  (let loop ((L stack))
+     (if (null? L) (.toString z)
+       (let ((x (first L)))
+         (.append z 
+           (case (first x)
+            ((LP) {<span class="error">   [(third x)]:   [(fourth x)] -- Left Parenthesis is never closed\n</span>})
+            ((LB HASH-LB) {<span class="error">   [(third x)]:   [(fourth x)] -- Left Square Bracket is never  closed\n</span>})
+            ((LC HASH-LC) {<span class="error">   [(third x)]:   [(fourth x)] -- Left Curly Brace is never closed\n</span>})
+            ((DQ) {<span class="error">   [(third x)]:   [(fourth x)] -- Double Quote is never closed\n</span>})
+            ((code) {\nLine:Char\n})
+            (else {<span class="error">Unknown error:[(.toString x)]\n</span>})))
+         (loop (rest L))))))
+
+
+
+(define (processcode code pos len tokenstart line char mstack newcode)
+ ;; pos is the current position in the code
+ ;; len is the length of the code
+ ;; line,char give the current line number and character position on that line
+ ;; tokenstart gives the position of the current token
+ ;; mstack is a list of tokens that need to be matched, 
+ ;;   these have the form (Token pos line char ..) 
+ ;;   where Token is 
+ ;;      paren"("  squarebracket "["  curlybracket "{"  doublequote  "\""    }])
+ ;;      hashsquarebracket "#[" or  hashcurlybracket "#{"                    }]
+ ;; newcode is a list of modified lines that contain the line number (for code lines)
+ ;;   and interspersed comment lines (with no line numbers)
+ ;;
+ ;; Note also that comments are properly noted and
+ ;; All matching expressions are highlighted (e.g.
+ ;;   parens are white, curlybrackets=lightgreen, squarebrackets=lightred, doublequote=lightgreen, comments=yellow
+ ;;   hashcurlybrackets=lightgreen hashsquarebrackets=lightred
+ ;; The states that we can be in correspond to the top of the stack...
+ ;;   code, paren, doublequote, curylquote, squarebracket, comment, hashcurlybracket, hashsquarebracket
+ ;; where code corresponds to the state where we have nothing to match ...
+ ;;
+
+
+;(newline) (display (.substring code pos)) (newline) (display (list 'processcode code pos len tokenstart line char mstack newcode)) 
+;(newline) 
+  (let (
+        (C (if (< pos len) (.charAt code pos) #'\n'))
+        (OP (first (first mstack)))
+       )
+      (define (pusherror E)
+                 (cons 
+                    (list E C "" (first mstack) (+ pos 1) line char)
+                    (pushtoken)))
+
+
+      (define (pushtoken)
+          (cons 
+            (list OP C (.substring code tokenstart pos) (first mstack) pos line char)
+             newcode))
+
+      (define (pushpeektoken)
+          (cons 
+            (list OP (.charAt code (+ 1 pos)) (.substring code tokenstart (+ 1 pos)) (first mstack) (+ 1 pos) line char)
+             newcode))
+
+      (define (pushstringtoken)
+          (cons 
+            (list OP C (html_quote (.substring code tokenstart pos)) (first mstack) pos line char)
+             newcode))
+
+      (define (pushpeekstringtoken)
+          (cons 
+            (list OP (.charAt code (+ 1 pos))
+               (html_quote (.substring code tokenstart (+ pos 1))) (first mstack) (+ pos 1) line char)
+             newcode))
+
+;    (display {[C]:[OP]\n})
+  (if (equal? pos len)
+    (processendcode mstack (pushtoken))
+
+    (case OP ;; this is what we are looking for!
+
+     ;;;; TOP LEVEL ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+     ((code LP LB HASH-LB) ;; this is top level, with nothing to match but left parens
+      (cond
+       ((equal? C LP) ; now we'll match Left Parens!
+        (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (cons (token 'LP pos line char) mstack) 
+           (pushtoken)))
+
+       ((equal? C DQ) 
+         (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (cons (token 'DQ pos line char) mstack) 
+           (pushtoken)))
+
+       ((equal? C HA)
+        (let ((C1 (.charAt code (+ 1 pos))))
+          (cond
+             ((equal? C1 LC)
+              (processcode code (+ 2 pos) len (+ 2 pos) line (+ 2 char) (cons (token 'HASH-LC pos line char) mstack)       
+                           (pushpeektoken)))
+             (else 
+              (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+           )))
+
+       ((equal? C LC)
+         (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (cons (token 'LC pos line char) mstack) 
+           (pushtoken)))
+
+       ((and (equal? OP 'HASH-LB) (equal? C RB))
+        (let ((C1 (.charAt code (+ 1 pos))))
+          (cond
+             ((equal? C1 HA)
+              (processcode code (+ 2 pos) len (+ 2 pos) line (+ 2 char) (rest mstack) 
+                   (pushpeektoken)))
+             (else 
+              (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+           )))
+
+
+;        ((equal? C LB)
+;         (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) mstack
+;                 (pusherror 'LB-IN-EXPR)))
+
+       ((equal? C CR) ; carriage return denotes a new line
+        (processcode code (+ 1 pos) len (+ 1 pos) (+ 1 line) 0 mstack
+          (cons (list 'CR #'\n' "\n" (first mstack) (+ 1 pos) line char)
+            (pushtoken))))
+
+       ((equal? C SC) ; semicolon denotes a "comment to end of line"
+        (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (cons (token 'SC pos line char) mstack) 
+           (pushtoken)))
+
+       ((equal? C BS) ; backslash says to ignore the next character (unless it is at end of file which is an error!)
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) (cons (token 'BS pos line char) mstack) newcode))
+
+       ((equal? C RP)
+        (if (not (equal? OP 'LP))
+            (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) mstack
+                 (pusherror 'NON-MATCHING-RP))
+            (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (rest mstack) (pushtoken)))
+         )
+
+       ((equal? C RB)
+        (if (not (equal? OP 'LB))
+            (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode)
+            (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (rest mstack) 
+                 (pushtoken))
+          )
+        )
+
+       ((equal? C RC)
+        (if (not (equal? OP 'LC))
+            (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) mstack
+                 (pusherror 'NON-MATCHING-RC))
+            (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (rest mstack) 
+                 (pushtoken)))
+         )
+
+       (else
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+     ); close cond
+    ) ; close code clause
+
+
+     ;;;; COMMENTS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ((SC) ;; this is in a comment, we skip to the end of the line
+     (let ((C (.charAt code pos)))
+      (cond
+       ((equal? C CR) ; we've hit the end of the comment
+        (processcode code (+ 1 pos) len (+ 1 pos) (+ 1 line) 0 (rest mstack)
+             (cons (list 'CR #'\n' "\n" (first mstack) (+ 1 pos) line char)
+                (pushstringtoken))))
+       (else ;; keep looking for the end of the line
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+      )))
+
+
+
+     ;;;; DOUBLE QUOTED STRINGS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ((DQ) ;; this is in a quoted string, we skip to the next unslashed doublequote or close curly
+     (let ((C (.charAt code pos)))
+      (cond
+       ((equal? C BS) ; backslash says to ignore the next character (unless it is at end of file which is an error!)
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) (cons (token 'BS pos line char) mstack) newcode))
+
+       ((equal? C DQ) ; we've hit the end of a doublequoted string
+        (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (rest mstack) (pushstringtoken)))
+
+       ((equal? C CR) ; carriage return denotes a new line
+        (processcode code (+ 1 pos) len (+ 1 pos) (+ 1 line) 0 mstack
+             (cons (list 'CR #'\n' "\n" (first mstack) (+ 1 pos) line char)
+                (pushstringtoken))))
+
+       (else ;; keep looking for the end of the string
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+      )))
+
+
+
+     ;;;; LEFT CURLY STRINGS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ((LC) ;; this is in a quoted string, we skip to the next unslashed doublequote or close curly
+     (let ((C (.charAt code pos)))
+      (cond
+
+       ((equal? C BS) ; backslash says to ignore the next character (unless it is at end of file which is an error!)
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) (cons (token 'BS pos line char) mstack) newcode))
+
+
+       ((equal? C RC) ; we've hit the end of a quasi-string
+        (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) (rest mstack) (pushstringtoken)))
+
+       ((equal? C CR) ; carriage return denotes a new line
+        (processcode code (+ 1 pos) len (+ 1 pos) (+ 1 line) 0 mstack
+             (cons (list 'CR #'\n' "\n" (first mstack) (+ 1 pos) line char)
+                (pushstringtoken))))
+
+       ((equal? C LB)
+        (processcode code (+ 1 pos) len (+ 1 pos) line (+ 1 char) 
+             (cons (token 'LB pos line char) mstack)
+             (pushstringtoken)))
+
+       (else ;; keep looking for the end of the string
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+      )))
+
+
+
+     ;;;; HASH LEFT CURLY STRINGS ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ((HASH-LC) ;; this is in a quoted string, we skip to the next unslashed doublequote or close curly
+     (let ((C (.charAt code pos)))
+      (cond
+
+       ((equal? C BS) ; backslash says to ignore the next character (unless it is at end of file which is an error!)
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) (cons (token 'BS pos line char) mstack) newcode))
+
+       ((equal? C HA) ; we've hit a hash sign, look for Right Curly or Left Bracket
+        (let ((C1 (.charAt code (+ pos 1))))
+          (cond
+            ((equal? C1 LB)
+             (processcode code (+ 2 pos) len (+ 2 pos) line (+ 2 char) 
+                (cons (token 'HASH-LB pos line char) mstack)
+                (pushpeekstringtoken)))
+
+            (else
+             (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+         )))
+
+       ((equal? C RC)
+        (let ((C1 (.charAt code (+ pos 1))))
+          (cond
+            ((equal? C1 HA) ; we've hit the end of a quasi-string
+             (processcode code (+ 2 pos) len (+ 2 pos) line (+ 2 char) (rest mstack) (pushpeekstringtoken)))
+            (else
+             (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+         )))
+
+
+       ((equal? C CR) ; carriage return denotes a new line
+        (processcode code (+ 1 pos) len (+ 1 pos) (+ 1 line) 0 mstack
+             (cons (list 'CR #'\n' "\n" (first mstack) (+ 1 pos) line char)
+                (pushstringtoken))))
+
+       (else ;; keep looking for the end of the string
+        (processcode code (+ 1 pos) len tokenstart line (+ 1 char) mstack newcode))
+      )))
+
+
+
+     ;;;; BACKSLASH ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;; 
+    ((BS) ;; when processing a backslash, just pass by the current character, and go back to previous state
+      (processcode code (+ 1 pos) len tokenstart line (+ 1 char) (rest mstack) newcode))
+        
+
+
+   ); close case
+  ); close let
+ ); close if
+) ; close define
+
+
+
+(define token list)      
+
+
+
+
+(define (processendcode mstack newcode)
+  (list mstack newcode))
+
+;; the schemevalidate servlet does not yet handle
+;; character constants correctly, that is why we
+;; need to use the unicode equivalents for the
+;; ascii characters listed below....
+;; Otherwise, the servlet can't validate itself ....
+
+(define DQ #'\u0022') ; double quote
+(define BS #'\\')
+(define SC #'\u003B') ; semicolon
+(define CR #'\n')
+(define LC #'\u007B') ; open curly brace
+(define RC #'\u007D') ; close curly brace
+(define LB #'\u005B') ; open square bracket
+(define RB #'\u005D') ; close square bracket
+(define LP #'\u0028') ; open round paren
+(define RP #'\u0029') ; close round paren
+(define HA #'\u0023') ; hash symbol
+
+
+
+  (case code
+    ((#null) {<h1>Scheme Validator</h1>
+<form method="post" action="schemevalidate.servlet"> <textarea name="the-code" rows=10 cols=50></textarea>
+              <input type="submit"></form>})
+    (else 
+      (define z (get-validation code))
+     {
+     <html><head><title>Test</title><style rel="stylsheet" type="text/css"><!--
+       body \{font-weight: bold; font-family: Courier, courier, monospace\}
+       .code   \{color:blue\}
+       .lp     \{color:blue\}
+       .lb     \{color:blue\}
+       .halb   \{color:blue\}
+       .lc     \{color:green\}
+       .halc   \{color:green\}
+       .dq     \{color:green\}
+       .sc     \{color:rgb(255,155,0)\}
+       .cr     \{background:rgb(230,230,230);color:black;font-weight:bold\}
+       .error  \{color:red\}
+     -->
+     </style></head><body>
+[(if (not (equal? #null file)) {<h3>Validating: <span <a href="[the-file]">[the-file]</a></h3>} "")]
+[(if (not (null? (rest (second z))))
+   {<h3>Unclosed parentheses, brackets, braces, and quotes:</h3>
+<pre>[(htmlprintstack (reverse (second z)))]</pre>
+} "")]
+
+<pre>
+[(first z)]<br/>
+</pre>
+<div style="text-align:right">
+<table border=5 style="font:9pt Helvetica,serif"><tr><td>
+KEY:<br/>
+<span class="code"> toplevel code (not inside parentheses)</span><br/>
+<span class="lp"> expression code (inside parentheses or square brackets)</span><br/>
+<!-- 
+<span class="lb"> inside square brackets</span><br/>
+<span class="lc"> inside curly brackets</span><br/>
+-->
+<span class="dq"> strings (inside double quotes or curly braces) </span><br/>
+<span class="sc"> a  comment (from a semicolon to the end of the line)</span><br/>
+<span class="error"> an error message (concerning the previous line)</span><br/>
+</td></tr></table>
+</div>
+     
+
+     </body></html>
+      })))
+ (lambda(e) {ERROR in (do-validate [request] [response] [the-file])\n<xmp>[e]</xmp>})
+ ))
+
+
+
+  (define (doGet request response)
+    (let* ((servletPath (getRealPath (.toString (.getServletPath request))))
+           (filename  ;; strip off the trailing U from the request URI
+              (.substring servletPath 0 (+ -1 (.length servletPath))))
+          )
+;    (let* ((requestURI (.getRequestURI request))
+;           (filename  ;; strip off the trailing U from the request URI
+;              (.substring requestURI 0 (+ -1 (.length requestURI)))))
+      (let ((out (.getWriter response)))
+         (.setContentType response "text/html")
+         (.println out
+            (.toString (do-validate request response filename))))))
+
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+  (set! getRealPath  ;; put getRealPath into the servlet environment
+    (lambda (File)
+      (.getRealPath (.getServletContext (.getServletConfig httpservlet)) File)))
+  (set! the-httpservlet httpservlet) ;; put the http servlet into the environment ..
+
+)
+
+
+
+

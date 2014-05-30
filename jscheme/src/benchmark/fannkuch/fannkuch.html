@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Fannkuch benchmark</title>
+  </head>
+
+  <body>
+    <h1>Fannkuch benchmark</h1>
+
+<p>This is directory is contains the fannkuch benchmark in several
+langaguages.  This benchmark has been <a
+href="fannkuch.ps.zip">extensively studied</a>.  It does integer and array
+access so it is very favorable to C.  However, Java and properly
+declared Common Lisp do quite well.  The benchmark is very sensitive
+to the quality of the compiler
+
+<p>Typical results are:
+<pre>
+   msec  relative
+51  7031 1.00 gcc -o fan2 fannkuch.c
+51 12813 1.82 java -server fannkuch 11
+51 15546 2.21 java -client fannkuch 11 (JDK 1.4.2_02-b03)
+51 17766 2.52 gcc -o fan  fannkuch.c
+</pre>
+
+The fact that the two Java times are bracketed by unoptimized and
+optimized C times suggests that HotSpot is doing quite well.  Many C
+programs are run unoptimized so they can be debugged.
+
+    <hr>
+  </body>
+</html>

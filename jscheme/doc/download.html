@@ -1,0 +1,43 @@
+<html>
+<head><title>Downloading JScheme</title></head>
+<body bgcolor=white>
+<p>
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4 COLS=1 WIDTH="100%" >
+<TR BGCOLOR="#66FFFF">
+<TD>
+<center><H3>Downloading JScheme
+</h3></center>
+</h3>
+</TD>
+</TR>
+</TABLE><P>
+<p>
+The simplest way to download Jscheme is to download the
+single jar file, <a href="../lib/jscheme.jar">jscheme.jar</a>.
+<p>
+You can also download the sources and compile. We'll add this
+capability shortly.
+<p>
+
+Once <code>jscheme.jar</code> is downloaded, you can put it in
+your classpath, and run it as an interpreter:
+<pre>
+  % java jscheme.REPL
+  > (display (* 12345679 8))
+  98765432'
+  > (exit)
+  %
+</pre>
+or as a Scheme->Java compiler:
+<pre>
+  % cat > Hello.scm
+  (display "Hello World") (newline)
+  ^D
+  % java jsint.Compile Hello.scm
+  % javac Hello.java
+  % java Hello
+  Hello World
+  %
+</pre>
+</body>
+</html>

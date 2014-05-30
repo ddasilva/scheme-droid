@@ -1,0 +1,23 @@
+(jswebpage "../.." "JScheme Servlet and Applet Demos" jswebapp-menu
+(let ((link (lambda(x msg) {<a href="jscheme/demo/[x]">[x]</a> [msg]\n})))
+#{
+<div style="height:3in" class="main">
+<p>
+We include here a few examples of servlet and applet demos:
+#[(ol (list 
+   (link "ssi.servlet" "An example of a server-side include")
+   (link "ssi.html" "An example of a server-side include in an html file")
+   (link "classbrowser.servlet" "A servlet using reflection to get information about Java classes")
+   (link "classbrowser.scm" "An applet version of the classbrowser (use .scmapp suffix to run as an applet)")
+   (link "JSchemeEvaluator.scm" "A JScheme evaluator applet (use .scmmapp suffix to run as an applet)")))]#
+Note that the applets are stored in files with ".scm" suffixes, but if you
+view the ".scm" file you will only see the scheme code. If you replace the suffix
+".scm" with ".scmapp" then server will generate a webpage containing the Scheme code embedded 
+as an applet.
+</p>
+<p>
+We will have more demos available here in the near future. You can also check out the
+Interval Arithmetic applications as they provide some additional applet examples.
+</div>
+}#)
+)

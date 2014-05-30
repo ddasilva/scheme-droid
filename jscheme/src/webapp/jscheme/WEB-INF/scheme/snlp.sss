@@ -1,0 +1,101 @@
+;; snlp.sss
+;;
+
+(lambda (httpservlet)
+
+ (define (read-all in)
+    (define (drain in sbuffer)
+      (let ((line (.readLine in)))
+        (if (eq? line #null) 
+            (.toString sbuffer)
+            (drain in (.append (.append sbuffer line) "\n")))))
+    (drain in (java.lang.StringBuffer.)))
+
+
+  (define (doGet request response)
+    (tryCatch 
+     (let ()
+      (define (getRealPath servlet File)
+          (.getRealPath (.getServletContext (.getServletConfig servlet)) File))
+      (define filename (getRealPath httpservlet (.getServletPath request)))
+      (define file (java.io.BufferedReader. (java.io.FileReader. filename)))
+      (define title (.readLine file))
+      (define vendor (.readLine file))
+      (define homepage (.readLine file))
+      (define desc (.readLine file))
+      (define icon (.readLine file))
+      (define codestring (read-all file))
+
+      (define (html_quote x) 
+        (define s (java.util.StringTokenizer. x "<>&\"" #t))
+        (define (maketokens s)
+           (if (not (.hasMoreTokens s)) ()
+               (let ((x (.nextToken s)))
+                 (cons
+                   (case x
+                      (("<")  "&lt;")
+                      ((">") "&gt;")
+                      (("\"") "&quot;")
+                      (("&") "&amp;")
+                      (else x))
+                   (maketokens s)))))
+         (apply string-append (maketokens s)))
+
+       (tryCatch
+        (begin
+          (.setContentType response "application/x-java-jnlp-file")
+          (let*
+            ((codebase
+               (string-append "http://" (.getServerName request) ":" (.getServerPort request)))
+             (href (.getRequestURI request)))
+           (.println (.getWriter response) 
+{
+  <?xml version="1.0" encoding="utf-8"?> 
+     <!-- JNLP File for TATool Demo Application --> 
+     <jnlp 
+       spec="1.0+" 
+       codebase=" [codebase]"
+       href="[href]">
+       <information>
+         <title>[(string->expr title)]</title> 
+         <vendor>[(string->expr vendor)]</vendor> 
+         <homepage href="[(string->expr homepage)]"/> 
+         <description>[(string->expr desc)]</description> 
+         <icon href="[(string->expr icon)]"/>
+         <offline-allowed/> 
+       </information> 
+
+       <resources> 
+         <j2se version="1.3"/> 
+         <j2se version="1.2"/> 
+         <jar href="jscheme/lib/jscheme.jar"/>
+       </resources> 
+       <application-desc main-class="jlib.SNLP"> 
+        <argument> [(html_quote codestring)]</argument>
+       </application-desc>
+     </jnlp> 
+}
+   )))
+     (lambda(e) 
+        (.setContentType response "text/plain")
+        (display (list "ERROR: " e) (.getWriter response))))
+  )
+    (lambda(ee)
+          (.setContentType response "text/plain")
+          (display (list "ERROR: " e) out)))
+   )
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+)
+
+
+
+
+
+
+

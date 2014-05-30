@@ -1,0 +1,42 @@
+<html>
+<head>
+<title>A General Interval Arithmetic Evaluator Demo in JScheme</title>
+</head>
+<body bgcolor=#f0f0ff>
+<h1>A General Interval Arithmetic Evaluator Demo in Scheme</h1>
+The source code for this applet
+is in the files
+<ul>
+<li> <a href="ereal.scm"> ereal.scm</a> -- an implementation of extended reals
+<li> <a href="gia.scm"> gia.scm</a> -- an implementation of interval arithmetic
+<li> <a href="opparse.scm">opparse.scm</a> -- an Operator Precedence parser
+<li> <a href="giaeval.scm"> giaeval.scm</a> -- the General Interval Arithmetic Evaluator
+<li> <a href="giaevaldemo.scm"> giaevaldemo.scm</a> -- the GUI
+</ul>
+<p>
+Todo:
+<ul>
+<li> add programming interface (variables, assignment statements, tests)
+<li> add more operands (currently abs, sqrt, sq, %  are not implemented).
+</ul>
+<p>
+<hr>
+<p>
+<center>
+<table border=10 bgcolor=#c8c8fa cellspacing=15 cellpadding=25><tr><td>
+<applet  code="jsint.SchemeApplet"
+     codebase=".."
+     archive = "lib/jscheme.jar,lib/ia_math.jar"
+     height=800  width=600>
+    <param name="prog" value="gia_eval/giaevaldemo.scm">
+    <param name="init" value="init">
+You need a Java-enabled browser to run this applet.
+</applet>
+</td></tr></table>
+</center>
+<p>
+<hr>
+<p>
+
+</body>
+</html>

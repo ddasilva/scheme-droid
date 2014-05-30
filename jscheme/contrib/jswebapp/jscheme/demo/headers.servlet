@@ -1,0 +1,23 @@
+(let ()
+ (use-module "elf/basic.scm" 'import 'all)
+
+#{<html>
+  <head>    <title>Headers Demo</title>  </head>
+  <body>
+     <h1>headers demo</h1>
+
+<pre style="background:white;color:black">
+Info about your visit:
+local-time:        #[(Date.)]#
+your IP addr:      #[(.getRemoteAddr request)]#
+your HTTP headers:
+#[(tryCatch 
+    (table (map* (lambda(x) (list x {<span style="color:blue">[(.getHeader request x)]</span>})) (.getHeaderNames request)))
+    (lambda(e) e))
+]#
+</pre>
+
+ </body>
+</html>
+}#
+)

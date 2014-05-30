@@ -1,0 +1,149 @@
+<html>
+<head>
+<title>
+Jscheme Special Forms and Macros
+</title>
+<link rel="stylesheet" href="man.css">
+</head>
+<body>
+<div class="main">
+<h1>Special Forms and Macros of Jscheme</h1>
+<img src="../images/jscheme-icon2.gif" align="right">
+
+<h2>Special Forms and Macros inherited from Scheme</h2>
+Jscheme adopts the standard special forms and macros of R4RS Scheme
+and adds a few (in blue) to improve the Java interface (e.g. tryCatch)
+<ul>
+<p><li> <code><font color=teal>(<font color=red>quote</font> EXPR)</font></code> or
+<code><font color=teal><font color=red>'</font> EXPR</font></code> --  intuitively, the
+quote indicates that the EXPR is to be treated as data
+and should not be evaluated. The precise semantics are a little
+more involved as we must state what syntax is allowed inside
+(e.g. quotes, Java Literals, vectors, ...) and how that syntax
+is treated.
+<p><li> <code><font color=teal>(<font color=red>begin</font> EXPR1 EXPR2 ... EXPRn)</font></code> -- this
+evaluates the expressions in order, first EXPR1, then EXPR2. The value
+of the last expression is returned. The non-final expresssions only affect
+program state by their side effects.
+<p><li><code><font color=teal>(<font color=red>if</font> EXPR1 EXPR2 EXPR3)</font></code> -- this first
+evaluates EXPR1 to get a value V. If V is equal to the boolean value #f, then
+EXPR2 is evaluated, otherwise EXPR3 is evaluated.
+<p><li><code><font color=teal> (<font color=red>if</font> EXPR1 EXPR2)</font></code> -- this is implemented as
+(<font color=red>if</font> EXPR1 EXPR2 #f)</font></code> 
+<p><li><code><font color=teal> (<font color=red>or</font> EXPR1 EXPR2 ...)</font></code> -- The expressions are
+evaluated in order until either one evaluates to a value V not equal to #f or
+all expressions are evaluated. In the former case, V is returned, in the latter
+#f is returned.
+<p><li><code><font color=teal> (<font color=red>and</font> EXPR1 EXPR2 ...)</font></code> -- The expressions are
+evaluated in order until one of the expressions evaluates to #f or the end of
+the list is reached. If there are no expressions, then #t is returned; otherwise,
+the value of the last expression to be evaluated is returned.
+<p><li><code><font color=teal> (<font color=red>set!</font> VAR EXPR)</font></code> -- Here VAR must be a global
+or local scheme variable or a Java Literal
+representing a static Java variable.
+In each case, the EXPR is evaluated and its value is assigned to the variable.
+<p><li><code><font color=teal> (<font color=red>define</font> VAR EXPR )</font></code> -- This adds the VAR to the
+(local or global) environment, and assigns it the value V obtained by evaluating EXPR.
+<p><li><code><font color=teal> (<font color=red>define</font> (VAR0 VAR1 ... VARN) EXPR1 ... EXPRN )</font></code> -- this
+is equivalent to
+(<font color=red>define</font> VAR0 (lambda (VAR1 ... VARN) EXPR1 ... EXPRN ))</font></code>
+<p><li><code><font color=teal> (<font color=red>lambda</font> (V1 ... VN) EXPR1 ... EXPRM)</font></code> -- this creates
+a closure C. When the closure is applied to N values A1 ... An, a new environment is
+created in which Ai is bound to Vi, and the expressions are evaluated in order, the
+value of the last expression is returned.
+<p><li><code><font color=teal>  (<font color=red>lambda</font> (V1 ... VN . R) EXPR1 ... EXPRM)</font></code> -- 
+This closure can be applied to a N or more arguments. R is then bound to the list containing
+all arguments after the Nth.
+<p><li><code><font color=teal>  (<font color=red>lambda</font> R EXPR1 ... EXPRM)</font></code> -- This closure
+can be applied to a list of 0 or more arguments. R is bound to the list of arguments.
+<p><li><code><font color=teal>  (<font color=red>cond</font> (EXPR1a EXPR1b ... EXPR1z) .... (EXPRNa ... EXPRNz))</font></code> 
+<p><li><code><font color=teal>  (<font color=red>quasiquote</font> EXPR)</font></code> or
+<font color=red>`</font> EXPR</font></code> -- the quasiquote
+<p><li><code><font color=teal>  (<font color=red>unquote</font> EXPR)</font></code> or
+<font color=red>,</font> EXPR</font></code> -- (must appear in quasiquoted expression)
+<p><li><code><font color=teal>  (<font color=red>unquote-splicing</font> EXPR)</font></code> or
+<font color=red>,@</font> EXPR</font></code> -- (must appear in quasiquoted expression)
+<p><li><code><font color=teal>  (<font color=red>let</font> ((V1 EXPR1) .... (Vn EXPRN)) E1 ... EM)</font></code> 
+<p><li><code><font color=teal>  (<font color=red>let</font> V0 ((V1 EXPR1) .... (Vn EXPRN)) E1 ... EM)</font></code> 
+<p><li><code><font color=teal>  (<font color=red>let*</font> ((V1 EXPR1) .... (Vn EXPRN)) E1 ... EM)</font></code> 
+<p><li><code><font color=teal>  (<font color=red>letrec</font> ((V1 EXPR1) .... (Vn EXPRN)) E1 ... EM)</font></code> 
+<p><li><code><font color=teal>  (<font color=red>case</font> EXPR ((C1a ... C1z) EXPR1) .... (Vn EXPRN)) E1 ... EM)</font></code> 
+<p><li><code><font color=teal>  (<font color=red>do</font> ((V1 EXPR1) .... (Vn EXPRN)) E1 ... EM)</font></code> 
+<p><li><code><font color=teal>  (<font color=red>delay</font> EXPR)</font></code>
+</ul>
+<h2>Jscheme Extensions to the Control Structure of Scheme</h2>
+<ul>
+<li><code><font color=teal>  (<font color=blue>tryCatch</font> EXPR F)</font></code> this evaluates the EXPR to obtain
+a return value V; if, however, a Java exception E is thrown, it calls (F E) to obtain
+a return value, e.g.,
+<pre>
+  (define (string-&gt;double S) 
+      (tryCatch (Double. S) (lambda (e)
+         (throw (RuntimeError. "Number format error")))))
+  (string-&gt;double "1.2e3")
+  (string-&gt;double "1.2e 3")
+</pre>
+
+<li><code><font color=teal>  (<font color=blue>define-macro</font> name (lambda ...))</font></code>
+When the macro "name" is applied to its arguments, it generates an expression
+which is then passed back to the evaluator. 
+<pre>
+  (define-macro (newif Test Then Else) `(if ,Test ,Then ,Else))
+  (define-macro when (lambda (Test . Actions) `(if ,Test (begin . ,Actions))))
+</pre>
+<li><font color=blue>Thunks are runnable objects.</font> 
+This allows Jscheme to easily implement multi-threading.
+<pre>
+(define (loop N D) 
+    (tryCatch (begin (Thread.sleep D) (display N) (newline) (loop (+ N 1) D))
+              (lambda (e) (display (list "thread interrupted" e)) (newline))))
+(define s (Thread. (lambda() (loop 0 1000L))))
+(define t (Thread. (lambda() (loop 0 5000L))))
+(.start s)
+(.start t)
+(.suspend t)
+(.resume t)
+(.stop s)
+(.stop t)
+</pre>
+
+<li><code><font color=teal>  (<font color=blue>define-method</font> ....)</font></code> -- this has the same syntax as define
+except that the parameters can have the form (NAME Type) instead of just NAME, where Type is a 
+Java class name, e.g.
+<pre>
+<pre>
+(define-method (iterate (items Iterator) action)
+  (if (.hasNext items)
+      (begin (action (.next items))
+             (iterate items action))))
+
+(define-method (iterate (items Collection) action)
+  (iterate (.iterator items) action))
+
+(define-method (iterate (items Map) action)
+  (iterate (.entrySet items) action))
+
+(define-method (iterate (items jsint.Pair) action)
+  (action (car items))
+  (let ((items (cdr items)))
+    (if (pair? items) (iterate items action))))
+
+(define-method (iterate (items Object[]) action)
+  (let loop ((i 0) 
+             (L (vector-length items)))
+    (if (< i L) (begin (action (vector-ref items i)) (loop (+ i 1) L)))))
+
+(define (printit x) (.println System.$out x))
+(iterate '(1 2 3 4) printit)
+(iterate (list->vector '(1 2 3 4)) printit)
+...
+</pre>
+</pre>
+
+<li><code><font color=teal>  (<font color=blue>time</font> EXPR [OptionalNumRepeats])</font></code> This little
+macro lets you time operations.
+
+</ul>
+</div>
+</body>
+</html>

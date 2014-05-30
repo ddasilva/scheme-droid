@@ -1,0 +1,31 @@
+(begin
+(define contrib-menu #{
+<div class="navbar">
+<br/>Applications<br/>
+<a href="jswebapp/jswebapp.html">Servlets</a><br/>
+<a href="ia/ia.html">Interval Arithmetic</a><br/>
+<br/>developers<br/>
+<a href="../main.html">back to JScheme</a><br/>
+<a href="http://sourceforge.net/projects/jscheme">jscheme.sf.net</a> <br/>
+<a href="licenses/JScheme.txt">licensing</a> <br/>
+</div>
+}#
+)
+
+
+(jswebpage ".." "JScheme Applications" contrib-menu 
+#{
+<div class="main">
+<p>
+This site is dedicated to providing examples of 
+JScheme projects ranging from fairly large applications
+to small but interesting examples and code snippets.
+Most of these applications require 3rd party jar files.
+Although these jar files can all be distributed, 
+the licensing is more complex and you should take care to read
+the licenses in each of the lib files...
+</p>
+<br/><br/>
+</div>
+}#)
+)

@@ -1,0 +1,29 @@
+<html>
+  <head><title>JSchemeEvaluator</title>
+    <style type="text/css">
+     body {background:rgb(0,0,0); color:white}
+     div {background:rgb(0,0,100); color:white; padding:1in; margin:0.5in}
+     a {text-decoration:none; color:white}
+     a:link {color:white}
+     a:visited {color:white}
+     a:active {color:white}
+     a:hover {background:rgb(0,100,0)}
+    </style>
+ </head>
+<body>
+<div>
+  <h1>JSchemeEvaluator applet</h1>
+  <a href="JSchemeEvaluator.scm">source code</a><br/>
+ <hr/>
+  <applet style="background:lightgreen"
+     code="jsint.SchemeApplet"
+     codebase="../.."
+     archive="jscheme.jar"
+     height=600
+     width=600>
+   <param name="prog" value="JSchemeEvaluator.scm">
+   <param name=init value="install">
+  </applet>
+</div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+(servlet (a b)
+ (case a
+  ((#null) 
+    (make-form "form.servlet" 'a 'b))
+  (else 
+    (table `((a b) (,a ,b))))))

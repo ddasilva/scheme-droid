@@ -1,0 +1,205 @@
+<html>
+<head><title>JLIB</title></head>
+<body bgcolor=white link=olive alink=orange vlink=olive>
+<h1>JLIB -- a high-level interface to the Java AWT<br>
+11/28/2001</h1>
+<p>
+The key idea is to use the flexibility and expressiveness of
+Scheme to create a GUI-building library which allows complex
+GUIs to be built by evaluating a simple and declarative expression
+whose structure closely resembles the structure of the GUI itself.
+<p>
+The JLIB model is based on five fundamental concepts:
+<ul>
+<li> COMPONENTS -- there are a small number of ways to construct basic components (buttons, windows, ...)
+<li> LAYOUTS -- there are a small number of ways to layout basic components (row, col, table, grid, ...)
+<li> ACTIONS -- there is a simple mechanisms for associating an action to a component
+<li> PROPERTIES -- there are easy ways for setting the font and color of components
+<li> TAGGING -- there is a simple mechanism for giving names to components "in place"
+</ul>
+<p>
+Another key idea is that operations on all components should be as
+uniform as possible. For example, there are procedures "readstring" and
+"writestring" which allow one to read a "string" from a component, and
+write a string onto a component. Thus "writestring" can change the
+string on a label, a button, a textfield, a textarea. It can also change the
+title of a window or add an item to a choice component. Likewise, readstring
+returns the label of a button, the text in a textarea or textfield, the
+text of the currently selected item in a choice, the title of a window,
+and the text of a label.
+<p>
+Similarly, JLIB is designed so that the component and layout constructors
+require a few initial arguments of specified types, followed
+by many optional arguments which may apper
+in any order and whose types are used to determine their effect. 
+<p>
+For example, a font object will change the
+font of the component, a color object will change the background color,
+a Listener object will add an action listener to the component, a string
+will generally become the label of the object. 
+<p> 
+The current JLIB primitives are listed below:
+<p>
+<hr>
+<p>
+<h2>Components</h2>
+Components are created using the functions below. The optional arguments are described in the
+next section and can be used to set the color, font, and other properties of the component.
+The type of the argument is used to determine how it affect the component.
+<ul>
+<li> (window TITLE arg1 arg2 ...)
+<li> (button STRING arg1 arg2 ...)
+<li> (textfield STRING NUMCOLS arg1 arg2 ...)
+<li> (textarea NUMROWS NUMCOLS arg1 arg2 ...)
+<li> (choice arg1 arg2 ...)
+<li> (label STRING arg1 arg2 ...)
+<li> (canvas W H ...)
+<li> (menubar NAME arg1 arg2 ...)
+<li> (menu NAME arg1 arg2 ...)
+<li> (menuitem NAME arg1 arg2 ...)
+</ul>
+<p>
+<h2>Layouts</h2>
+<ul>
+<p>
+<li> Tabular layouts
+<ul>
+<li> (row arg1 arg2 ...)
+<li> (col arg1 arg2 ...)
+<li> (splitrow s1 s2 R1 R2 arg1 ...)  creates a box containing two rows whose relative sizes are given by the proportion s1::s2
+<li> (splitcol s1 s2 C1 C2 arg2 ...)  creates a box containing two cols whose relative sizes are given by the proportion s1::s2
+<li> (table ROWS COLS arg1 arg2 ...) creates a box consisting of the specified numbers of rows and columns
+<li> (grid NUMROWS NUMCOLS arg1 arg2 ...) creates a table where all cells have the same size
+</ul>
+These layouts all allow some additional arguments which specify how the components are placed in a cell and how they
+expand when the cell is enlarged:
+<ul>
+<li> placement: 'center 'north 'northeast 'east 'southeast ...
+<li> expansion: 'horizontal 'vertical 'both 'none
+</ul>
+<p>
+<li> Border Layout
+<ul>
+<li>
+ (border arg1 arg2 ...)
+</ul>
+<br>
+The args can specify properties of the container (e.g. color, font, etc.)
+and they can also include the following terms which add up to five components to
+specified parts of the layout. When the layout is resized,
+the center component expands in both ways, the north and south components expand
+horizontally only, and the east and west expand vertically only. The following
+positional args must precede the other args (font/color/etc.)
+<ul>
+<li> (north COMPONENT)
+<li> (south COMPONENT)
+<li> (east COMPONENT)
+<li> (west COMPONENT)
+<li> (center COMPONENT)
+</ul>
+<p>
+<li> Card Layout
+<ul>
+<li>(cards (card NAME1 COMPONENT) (card NAME2 COMPONENT) ....) -- this creates a COMPONENT
+with the CardLayout consisting of several NAMEd components. Only one of the cards is visible at
+a time
+<li>(showcards CARDS NAME) -- this causes the CARDS layout to make the NAMEd card visible.
+</ul>
+
+</ul>
+<p>
+<h2>Arguments to Components and Layouts</h2>
+<ul>
+<li> Colors -- these set the background color of the component
+<ul>
+<li> standard colors: black, white, red, green, ...
+<li> (color R G B)
+<li> (color 0xRRGGBB)
+</ul>
+<li> Fonts -- these set the font of the component
+<ul>
+<li>    (Courier N)    (CourierBold N)    (CourierItalic N) 
+<li> (TimesRoman N) (TimesRomanBold N) (TimesRomanItalic N) 
+<li>  (Helvetica N)  (HelveticaBold N)  (HelveticaItalic N)
+<li> (java.awt.Font. NAME STYLE SIZE)
+</ul>
+<li> Actions -- these specify the actions to be carried out when the component receives an action event
+<ul>
+<li> (action (lambda (e) COMMANDS)) 
+</ul>
+<li> Size -- (size WIDTH HEIGHT)
+<ul>
+<li> window -- set the size of the window
+<li> textarea -- set the size of the textarea in rows and columns
+</ul>
+<li> Strings
+<ul>
+<li> textarea -- store string in the textarea
+<li> choice -- add the string as one of the choices
+<li> menu -- add the string as a simple menuitem
+<li> menuitem -- set the label of the menuitem to the string
+</ul>
+<li> Components
+<ul> 
+<li> for layouts, add the component to the layout
+</ul>
+<li> Tags
+<ul>
+<li> (let ((tag (maketagger))) EXPR) creates a tagger "tag" whose scope is the EXPR
+<li> (tag STRING) -- returns the component which has been tagged with the
+string
+<li> (tag STRING COMPONENT) -- tags the component with the string and
+returns the COMPONENT
+</ul>
+<li> lambdas 
+<ul>
+<li> (lambda(C) COMMANDS) -- commands to be carried out on the component "C" when it is being created,
+for example
+<ul>
+<li> (lambda (C) (.setForeground C blue)) -- sets the foreground color of the component to blue
+<li> (lambda (C) (.hide C)) -- makes C invisible (although it still takes up space in the layout)
+<li> (lambda (C) (display (list "just created " C)) (newline)) -- prints a message when C is created
+</ul>
+</ul>
+</ul>
+
+<p>
+<hr>
+<p>
+<h2>Actions</h2>
+<ul>
+<li>
+Reading/Writing on Components
+<ul>
+<li> (readstring COMPONENT) -- reads the text on a component as a string
+<li> (readexpr COMPONENT) -- reads the text on a component as a Scheme term
+<li> (readexprlist COMPONENT) -- reads the text on a component as a sequence of Scheme terms and returns a list containing those terms
+<li> (writeexpr COMPONENT OBJ) -- convert the object to a string and write on the component
+<li> (writelnexpr COMPONENT  OBJ) -- same as above, but add a new line at the end
+<li> (appendexpr COMPONENT  OBJ) -- append the stringified object to the text on the component
+<li> (appendlnexpr COMPONENT  OBJ) -- same as above, but add a newline at the end
+</ul>
+</li>
+<p>
+<li>
+Other Common Java Actions
+<ul>
+<li> (.hide COMP) (.show COMP)  hiding or showing a component (or window)
+<li> (.pack WIN) (.resize WIN)  resizing a window 
+<li> (.setForeground COMP COLOR) (.setBackground COMP COLOR)
+<li> (.setFont COMP FONT)
+<li> (.addMouseListener COMP (Listener. (lambda(e) (.getX e) (.getY e) ...)))
+<li> (.addMouseMotionListener COMP (Listener. (lambda(e) (.getX e) (.getY e) ...)))
+<li> (.fillRect (.getGraphics g) x y w h)
+<li> (.fillRect (.bufferg$ CANVAS) x y w h) (.repaint CANVAS) -- canvas objects have an
+      associated backbuffer which you can access using (.bufferg$ CANVAS).
+</ul>
+
+</ul>
+<p>
+The current JLIB is accessible <a href="../jlib/JLIB.scm">here</a>
+and we have a SWING version as well, which is accessible <a href="../jlib/Swing.scm">here</a>
+To get the most uptodate version you should download the latest jscheme source from
+CVS.
+</body>
+</html>

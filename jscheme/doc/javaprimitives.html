@@ -1,0 +1,230 @@
+<html>
+<head>
+<title>
+The Java Dot Notation
+</title>
+<link rel="stylesheet" href="man.css">
+</head>
+<body>
+<div class="main">
+<center>
+<img src="../images/jscheme-icon2.gif" align="right">
+<h2>
+<strong>The Java Dot Notation</strong></h2>
+</center>
+
+
+The Java Dot Notation provides Jscheme with full access to all
+Java constructors, methods, and fields for all Java classes on the
+current classpath. The syntax is very simple as explained in the box below
+and demonstrated in the examples on the rest of this page.
+<p>
+Java literals have the same syntax as Java members except for
+a possible "." or "$" prefix or suffix. 
+Overloaded methods and constructors are disambiguated dynamically at
+runtime. Adding a "#" to the end of a Javadot symbol allows access to
+private fields, methods, and constructors (and to members with
+protected, package, and public visibility as well).
+<p>
+<center>
+<table border = 2 bgcolor=lightblue>
+<tr><td>Syntax</td><td>Type of Member</td><td>Example</td></tr>
+<tr><td> "." at the end </td><td> constructor</td><td><code>(Font. NAME STYLE SIZE)</code></td></tr>
+<tr><td> "." at the beginning </td><td> instance member</td><td><code>(.setFont COMP FONT)</code></td></tr>
+<tr><td> "." at beginning and "$" at the end </td><td> instance field</td><td><code>(.first$ '(1 2))</code></td></tr>
+<tr><td> "." only in the middle </td><td> static member</td><td><code>(Math.round 123.456)</code></td></tr>
+<tr><td> ".class" suffix </td><td> Java class</td><td><code>Font.class</code></td></tr>
+<tr><td> "$" at the end </td><td> static field</td><td><code>Font.BOLD$</code></td></tr>
+<tr><td> "$" in the middle </td><td> inner class</td><td><code>java.awt.geom.Point2D$Double.class</code></td></tr>
+<tr><td> "$" at the beginning </td><td> packageless class</td><td><code>$ParseDemo.class</code></td></tr>
+<tr><td> "#" at the end </td><td> private access</td><td><code>(.jsint.Symbol.name$# 'a)</code></td></tr>
+</table>
+</center>
+</ul>
+
+<p>
+<hr>
+<p>
+
+
+<TABLE BORDER=0 CELLSPACING=0 CELLPADDING=4 COLS=1 WIDTH="100%" >
+<TR BGCOLOR="#66FFFF">
+<TD>
+<center><h1>Examples of Java Literals</h1></center>
+</table>
+<table border=1 cellspacing=0 cellpadding=4>
+<p>
+
+<tr><td><TT>(<font color=red>import</font> "java.awt.*")</TT><td>
+The import statement allows Java package names to be omitted in Java literals,
+just as in Java:
+<pre>
+import java.awt.*;
+</pre>
+
+
+<tr><td><TT>
+(define win (<font color=red>Frame<strong>.</strong></font> "Hello")) <br>
+(define L (<font color=red>java.awt.Label<strong>.</strong></font> "Hi"))
+<td>
+<strong>
+A <font color=blue>constructor</font> 
+<br>
+is signified by trailing "." 
+as in 
+<font color=red>"Class." </font>
+</strong>
+<br> 
+The particular constructor is determined dynamically 
+by analyzing the types of the arguments. The corresponding Java
+would be
+<pre>
+Frame win = new Frame("Hello");
+Label L  = new Label("Hi");
+</pre>
+
+<tr><td><TT>
+(<font color=red><strong>.</strong>resize</font> win1 200 300)<br>
+(<font color=red><strong>.</strong>Container.resize</font> win2 200 300)<br>
+(<font color=red><strong>.</strong>java.awt.Component.resize</font> win3 200 300)<br>
+</TT>
+<td> 
+<strong>
+An <font color=blue>instance method </font> 
+<br>
+is signified by a leading "." as in 
+<font color=red>"<strong>.</strong>Name" </font>
+</strong><br>
+The examples at left would be written in Java as:
+<pre>
+  win1.resize(200, 300);
+  ((Container) win2).resize(200,300);
+  ((java.awt.Component) win3).resize(200,300);
+</pre>
+
+
+<tr><td><TT>
+(<font color=red>System.exit</font> 0) <br>
+(<font color=red>java.lang.Math.sin</font> 3.1415926)
+
+</TT><td>
+<strong> 
+A<font color=blue> static method</font> 
+<br>
+is signified by "." only in the middle as in 
+<font color=red> "Class.Name"</font>
+</strong>
+<br>
+The examples at left would be written in Java as:
+<pre>
+System.exit(0);
+java.lang.Math.sin(3.1415926)
+</pre>
+
+
+
+<tr><td><TT>
+(<strong>.</strong>println <font color=red>System.out$</font> "hi")
+<br>
+(set! <font color=red>U.useJavaSyntax$</font> #t)
+
+</TT><td>
+<strong>
+A <font color=blue>static variable</font> 
+<br>
+is signified by a "$" at the end and no leading "." 
+as in <font color=red>"Class.Name$"</font>
+</strong>
+<br>
+The examples at left would be written in Java as:
+<pre>
+System.out.println("hi");
+U.useJavaSyntax = true;
+</pre>
+
+
+<tr><td><TT>
+(define a (<font color=red><strong>.</strong>Pair.first$</font> x))<br>
+(define b (<font color=red><strong>.</strong>SubPair.first$</font> x))<br>
+(define c(<font color=red><strong>.</strong>Pair.first$</font> x newval))<br>
+(define d (<font color=red><strong>.</strong>SubPair.first$</font> x newval))<br>
+<br>
+(define L '(1 2 3))<br>
+(define e (<font color=red><strong>.</strong>first$</font> L))<br>
+(<font color=red><strong>.</strong>first$</font> L 5)
+
+</TT><td>
+<strong>
+An <font color=blue>instance variable</font> 
+<br>
+is signified by 
+a "$" at the end and a leading "." as in 
+<font color=red>
+ "<strong>.</strong>Class.Name$" or "<strong>.</strong>Name$" </font>
+</strong>
+<br>
+Instance variables are viewed as get/set functions, <br>
+while static variables are viewed
+as Scheme variables which can be evaluated and set!'d.
+<br>
+The examples at left would be written in Java as:
+<pre>
+
+Object a=((Pair)x).first
+Object b=((SubPair)x).first
+Object c=((Pair)x).first = newval;
+Object d=((SubPair)x).first = newval;
+
+Pair L = new Pair(new Integer("1"),
+         new Pair(new Integer("2"),
+         new Pair(new Integer("3"),Pair.EMPTY)));
+Object e = L.first;
+L.first= 5;
+</pre>
+
+
+<tr><td><TT>
+(define c1 <font color=red>Object.class</font>) <br>
+(define c2 <font color=red>Line2D$Float.class</font>) <br>
+(define c3 <font color=red>int.class</font>) <br>
+(define c4 <font color=red>float[][].class</font> )<br>
+(define c5 <font color=red>Float[].class</font>) 
+</TT><td>
+<strong>
+The suffix ".class" signifies a <font color=red>class literal</font>. </strong>
+<br>
+The examples at left would be written in Java as:
+<pre>
+Class c1 = Object.class;
+Class c2 = Line2D.Float.class;
+Class c3 = int.class;
+Class c4 = float[][].class;
+Class c5 = Float[][].class;
+</pre>
+<br>
+Note that in Jscheme, "$" is used to indicate inner classes
+rather than "." as used by Java.
+
+<tr><td><pre>
+(define win 
+  (<font color=red>constructor</font> "Frame" "String"))
+(define frame-add 
+  (<font color=red>method</font> "add" "Frame" "Component"))
+</pre>
+<td>
+Jscheme also provides a mechanism for precisely and unambiguously
+specifying a method or constructor by giving its name, class, and
+argument types.
+</table>
+<p>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+</div>
+</body>
+</html>

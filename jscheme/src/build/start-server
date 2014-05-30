@@ -1,0 +1,1 @@
+java  -classpath lib/jscheme.jar jscheme.REPL src/build/start-server.scm '(gstart)'

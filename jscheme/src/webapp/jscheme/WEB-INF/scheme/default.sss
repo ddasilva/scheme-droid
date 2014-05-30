@@ -1,0 +1,97 @@
+;; default.sss
+;;
+;;  This scheme servlet is called when there is no other applicable servlet
+;;  mapping. It generates an error page with a listing of all the
+;;  information about the request and servlet.
+
+(lambda (httpservlet)
+
+(define (doGet request response)
+
+  (define (badNews m)
+    ;; These methods cause and error.
+    (or (.equals (.getName m) "getInputStream")))
+  
+  (define (isAccessor m)
+    ;; Rough guess.
+    (and (not (badNews m))
+         (not (Modifier.isStatic (.getModifiers m)))
+         (Modifier.isPublic (.getModifiers m))
+         (= (vector-length (.getParameterTypes m)) 0)
+         (or (.startsWith (.getName m) "get")
+  	   (.startsWith (.getName m) "is"))))
+  
+  (define ms
+    ;; Some things you can do to a Request.
+    (filter-in isAccessor
+  	     (vector->list
+  	      (.getMethods javax.servlet.http.HttpServletRequest.class))))
+  
+
+  
+  (define (displayGroup request groupName getNames getValue)
+    (tag-seq
+     (tag 'b groupName) ":\n"
+     (map* (lambda (name) (tag-seq "  " name ": " (getValue request name) "\n"))
+  	 (getNames request))))
+  
+
+  (define (displayItem m)
+    (let ((name (.getName m))
+	  (value (.invoke m request #())))
+      (if (.endsWith name "es")
+	  (displayItems name value)
+	  (tag-seq (tag 'b name) ": " value "\n"))))
+  (define (displayItems name vs)
+    (tag-seq (tag 'b name) ": \n"
+	     (map* (lambda (v) (tag-seq "  " v "\n")) vs)))
+
+
+;  (set! q request)				; Not very useful.
+;  (set! config (.getServletConfig httpservlet))
+  (.setContentType response "text/html")
+  (let ((out (.getWriter response))
+        (answer 
+   (tryCatch
+     (tag 'html
+	  (tag 'head (tag 'title "Scheme Servlet Error"))
+	  (tag '(body (bgcolor white))
+	       (tag 'h1 "Scheme Servlet Error" )
+               "Unknown Servlet --- "
+               (tag '(font (color red) (size +2))                       
+                        (U.stringify (.getPathInfo request) #t))
+               (tag 'em 
+                  "<p><hr><p>"
+                  " You have tried to access a servlet which is unknown to this server."
+                  " To help in your debugging of the problem, "
+                  " we have listed below the various headers,"
+                  " attributes, and parameter values of this servlet.<p><hr><p>")
+	       (tag 'pre
+		    (map (lambda (m) (displayItem m)) ms)
+		    (displayGroup httpservlet
+				  "Init Parameters"
+				  .getInitParameterNames
+				  .getInitParameter)
+		    (displayGroup request "Headers" .getHeaderNames .getHeader)
+		    (displayGroup request "Parameters" .getParameterNames .getParameterValues)
+		    (displayGroup request "Attributes" .getAttributeNames .getAttributes)
+    )))
+      (lambda(e) (.toString (list "ERROR" e))))))
+    (.println out answer)
+    (.close out)
+  )
+)
+
+  (define (doPost request response) (.doGet httpservlet request response))
+
+  ;; store scheme procedures into the httpservlet
+  (.do_get$ httpservlet doGet)
+  (.do_post$ httpservlet doPost)
+
+  ;; load the library defining the "tag" procedure used in doGet
+  (load "elf/basic.scm")
+)
+
+
+
+

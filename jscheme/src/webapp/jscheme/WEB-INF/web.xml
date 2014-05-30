@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE web-app
+    PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+    "http://java.sun.com/j2ee/dtds/web-app_2.3.dtd">
+
+<web-app>
+
+      <servlet>
+        <servlet-name>    sssphandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/sssp.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    sxmlhandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/sxml.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    brlshandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/brls.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    schemehandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/scheme.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    brls2handler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/brls2.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    jnlphandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/snlp.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    applethandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/applet.sss  </param-value> </init-param>
+      </servlet>
+
+      <servlet>
+        <servlet-name>    defaultservlethandler     </servlet-name>
+        <servlet-class>   jschemeweb.SchemeServlet    </servlet-class>
+        <init-param><param-name> code  </param-name> <param-value>  /WEB-INF/scheme/default.sss  </param-value> </init-param>
+      </servlet>
+
+
+      <servlet-mapping>
+        <servlet-name> sssphandler </servlet-name> <url-pattern> *.sssp </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> sxmlhandler </servlet-name> <url-pattern> *.sxml </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> brlshandler </servlet-name> <url-pattern> *.brls </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> schemehandler </servlet-name> <url-pattern> *.servlet </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> brls2handler </servlet-name> <url-pattern> *.brls2 </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> jnlphandler </servlet-name> <url-pattern> *.snlp </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> applethandler </servlet-name> <url-pattern> *.applet </url-pattern>
+      </servlet-mapping>
+
+      <servlet-mapping>
+        <servlet-name> defaultservlethandler </servlet-name> <url-pattern> /servlet/* </url-pattern>
+      </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,9 @@
+(begin
+  (load "webapps/jscheme/lib/mylib.scm")
+  (generic-page
+    "Demo page for ICFP talk" 
+    "body {background:black;color:white} h1{border: thick solid red}"
+    {<h1>My Pets</h1>
+      [(captioned-image "Snappy and Pepper" "cats.jpg")]
+     <br>
+      [(captioned-image "Missy" "missy.jpg")]}))

@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>A Jscheme Evaluator Applet</title>
+</head>
+<body bgcolor=#fafaff>
+<h1>A Jscheme Evaluator Applet</h1>
+The source code for this applet is in the file
+<a href="SchemeEval.scm">
+<code>SchemeEval.scm</code>
+</a>
+<p>
+This applet has paren matching (in a separate panel) and
+autoindenting.
+<p>
+This applet has been tested on the following platforms:
+<ul>
+<li> Mac OS X
+<ul>
+<li> Internet Explorer 5.1
+</ul>
+</ul>
+<p>
+<hr>
+<p>
+<table align=center border=20 cellspacing=20 cellpadding=20 bgcolor=#ccccff><tr>
+<td bgcolor=#ccccff>
+<applet  
+    code="jsint.SchemeApplet"  
+    codebase="../.."
+    archive="applet.jar"
+    height=400  width=600>
+    <param name="prog" value="SchemeEval.scm">
+    <param name="init" value="init">
+You need a Java-enabled browser to run this applet.
+</applet>
+</td></tr></table>
+</body>
+</html>
+

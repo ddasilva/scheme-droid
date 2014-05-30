@@ -1,0 +1,95 @@
+;; Wiki commands
+;;  init - create the database
+;;  edit - generate form for editting the database
+;;  do-edit - update the database using the form data
+;;  view - view the contents of the wiki
+(servlet
+ (cmd content file)
+ ;; code for doing global replace (put in elf or jlib....)
+ 
+ (define (replaceall-list Ps text)
+   (if (null? Ps) text
+       (replaceall-list (rest Ps) (replaceall (first Ps) text))))
+ 
+ (define (replaceall PR text)
+   (define p (java.util.regex.Pattern.compile (first PR)))
+   (define m (.matcher p text))
+   (.replaceAll m (second PR)))
+ 
+ (define (htmlquote x)
+   (replaceall-list 
+    `( (">" "&gt;") ("<" "&lt;") 
+       ("wiki:([a-zA-Z0-9]*)" ,{<a href="wiki.servlet?cmd=view&file=$0">$1</a>}))
+    x))
+ 
+ ;; this assumes we use the hsqldb database
+ (define (sqlquote x) (replaceall-list `( ("'" "''") )      x))
+ 
+ (define (getcontent w) 
+   (let ((c (rest (dbquery {select CONTENT from wiki where file='[w]'}))))
+     (if (null? c) "" (first (first c)))))
+ 
+ (define wfile (if (equal? file #null) "wiki:top" file))
+ (define wcmd (if (equal? cmd #null) "view" cmd))
+  
+ {<html><head><title>schemewiki:[wfile]</title>
+</head><body>
+<h1><a href="http://jscheme.sourceforge.net">JScheme</a> wiki</h1>
+<h2>
+[(if (equal? cmd #null) "" {Command: [wcmd]<br/>})]
+[(if (equal? file #null) "" {Topic: [file]})]
+</h2>
+[(case cmd
+   ((#null "init") ; try to create the databases for the first visit ...
+    (dbquery {create table wiki(file varchar(1024), content varchar(1024))})
+    (dbquery {insert into wiki values('wiki:top','Welcome, to the wiki:JScheme wiki:wiki')})
+    {<a href="?cmd=view">View Current Wiki</a><br/><br/>}
+   )
+
+   (("dump") (table (dbquery "select * from wiki")))
+
+   (("clear") (dbquery {delete from wiki where 1=1}) {Database has been cleared!})
+
+   (("view")
+    {<pre style="background:lightgreen; padding:0.2in; width:80%">[
+	  (htmlquote (getcontent wfile))]</pre>
+	  <br/><hr/><br/>
+	  <a href="?cmd=edit&file=[wfile]">edit</a>, 
+	  <a href="?cmd=listall">listall</a>,
+	  <a href="?cmd=backlinks&file=[file]">backlinks</a>
+	  <br/>
+	  }
+    )
+
+   (("backlinks")
+    {<ol>[(lis 
+	       (map htmlquote
+		    (map first
+			 (rest 
+			  (dbquery {select file from wiki where content like
+					   '%[file]%'})))))] </ol>})
+   (("listall")
+    {<ol>[(lis  
+	       (map htmlquote
+		    (map first (rest (dbquery {select * from wiki})))))]</ol>}
+    )
+   (("edit")
+    (let ((content (getcontent wfile)))
+      {
+       <form method="post" action="wiki.servlet" 
+       style="padding:10px; border:thin solid green;background:lightgreen">
+       <input type="submit" value="Store changes"><br/><br/>
+       <input name="file" type="hidden" value="[file]">
+       <input name="cmd" type="hidden" value="do_edit">
+       <textarea name="content" rows=40 cols=60>[content]</textarea><br/>}))
+   (("do_edit")
+    (let ((hcontent (sqlquote content)))
+      (dbquery {delete from wiki where file='[file]'})
+      (dbquery {insert into wiki values('[file]','[hcontent]')})
+      {inserting file=[file] and <br/> hcontent=[hcontent]<br/><br/>
+       <h2>edit successful, click <a href="?file=[file]&cmd=view">here</a> 
+		to view the modified wiki page</h2>}))
+   (else {unknown command: [cmd]})
+   )]
+<br/><br/>
+</body></html>})

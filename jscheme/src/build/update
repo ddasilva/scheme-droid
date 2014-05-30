@@ -1,0 +1,15 @@
+#! /bin/sh
+# sourceforge update script run by crontab for kanderso
+PATH=/usr/java/j2sdk1.4.2_01/bin:$PATH
+export PATH
+# printenv
+cd /home/groups/j/js/jscheme/htdocs/jscheme
+# get rid of mostly everything to avoid conflicts.
+# rm `find . -name '*.java' -o -name '*.scm' -o -name '*.html' -o -name '*.class'`
+rm `find . -name '*.class'`
+rm `find . -name '*~'`
+cvs -q -d:pserver:anonymous@cvs1.sourceforge.net:/cvsroot/jscheme update -dP
+crontab src/build/crontab
+bin/make | grep -v "^Generating doc/api"
+# record that you've run
+echo `date` >> update.txt

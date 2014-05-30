@@ -1,0 +1,280 @@
+<html>
+<head>
+  <link rel="stylesheet" href="man.css">
+  <title>Jscheme modules</title>
+  <style rel=stylesheet type="text/css">
+   <!--
+    li {margin-top:0.2in; margin-bottom:0.2in}
+    body {margin:0.5in}
+    -->
+  </style>
+</head>
+<body>
+<div class="main">
+<img src="../images/jscheme-icon2.gif" align="right">
+<h1>Modules in Jscheme</h1>
+<em>originally implemented by Derek Upham (derek.upham at ontain.com)</em><br/>
+<em>modified by Tim Hickey (5/04) to use the "use-module" syntax</em>
+<br><br>
+Modules are implemented using the facilty for creating and
+manipulating multiple independent JScheme instances. Each such
+instance constains a DynamicEnvironment which is a set of
+bindings of symbols to values. 
+<br><br>
+Any scheme file can be loaded as a module. The key idea is that
+when a file is loaded as a module it is first loaded into its
+own Jscheme instance (with a new DynamicEnvironment). Then
+the original environment is extended by importing some or all
+of the bindings from the module (possibly with a prefix).
+<br><br>
+The environments created when loading a module are cached so that
+modules are only loaded once. Moreover, a module can recursively
+use submodules, but modules can not depend on each other recursively
+as this will cause an infinite loop.
+<br><br>
+
+The syntax for using modules is as follows:
+<xmp>
+(use-module MODULE)
+(use-module MODULE SPECIFIER)
+(use-module MODULE SPECIFIER SYMBOLS)
+(use-module MODULE SPECIFIER SYMBOLS PREFIX)
+</xmp>
+where 
+ <ul>
+  <li> MODULE is a either a filename, or a URL, or the name of a compiled Scheme class</li>
+  <li> SPECIFIER is one of the following:
+   <ul>
+    <li> 'import-procedures</li>
+    <li> 'import-macros</li>
+    <li> 'import</li>
+   </ul>
+  and it specifies whether to import procedures, macros, or both. The default value is 'import.
+  </li>
+ <li> SYMBOLS is either the symbol 'all or is a list of symbols. The default value is 'all
+In the former case, all symbols defined in the module are imported to the 
+current environment; in the latter case, only those symbols in the list
+are imported
+</li>
+<li> PREFIX is a string which is prepended to each imported symbol from the module
+before that value is put into the current environment. The default value is the empty string "".
+</li>
+</ul>
+<h2>Examples</h2>
+The following are all equivalent:
+<xmp>
+(use-module "elf/basic.scm")
+(use-module "elf/basic.scm" 'import)
+(use-module "elf/basic.scm" 'import 'all)
+(use-module "elf/basic.scm" 'import 'all "")
+</xmp>
+<br/>
+The following examples show how to get more control over what is imported.
+You can import only procedures, or only macros, or import some subset
+of the procedure or macros.
+<xmp>
+> (use-module "elf/basic.scm" 'import-procedures 'all)
+> (print "string")
+
+> (use-module "elf/basic.scm" 'import-procedures '(describe print))
+> (describe print)
+
+> (use-module "elf/basic.scm" 'import-macros 'all)
+> (dotimes (x 5) (print x))
+
+> (use-module "elf/basic.scm" 'import-macros '(dotimes))
+> (dotimes (x 5) (display x))
+
+>(use-module "elf/basic.scm" 'import '(describe print dotimes))
+> (dotimes (x 5) (print x))
+
+</xmp>
+Finally, you can add arbitrary prefixes to the symbols that are imported,
+but prefixes are never applied to the macros.
+<xmp>
+> (use-module "elf/basic.scm" 'import-procedures '(describe print) "elf:")
+> (elf:describe 5)
+
+> (use-module "elf/basic.scm" 'import-procedures '(describe print) "elf-")
+> (elf-describe (java.awt.Button. "hi"))
+
+> (use-module "elf/basic.scm" 'import '(describe print dotimes) "elf:")
+> (dotimes (x 5) (elf:print x))
+</xmp>
+<br/>
+<br/>
+<br/>
+<h3>Explanations</h3>
+<ul>
+<li><code> (use-module "elf/basic.scm")</code> is equivalent to
+<br/>
+<code>(use-module "elf/basic.scm" 'import 'all "")</code>
+<br/>
+This creates a new JScheme instance js and loads elf/basic.scm into js.
+Then it takes each of the symbols defined in the js environment and
+transfers those bindings verbatim to the current environment. Note: any closures
+imported into the current environment will point to the js environment.
+Hence, we can freely modify the values of the primitives (set! car cdr)
+without changing the behavior of the procedures and macros imported from elf/basic.scm.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import-procedures)</code> is equivalent to <br/>
+<code>(use-module "elf/basic.scm" 'import-procedures 'all "")</code>
+<br/>
+This does the same as above, but only imports the procedures, not the macros.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import-procedures '(describe apropos))</code> is equivalent to
+<br/>
+<code>(use-module "elf/basic.scm" 'import-procedures '(describe apropos) "")</code>
+<br/>
+This does the same as the first example, but only imports two things, the bindings
+for the <code>describe</code> and <code>apropos</code> procedures.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import-macros '(dotimes))</code> is equivalent to
+<br/>
+<code> (use-module "elf/basic.scm" 'import-macros '(dotimes) "")</code> 
+<br/>
+This does the same as the first example, but only imports the
+binding for the <code>dotimes</code> macro.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import '(describe apropos dotimes))</code><br/>
+This does the same as the first example, but only imports three things, the bindings
+for the <code>describe</code> and <code>apropos</code> procedures and the 
+binding for the <code>dotimes</code> macro.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import-procedures '(describe apropos) "elf:")</code><br/>
+This does the same as the previous example, but it binds the <code>describe,apropos</code>
+values from the js environment to the symbols:
+<xmp>
+  elf:describe
+  elf:apropos
+</xmp>
+Note that the prefix is <b>not</b> applied to macros. The rationale here is that macros
+are changing the syntax of the language, and that introducing prefixes makes the syntax
+even more confusing.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import-procedures '(describe apropos) "elf-")</code><br/>
+This does the same as the previous example, but it binds the <code>describe,apropos</code>
+values from the js environment to the symbols:
+<xmp>
+  elf-describe
+  elf-apropos
+</xmp>
+Note that the prefix is <b>not</b> applied to macros. The rationale here is that macros
+are changing the syntax of the language, and that introducing prefixes makes the syntax
+even more confusing.
+</li>
+<li><code> (use-module "elf/basic.scm" 'import '(describe apropos dotimes) "elf:")</code><br/>
+This does the same as the previous example, but it binds the <code>describe,apropos,dotimes</code>
+values from the js environment to the symbols:
+<xmp>
+  elf:describe
+  elf:apropos
+  dotimes
+</xmp>
+Note that the prefix is <b>not</b> applied to macros. The rationale here is that macros
+are changing the syntax of the language, and that introducing prefixes makes the syntax
+even more confusing.
+</li>
+</ul>
+
+
+
+<h2>Deprecated approach to Modules<br/> using environment-import and language-import</h2>
+Modules are loaded using one of the following procedures:
+<pre>
+(environment-import FILENAME PREFIX)
+(environment-import FILENAME)
+(language-import FILENAME)
+</pre>
+Each of these creates a new environment (containing a copy of the (initial-environment)) and loads the specified
+file into that environment. After the load, the environment is "locked" so that one
+cannot change any bindings in the environment. Next, the variables in the environment
+are imported into the current environment and are bound to the values they have in the
+original environment, as follows:
+<ul>
+<li> For <b>language-import</b> only the variables bound to macros are 
+imported. </li>
+<li>For the <b>environment-import</b> only those variables not bound to macros
+are imported.
+</li>
+</ul>
+The environment-import allows you to specify a prefix string which will be prepended to all variables 
+before they are imported into the current environment. 
+<br>
+<h2>Examples</h2>
+<pre>
+> (environment-import "elf/basic.scm" "foo:")
+  #t
+> (foo:map* (lambda (x) (* x 2)) #(1 2 3))
+  (2 4 6)
+> (map* (lambda (x) (* x 2)) #(1 2 3))
+  (map* {jsint.Closure ??[1] (x)} #(1 2 3) )
+    ====================================
+  SchemeException:[[ERROR: undefined variable "map*"""]]
+</pre>
+
+Note that "map*" is renamed to "foo:map*" for us, but internally it still
+uses the plain "iterate" binding that is always does.  You can also load
+classes that use the normal "load()" method initialization convention:
+<pre>
+> (environment-import jlib.JLIB.class "jl:")
+  #t
+> (jl:menu "m1" (jl:menuitem "foo"))
+  java.awt.Menu[menu0,label=m1,tearOff=false,isHelpMenu=false]
+</pre>
+If we pass #f for the prefix, nothing is prefixed; the function acts like
+"load".  Assigning prefixes at load time gives more flexibility than
+depending on hierarchical module trees (c.f. namespace aliases in C++).
+Note that generic functions are merged correctly, not treated like other
+variables.
+<br>
+This mechanism only works for libraries that are idempotent; it can't matter
+how many times you've loaded the library, or which of the times you've
+loaded it you're referring to.  But a large class of Scheme code satisfies
+this restriction.  (Locking-down the new environments catches at least some
+violations of this rule.)  
+<br>
+<br>
+We have not yet added "caching" to the module loading code. Each time an
+environment-import or language-import is encountered, a new environment is
+created. This makes it easier to debug multi-module programs.
+<br>
+<br>
+Each time a prefixed environment is imported, a prefixed copy of the
+initial environment is also imported. Thus
+<pre>
+(environment-import "file.scm" "a:")
+</pre>
+will add the non-macro definitions in file.scm as well as all of the 
+primitives "a:car" "a:cdr" ... etc.
+If this file also imports a file with prefix say "b:", then variables of
+the form "a:b:car" "a:b:cdr", ... will be imported into the interaction environment.
+<br><br>
+<h2><code>eval</code> and environments</h2>
+There are three named environments accessible from Jscheme:
+<pre>
+(null-environment)  -- which contains no definitions, but does handle Javadot notation
+(initial-environment) -- which contains only the Jscheme primitives
+(interaction-environment) -- which is the "current" toplevel environment
+</pre>
+The <code>eval</code> procedure can be called with any of these three
+environments as its second parameter, e.g.
+<pre>
+> (eval `(jsint.Op.add 3 4) (null-environment)) 
+ 7
+> (eval '(begin (set! + *) (+ 3 4)) (initial-environment))
+ SchemeException:[[ERROR: attempting to alter bindings in locked environment:+ <-- {jsint.Primitive *[0,n]}""]]
+> (eval '(begin (set! + *) (+ 3 4)) (interaction-environment))
+12
+> (+ 3 4)
+12
+</pre>
+<br>
+<br>
+<br>
+<hr>
+<br>
+<br>
+</div>
+</body>
+</html>

@@ -1,0 +1,63 @@
+(begin
+
+(define jswebapp-menu 
+#{
+<div class="navbar">
+Downloads<br/>
+<a href="/jscheme/downloads/jswebapp.zip">jswebapp.zip</a><br/>
+<br/>
+Documentation<br/>
+<a href="install.html">Installation</a><br/>
+<a href="webxml.html">Configuring web.xml</a><br/>
+<a href="jscheme/demo/">Demo folder</a><br/>
+<a href="../main.html">Back to Contrib</a><br/>
+<!--
+  <a href="servlets.html">Writing Servlets</a><br/>
+  <a href="util.html">Utility procedures</a><br/>
+  <a href="text.html">Textbook for novices</a><br/>
+  <a href="architecture.html">Webapp Architecture</a><br/>
+-->
+</div>
+}#
+)
+
+
+(jswebpage "../.." "JScheme Servlets and Applets" jswebapp-menu
+#{
+<div class="main">
+<p>
+The JScheme webapp,
+<a href="/jscheme/downloads/jscheme-webapp.zip">jscheme-webapp.zip</a>,
+is a file that can be unzipped and dropped into the webapps folder 
+of any Servlet container (e.g. <a href="http://jakarta.apache.org/tomcat">tomcat</a>,
+<a href="http://jetty.mortbay.org">jetty</a>,
+<a href="http://www.caucho.com">resin</a>, ...).
+</p>
+<p>
+Once the servlet container is started (or the jscheme-webapp started in a running servlet container),
+you can write servlets, applets,
+and java web start applications directly in Scheme.
+</p>
+<p>
+You can also start webapps directly in Scheme 
+provided you have
+the necessary jar files (e.g. the lib and ext folders in the Jetty distribution).
+Here are two examples:
+<ol>
+<li> <a href="startserver.scm">startserver.scm</a> -- shows how to start a server which loads up the
+jscheme webapp</li>
+<li> <a href="simpleserver.scm">simpleserver.scm</a> -- shows how to start a server which defines two
+servlets directly in Scheme and starts a server that only handles those two servlets.</li>
+</ol>
+The startserver.scm examples uses the following four jar files from the Jetty/lib and Jetty/ext folders:
+<ul>
+<li> javax.servlet.jar</li>
+<li> org.mortbay.jetty.jar</li>
+<li> jasper-runtime.jar</li>
+<li> jasper-compiler.jar</li>
+</ul>
+The simpleserver.scm example only uses the first two jars (which are 75KB and 570KB respectively).
+</p>
+</div>
+}#)
+)
