@@ -23,4 +23,8 @@ debug:
 install: debug
 	ant installd
 
+test:
+	${ANDROID_HOME}/platform-tools/adb shell am instrument -w \
+		net.meltingwax.schemedroid.test/android.test.InstrumentationTestRunner
+
 .PHONY: all clean jscheme debug install
