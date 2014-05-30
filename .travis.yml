@@ -2,8 +2,18 @@ language: android
 android:
   components:
     - build-tools-19.0.2
-
+    - android-19
+    - sysimg-19
+    - extra-android-support
+  licenses:
+    - *
+before-install:
+  - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
+  - emulator -avd test -no-skin -no-audio -no-window &
+before_script:
+  - ./wait_for_emulator
+  - adb shell input keyevent 82 &
 script:
-- make jscheme
-- make
-- make test
+  - make jscheme
+  - make
+  - make test
