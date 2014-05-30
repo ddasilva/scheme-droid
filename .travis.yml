@@ -6,3 +6,4 @@ android:
 script:
 - make jscheme
 - make
+- make test
