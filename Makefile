@@ -14,11 +14,12 @@ clean:
 jscheme:
 	cd jscheme && ./bin/make.sh
 	cd ..
-	cp jscheme/lib/jscheme.jar lib/
+	cp jscheme/lib/jscheme.jar libs/
 
-debug:
+debug: jscheme
 	ant debug
 
-install:
+install: debug
 	ant installd
 
+.PHONY: all clean jscheme debug install
