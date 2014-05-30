@@ -209,7 +209,11 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 				resp = e.getMessage();
 			} catch (final Exception e) {
 				resp = "Generic Error: " + e.toString();
- 			}
+			} catch (final Error e) {
+				resp = "Critical Error: " + e.toString();
+			} catch (final Throwable e) {
+				resp = "Unknown Error: " + e.toString();
+			}
 
 			console.append("\n> " + code + "\n");
 			console.append(resp);
