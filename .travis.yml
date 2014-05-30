@@ -21,4 +21,5 @@ before_script:
 script:
   - make jscheme
   - make
+  - make install
   - make test
