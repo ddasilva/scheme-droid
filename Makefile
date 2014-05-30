@@ -10,13 +10,14 @@ all:
 
 clean:
 	rm -rf bin/*
+	find jscheme -name '*.class' | xargs rm -f
 
 jscheme:
 	cd jscheme && ./bin/make.sh
 	cd ..
 	cp jscheme/lib/jscheme.jar libs/
 
-debug: jscheme
+debug:
 	ant debug
 
 install: debug

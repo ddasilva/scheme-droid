@@ -8,10 +8,11 @@ Scheme Droid is [available on the Google Play Store](https://market.android.com/
 
 To build and install onto your device, first set the ``$ANDROID_HOME`` environmental variable and then execute the following commands. Building on Windows is not currently supported.
 
+    $ make jscheme
     $ make
     $ make install
 
-**Eclipse and ADT users** must execute ``make`` first, and then may use the integrated compilation and deployment tools.
+**Eclipse and ADT users** only need to execute ``make jscheme`` once, and then may use the integrated compilation and deployment tools in their IDE.
 
 # License
 
