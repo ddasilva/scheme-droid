@@ -25,7 +25,7 @@
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:inputType="text|textNoSuggestions"
-          android:imeOptions="actionDone"
+          android:imeOptions="actionNone"
           android:imeActionLabel="@string/button_eval"
           android:hint="@string/input_code_hint"
           android:singleLine="true"

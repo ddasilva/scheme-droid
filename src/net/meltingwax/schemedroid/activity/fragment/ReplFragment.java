@@ -116,12 +116,17 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 			@Override
 			public boolean onEditorAction(final TextView v, final int actionId,
 					final KeyEvent event) {
-				if (EditorInfo.IME_ACTION_DONE == actionId || (event != null
-						&& event.getAction() == KeyEvent.ACTION_DOWN
-						&& event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-					processEntry();
+				// Consume all events, acting only on KeyEvent.ACTION_DOWN.
+				// If we do not consume KeyEvent.ACTION_UP as well, the
+				// code input does not retain focus after enter is pushed on
+				// a physical keyboard.
+				if (EditorInfo.IME_NULL == actionId && event != null) {
+					if (event.getAction() == KeyEvent.ACTION_DOWN) {
+						processEntry();
+					}
 					return true;
 				}
+
 				return false;
 			}
 		});
@@ -204,7 +209,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 				resp = e.getMessage();
 			} catch (final Exception e) {
 				resp = "Generic Error: " + e.toString();
-			}
+ 			}
 
 			console.append("\n> " + code + "\n");
 			console.append(resp);
