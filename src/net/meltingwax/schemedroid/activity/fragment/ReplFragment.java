@@ -96,6 +96,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		/*
 		 * Entry (input) Configuration
 		 * - Set font to MonoSpace
+		 * - Request focus
 		 * - Restore text from old saved instance, if one exists
 		 * - Attach new EntryHighlighter instance to response to changes
 		 * - Attach anonymous listeners to respond to enter press
@@ -103,6 +104,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		EditText oldEntry = entry;
 		entry = (EditText) view.findViewById(R.id.code_input);
 		entry.setTypeface(Typeface.MONOSPACE);
+		entry.requestFocus();
 
 		if (oldEntry != null) {
 			entry.setText(oldEntry.getText());
