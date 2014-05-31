@@ -24,9 +24,6 @@ install:
 	cd app && ant installd
 
 test:
-	cd app && \
-	${ANDROID_HOME}/platform-tools/adb shell am instrument -w \
-		net.meltingwax.schemedroid/android.test.InstrumentationTestRunner
-
+	./tools/run_tests.py
 
 .PHONY: all clean jscheme debug install test

@@ -16,7 +16,7 @@ before_install:
   - echo no | android create avd --force -n test -t $ANDROID_TARGET --abi $ANDROID_ABI
   - emulator -avd test -no-skin -no-audio -no-window &
 before_script:
-  - ./wait_for_emulator.sh
+  - ./tools/wait_for_emulator.sh
   - adb shell input keyevent 82 &
 script:
   - make jscheme
