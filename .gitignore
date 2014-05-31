@@ -1,6 +1,17 @@
+
+# Scheme Droid build results
 bin
 gen
 *.class
+
+# JScheme unused
 WEB-INF
+
+# JScheme build result
 app/libs/jscheme.jar
+
+# JScheme file that stores the build date
+version.txt
+
+# JScheme generated documentation
 *.html
