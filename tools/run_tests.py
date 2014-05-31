@@ -35,7 +35,6 @@ def main():
 
     # Run the command through a pipe, and keep track of its stdout/stderr.
     # Use the stdout/stderr to check for failure, using FAILURE_WORDINGS.
-    global process
     process = subprocess.Popen(args,
                                stdout=subprocess.PIPE,
                                stderr=subprocess.PIPE)
