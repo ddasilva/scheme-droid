@@ -1,4 +1,4 @@
-# Scheme Droid
+# Scheme Droid [![Build Status](https://api.travis-ci.org/ddasilva/scheme-droid.png)](https://travis-ci.org/ddasilva/scheme-droid)
 
 Scheme Droid is a REPL (Read Eval Print Loop) Scheme interpreter for Android. [Scheme](http://en.wikipedia.org/wiki/Scheme_%28programming_language%29) is a minimalist, multi-paradigm dialect of Lisp. Scheme Droid is powered by an enhanced version of the [JScheme](http://jscheme.sourceforge.net/jscheme/main.html) Library.
 
