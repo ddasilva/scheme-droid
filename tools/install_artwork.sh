@@ -3,6 +3,8 @@
 # This script is for converting to the artwork/icon.xcf file to a PNG and
 # resizing it to the various dimensions for res/drawable-$cat/ic_launcher.png.
 
+readonly BASE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/.."
+
 
 check_deps() {
     if [ ! $(which xcf2png) ]; then
@@ -32,14 +34,14 @@ do_resize() {
     local icon_png=$3
     local cat=$4
  
-    local out_png="res/drawable-$cat/ic_launcher.png"
+    local out_png="$BASE_DIR/app/res/drawable-$cat/ic_launcher.png"
 
     convert -resize ${width}x${height} $icon_png $out_png
 }
 
 
 main() {
-    local icon_xcf="artwork/icon.xcf"
+    local icon_xcf="$BASE_DIR/artwork/icon.xcf"
     local icon_png="/tmp/sd_icon.png"
 
     check_deps
