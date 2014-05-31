@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentActivity;
  */
 public class SchemeDroid extends FragmentActivity {
 
+	private ReplFragment replFragment;
+
 	@Override
 	public void onCreate(final Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -24,12 +26,15 @@ public class SchemeDroid extends FragmentActivity {
 				args.putString(ReplFragment.ARG_FILE, getIntent().getData()
 						.getPath());
 			}
-			final ReplFragment f = new ReplFragment();
-			f.setArguments(args);
+			replFragment = new ReplFragment();
+			replFragment.setArguments(args);
 			getSupportFragmentManager().beginTransaction()
-					.replace(android.R.id.content, f, ReplFragment.TAG)
+					.replace(android.R.id.content, replFragment, ReplFragment.TAG)
 					.commit();
 		}
 	}
 
+	public ReplFragment getReplFragment() {
+		return replFragment;
+	}
 }

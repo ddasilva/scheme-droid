@@ -11,7 +11,7 @@ import android.widget.TextView;
 public class SchemeDroidTest extends
 		ActivityInstrumentationTestCase2<SchemeDroid> {
 
-	private Activity activity;
+	private SchemeDroid activity;
 	private TextView console;
 	private EditText entry;
 	private Button evalButton;
@@ -34,12 +34,5 @@ public class SchemeDroidTest extends
 
 		evalButton = (Button) activity.findViewById(
 				net.meltingwax.schemedroid.R.id.button_eval);
-	}
-	
-	@UiThreadTest
-	public void testErronousInput() {
-		entry.requestFocus();
-		entry.setText("(a");
-		evalButton.callOnClick();
 	}
 }

@@ -217,15 +217,15 @@ public class Listener11swing extends Listener11 implements javax.swing.event.Und
         handler.apply(U.list(e));
       }
     
+  public void changedUpdate(javax.swing.event.DocumentEvent e) {
+        handler.apply(U.list(e));
+      }
+    
   public void insertUpdate(javax.swing.event.DocumentEvent e) {
         handler.apply(U.list(e));
       }
     
   public void removeUpdate(javax.swing.event.DocumentEvent e) {
-        handler.apply(U.list(e));
-      }
-    
-  public void changedUpdate(javax.swing.event.DocumentEvent e) {
         handler.apply(U.list(e));
       }
     

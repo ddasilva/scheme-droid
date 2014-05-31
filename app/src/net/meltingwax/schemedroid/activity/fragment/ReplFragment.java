@@ -183,7 +183,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		getLoaderManager().initLoader(LOADER_INIT, args, this);
 	}
 
-	private void reset() {
+	public void reset() {
 		js = new JScheme();
 		console.setText("");
 		entry.setText("");
