@@ -14,8 +14,6 @@ To build and install onto your device, first set the ``$ANDROID_HOME`` environme
 
 **Eclipse and ADT users** only need to execute ``make jscheme`` once, and then may use the integrated compilation and deployment tools in their IDE.
 
-# Testing
-
 To run the tests, execute the following command. You must have an emulator running or a physical device connected.
 
     $ make test
