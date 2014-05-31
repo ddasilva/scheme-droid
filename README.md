@@ -14,6 +14,12 @@ To build and install onto your device, first set the ``$ANDROID_HOME`` environme
 
 **Eclipse and ADT users** only need to execute ``make jscheme`` once, and then may use the integrated compilation and deployment tools in their IDE.
 
+# Testing
+
+To run the tests, execute the following command. You must have an emulator running or a physical device connected.
+
+    $ make test
+
 # License
 
 Scheme Droid is, and always will be, free software. The code of Scheme Droid is licensed under the [GNU GPL v2](http://www.gnu.org/licenses/gpl-2.0.html) (see ``LICENSE``), and the bundled code of JScheme is licensed under the [zlib/libpng open source license](http://www.libpng.org/pub/png/src/libpng-LICENSE.txt) (see ``LICENSE.jscheme``).
