@@ -41,6 +41,5 @@ public class SchemeDroidTest extends
 		entry.requestFocus();
 		entry.setText("(a");
 		evalButton.callOnClick();
-		assertTrue("Test", false);
 	}
 }
