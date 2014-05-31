@@ -9,21 +9,24 @@ all:
 	make debug
 
 clean:
-	rm -rf bin/*
+	rm -rf app/bin/*
+	rm -rf app/gen/*
 
 jscheme:
 	cd jscheme && ./bin/make.sh
 	cd ..
-	cp jscheme/lib/jscheme.jar libs/
+	cp jscheme/lib/jscheme.jar app/libs/
 
 debug:
-	ant debug
+	cd app && ant debug
 
-install: debug
-	ant installd
+install:
+	cd app && ant installd
 
 test:
+	cd app && \
 	${ANDROID_HOME}/platform-tools/adb shell am instrument -w \
 		net.meltingwax.schemedroid/android.test.InstrumentationTestRunner
+
 
 .PHONY: all clean jscheme debug install test

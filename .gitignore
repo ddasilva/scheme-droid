@@ -2,5 +2,5 @@ bin
 gen
 *.class
 WEB-INF
-libs/jscheme.jar
+app/libs/jscheme.jar
 *.html
