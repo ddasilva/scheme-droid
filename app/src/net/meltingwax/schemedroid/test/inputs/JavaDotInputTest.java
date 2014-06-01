@@ -5,7 +5,7 @@ import android.test.UiThreadTest;
 public class JavaDotInputTest extends InputSetTestCase {
 
 	@UiThreadTest
-	public void testMathClass() {
+	public void testMathTrigFunctions() {
 		sendInput("(Math.sin 1.0)");
 		assertConsoleContains(".84");
 
@@ -14,6 +14,13 @@ public class JavaDotInputTest extends InputSetTestCase {
 
 		sendInput("(Math.tan 1.0)");
 		assertConsoleContains("1.55");
+	}
+
+	@UiThreadTest
+	public void testMathPiConstanst() {
+		sendInput("Math.PI$");
+		assertConsoleContains(
+				Double.valueOf(Math.PI).toString().substring(0, 5));
 	}
 
 	@UiThreadTest
