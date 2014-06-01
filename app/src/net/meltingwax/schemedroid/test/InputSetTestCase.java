@@ -1,22 +1,20 @@
 package net.meltingwax.schemedroid.test;
 
 import net.meltingwax.schemedroid.SchemeDroid;
-import android.app.Activity;
 import android.test.ActivityInstrumentationTestCase2;
-import android.test.UiThreadTest;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public class SchemeDroidTest extends
-		ActivityInstrumentationTestCase2<SchemeDroid> {
+public class InputSetTestCase extends
+	ActivityInstrumentationTestCase2<SchemeDroid>{
 
 	private SchemeDroid activity;
 	private TextView console;
 	private EditText entry;
 	private Button evalButton;
 	
-	public SchemeDroidTest() {
+	public InputSetTestCase() {
 		super(SchemeDroid.class);
 	}
 
@@ -25,7 +23,7 @@ public class SchemeDroidTest extends
 		setActivityInitialTouchMode(false);
 
 		activity = getActivity();
-		
+
 		console = (TextView) activity.findViewById(
 				net.meltingwax.schemedroid.R.id.console);
 		
@@ -34,5 +32,18 @@ public class SchemeDroidTest extends
 
 		evalButton = (Button) activity.findViewById(
 				net.meltingwax.schemedroid.R.id.button_eval);
+	}
+
+	protected void doInputTest(String ... inputs) {
+		activity.getReplFragment().reset();
+
+		for (String input : inputs) {
+			entry.setText(input);
+			evalButton.callOnClick();
+		}
+	}
+
+	protected void assertConsoleContains(String text) {
+		assertTrue(console.getText().toString().contains(text));
 	}
 }
