@@ -34,12 +34,16 @@ public class EntryHighlighter implements TextWatcher {
 
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
-		CharSequence text = entry.getText();
-		int textLength = text.length();
-		int cursorPos = start + count - 1;
+		final CharSequence text = entry.getText();
+		final int textLength = text.length();
+		final int cursorPos = start + count - 1;
 
-		if (textLength > 0 && entry.getText().charAt(cursorPos) == ')') {
+		// Acting conditions
+		final boolean nonEmpty = (textLength > 0);
+		final boolean addingNewChar = (before == 0);
+		final boolean cursorAtRightParen = (nonEmpty && text.charAt(cursorPos) == ')');
 
+		if (nonEmpty && addingNewChar && cursorAtRightParen) {
 			// Search for last unbalanced left parenthesis
 			final LinkedList<Integer> openParens = new LinkedList<Integer>();
 			boolean inQuotes = false;
