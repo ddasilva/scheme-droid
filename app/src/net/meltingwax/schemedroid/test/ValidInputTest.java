@@ -43,4 +43,16 @@ public class ValidInputTest extends InputSetTestCase {
 		assertConsoleContains("3");
 		assertConsoleContains("97");
 	}
+
+	@UiThreadTest
+	public void testConsNumberAndNumber() {
+		sendInput("(cons 3 4)");
+		assertConsoleContains("(3 . 4)");
+	}
+
+	@UiThreadTest
+	public void testConsNumberAndEmptyList() {
+		sendInput("(cons 3 '())");
+		assertConsoleContains("(3)");
+	}
 }
