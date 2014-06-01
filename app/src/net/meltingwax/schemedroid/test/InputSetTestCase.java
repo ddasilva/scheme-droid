@@ -34,16 +34,21 @@ public class InputSetTestCase extends
 				net.meltingwax.schemedroid.R.id.button_eval);
 	}
 
-	protected void doInputTest(String ... inputs) {
+	protected void sendInput(String ... inputs) {
 		activity.getReplFragment().reset();
 
-		for (String input : inputs) {
+		for (final String input : inputs) {
 			entry.setText(input);
 			evalButton.callOnClick();
 		}
 	}
 
 	protected void assertConsoleContains(String text) {
-		assertTrue(console.getText().toString().contains(text));
+		final String message =
+				"Console does not contain: " + text + "\n"
+				+ "Consoles contents are: " + console.getText();
+		final boolean assertion = console.getText().toString().contains(text);
+
+		assertTrue(message, assertion);
 	}
 }

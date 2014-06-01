@@ -11,21 +11,21 @@ public class ErroneousInputTest extends InputSetTestCase {
 
 	@UiThreadTest
 	public void testCallUndefinedFunction() {
-		doInputTest("(foobar)");
+		sendInput("(foobar)");
 	}
 
 	@UiThreadTest
 	public void testCallWithUnbalancedParenthesis() {
-		doInputTest("(foo", "bar)");
+		sendInput("(foo", "bar)");
 	}
 
 	@UiThreadTest
 	public void testReferenceUndefinedVariable() {
-		doInputTest("foobar", "foo", "bar", "foo-bar");
+		sendInput("foobar", "foo", "bar", "foo-bar");
 	}
 
 	@UiThreadTest
 	public void testCdrEmptyList() {
-		doInputTest("(cdr '())");
+		sendInput("(cdr '())");
 	}
 }

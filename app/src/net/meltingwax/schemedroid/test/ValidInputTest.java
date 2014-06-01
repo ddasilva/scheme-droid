@@ -12,27 +12,35 @@ public class ValidInputTest extends InputSetTestCase {
 	@UiThreadTest
 	public void testNumberLiteral() {
 		for (int i = -100; i <= 100; i++) {
-			doInputTest(i + "");
+			sendInput(i + "");
 		}
 	}
-	
+
 	@UiThreadTest
 	public void testDefineFunction() {
-		doInputTest("(define (f x) (+ x 1))");
-		doInputTest("(define f (lambda (x) (+ x 1)))");
+		sendInput("(define (f x) (+ x 1))");
+		sendInput("(define f (lambda (x) (+ x 1)))");
 	}
-	
+
 	@UiThreadTest
 	public void testApplyFunction() {
-		doInputTest("(define (f x) (+ x 1))", "(f 100)");
+		sendInput("(define (f x) (+ x 1))", "(f 100)");
 		assertConsoleContains("101");
 
-		doInputTest("(define (f ls) "
+		sendInput("(define (f ls) "
 					+ "(if (null? ls) '() "
 					+ "(cons (* 2 (car ls)) (f (cdr ls)))))",
 					"(f '(300 400 500))");
 		assertConsoleContains("600");
 		assertConsoleContains("800");
 		assertConsoleContains("1000");
+	}
+
+	@UiThreadTest
+	public void testMapBuiltin() {
+		sendInput("(map (lambda (x) (- x 2)) '(0 5 99))");
+		assertConsoleContains("-2");
+		assertConsoleContains("3");
+		assertConsoleContains("97");
 	}
 }
