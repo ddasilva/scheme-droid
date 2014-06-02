@@ -13,6 +13,21 @@ public class Evaluator implements java.io.Serializable {
   public boolean setExit(boolean exit) {
     return this.exit = exit;
   }
+  
+  /** Begin Scheme Droid modification
+   * Adds CancelIndicator member, which it later uses to call isCanceled() to
+   * determine if the execute loop should stop.
+   */
+  public interface CancelIndicator {
+	  public boolean isCancelled();
+  }
+  
+  public CancelIndicator cancelIndicator = null;
+  
+  public void setCancelIndicator(CancelIndicator cancelIndicator) {
+	  this.cancelIndicator = cancelIndicator;
+  }
+  /** End Scheme Droid modification */
 
   private transient InputPort   input  = new InputPort(System.in);
   public void setInput(InputPort ip) { this.input = ip; }
@@ -356,6 +371,14 @@ public class Evaluator implements java.io.Serializable {
     // The idea is that in a tail recursive position, we do "x = ..."
     // and loop, rather than doing "return execute(...)".
     do {
+    	/** Begin Scheme Droid modification
+    	 * Use the cancel indicator (if any) to test whether to break
+    	 * the execution loop.
+    	 */
+    	if (cancelIndicator != null && cancelIndicator.isCancelled()) {
+    		return Symbol.intern("interrupted");
+    	}
+  
       if (!(x instanceof Object[])) {
 	if (x instanceof DynamicVariable)
 	  return ((DynamicVariable)x).getDynamicValue();

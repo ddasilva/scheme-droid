@@ -1,19 +1,25 @@
 package net.meltingwax.schemedroid.activity.fragment;
 
+import java.io.BufferedOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 
 import jscheme.JScheme;
 import net.meltingwax.schemedroid.R;
 import net.meltingwax.schemedroid.activity.SchemeResources;
 import net.meltingwax.schemedroid.ui.EntryHighlighter;
 import net.meltingwax.schemedroid.util.BaseAsyncTaskLoader;
+import net.meltingwax.schemedroid.util.EvalAsyncTask;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager.LoaderCallbacks;
 import android.support.v4.content.Loader;
@@ -26,6 +32,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -58,6 +65,12 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 	/** Console input. */
 	private EditText entry;
 
+	/** Current evaluation async task */
+	private EvalAsyncTask currentEvalTask;
+
+	/** Output handler */
+	private Handler outputHandler;
+	
 	/** File was loaded. */
 	private boolean loadedFile = false, inited = false;
 
@@ -68,6 +81,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		setRetainInstance(true);
 
 		js = new JScheme();
+		currentEvalTask = null;
 	}
 
 	@Override
@@ -84,6 +98,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		 * Console Configuration
  		 * - Set font to MonoSpace
 		 * - Restore text from old saved instance, it one exists
+		 * - Tie the JScheme output to the console
 		 */
 		TextView oldConsole = console;
 		console = (TextView) view.findViewById(R.id.console);
@@ -92,7 +107,21 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		if (oldConsole != null) {
 			console.setText(oldConsole.getText());
 		}
-		
+
+		outputHandler = new Handler();
+		js.getEvaluator().setOutput(
+			/* this is ridiculous and needs to be rewritten */
+			new PrintWriter(new BufferedOutputStream(new OutputStream() {
+				public void write(final int oneByte) throws IOException {
+					outputHandler.post(new Runnable() {
+						public void run() {
+							char charArray[] = Character.toChars(oneByte);
+							console.append(new String(charArray));
+						}
+					});
+				}
+		})));
+
 		/*
 		 * Entry (input) Configuration
 		 * - Set font to MonoSpace
@@ -164,6 +193,11 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 
 	@Override
 	public boolean onOptionsItemSelected(final MenuItem item) {
+		if (item.getItemId() == R.id.menu_cancel) {
+			cancel();
+			return true;
+		}
+
 		if (item.getItemId() == R.id.menu_reset) {
 			reset();
 			return true;
@@ -191,6 +225,14 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		init();
 	}
 
+	private void cancel() {
+		if (currentEvalTask != null) {
+			if (!currentEvalTask.cancel(true)) {
+				Log.e(TAG, "Could not cancel the eval task");
+			}
+		}
+	}
+
 	/**
 	 * Processes the code in the entry EditText and updates the UI.
 	 */
@@ -198,31 +240,35 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		final String code = entry.getText().toString().trim();
 
 		if (code.length() > 0) {
-			String resp;
-
-			try {
-				Object ret = js.eval(code);
-				resp = jsint.U.stringify(ret);
-			} catch (final jscheme.SchemeException e) {
-				resp = e.getMessage();
-			} catch (final jsint.BacktraceException e) {
-				resp = e.getMessage();
-			} catch (final Exception e) {
-				resp = "Generic Error: " + e.toString();
-			} catch (final Error e) {
-				resp = "Critical Error: " + e.toString();
-			} catch (final Throwable e) {
-				resp = "Unknown Error: " + e.toString();
-			}
-
 			console.append("\n> " + code + "\n");
-			console.append(resp);
-
+			currentEvalTask = new EvalAsyncTask(this);
+			currentEvalTask.execute(code);
 			entry.setText("");
+			entry.setEnabled(false);
 		} else {
 			Toast.makeText(getActivity(), R.string.error_code_empty,
 					Toast.LENGTH_SHORT).show();
 		}
+	}
+
+	public void clearEvalTask() {
+		currentEvalTask = null;
+	}
+	
+	public TextView getConsole() {
+		return console;
+	}
+	
+	public EditText getEntry() {
+		return entry;
+	}
+	
+	public JScheme getJScheme() {
+		return js;
+	}
+
+	public EvalAsyncTask getCurrentEvalTask() {
+		return currentEvalTask;
 	}
 
 	@Override
@@ -305,4 +351,5 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		}
 	}
 
+	
 }

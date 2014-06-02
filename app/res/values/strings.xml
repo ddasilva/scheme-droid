@@ -16,6 +16,7 @@
     <string name="title_repl">Scheme Droid REPL</string>
     <string name="title_resources">Scheme Droid Resources</string>
     
+    <string name="menu_cancel">Cancel</string>
     <string name="menu_reset">Reset</string>
     <string name="menu_resources">Resources</string>
     
