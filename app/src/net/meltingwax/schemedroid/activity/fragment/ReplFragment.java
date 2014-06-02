@@ -60,13 +60,12 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 
 	/** JScheme core. */
 	private JScheme js;
+	/** Current evaluation AsyncTask */
+	private EvalAsyncTask currentEvalTask;
 	/** Console output. */
 	private TextView console;
 	/** Console input. */
 	private EditText entry;
-
-	/** Current evaluation async task */
-	private EvalAsyncTask currentEvalTask;
 
 	/** Output handler */
 	private Handler outputHandler;
