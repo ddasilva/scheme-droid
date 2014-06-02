@@ -350,6 +350,4 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 			return path;
 		}
 	}
-
-	
 }
