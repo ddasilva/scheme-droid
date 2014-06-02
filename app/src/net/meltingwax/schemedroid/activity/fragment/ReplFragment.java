@@ -67,7 +67,7 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 	/** Console input. */
 	private EditText entry;
 
-	/** Output handler */
+	/** Handler for use in custom OutputStream. */
 	private Handler outputHandler;
 	
 	/** File was loaded. */
