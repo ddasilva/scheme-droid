@@ -5,20 +5,22 @@ import jscheme.JScheme;
 import jsint.Evaluator.CancelIndicator;
 import android.os.AsyncTask;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class EvalAsyncTask extends AsyncTask<String, Void, String> implements CancelIndicator {
 
 	private JScheme js;
 	private TextView console;
+	private ProgressBar runningIndicator;
 	private EditText entry;
 	private ReplFragment fragment;
 	
 	public EvalAsyncTask(ReplFragment fragment) {
 		this.js = fragment.getJScheme();
 		this.console = fragment.getConsole();
+		this.runningIndicator = fragment.getRunningIndicator();
 		this.entry = fragment.getEntry();
 		this.fragment = fragment;
 	}
@@ -65,6 +67,7 @@ public class EvalAsyncTask extends AsyncTask<String, Void, String> implements Ca
 	protected void onPostExecute(String result) {
 		fragment.clearEvalTask();
 		console.append(result);
+		runningIndicator.setVisibility(View.INVISIBLE);
 		entry.setEnabled(true);
 	}
 }

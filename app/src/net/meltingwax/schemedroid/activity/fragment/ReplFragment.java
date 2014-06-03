@@ -1,6 +1,5 @@
 package net.meltingwax.schemedroid.activity.fragment;
 
-import java.io.BufferedOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,7 +7,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import java.util.LinkedList;
 
 import jscheme.JScheme;
 import net.meltingwax.schemedroid.R;
@@ -32,8 +30,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
@@ -58,12 +56,17 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 	/** Init file. */
 	private static final String INIT_FILE = "jscheme.init";
 
+	/** How long to let eval task run before display running indicator. */
+	private static final long RUNNING_INDICATOR_DELAY = 1000;
+
 	/** JScheme core. */
 	private JScheme js;
 	/** Current evaluation AsyncTask */
 	private EvalAsyncTask currentEvalTask;
 	/** Console output. */
 	private TextView console;
+	/** Running indicator. */
+	private ProgressBar runningIndicator;
 	/** Console input. */
 	private EditText entry;
 
@@ -108,9 +111,10 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 		}
 
 		outputHandler = new Handler();
+
 		js.getEvaluator().setOutput(
 			/* this is ridiculous and needs to be rewritten */
-			new PrintWriter(new BufferedOutputStream(new OutputStream() {
+			new PrintWriter(new OutputStream() {
 				public void write(final int oneByte) throws IOException {
 					outputHandler.post(new Runnable() {
 						public void run() {
@@ -119,7 +123,12 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 						}
 					});
 				}
-		})));
+		}));
+
+		/*
+		 * Running indicator Configuration
+		 */
+		runningIndicator = (ProgressBar) view.findViewById(R.id.progress_running);
 
 		/*
 		 * Entry (input) Configuration
@@ -244,6 +253,15 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 			currentEvalTask.execute(code);
 			entry.setText("");
 			entry.setEnabled(false);
+			
+			new Handler().postDelayed(new Runnable() {
+				@Override
+				public void run() {
+					if (currentEvalTask != null) {
+						runningIndicator.setVisibility(View.VISIBLE);
+					}
+				}
+			}, RUNNING_INDICATOR_DELAY);
 		} else {
 			Toast.makeText(getActivity(), R.string.error_code_empty,
 					Toast.LENGTH_SHORT).show();
@@ -256,6 +274,10 @@ public class ReplFragment extends Fragment implements LoaderCallbacks<String> {
 	
 	public TextView getConsole() {
 		return console;
+	}
+	
+	public ProgressBar getRunningIndicator() {
+		return runningIndicator;
 	}
 	
 	public EditText getEntry() {
