@@ -8,6 +8,13 @@ import java.lang.reflect.Array;
 public class Primitive extends Procedure {
   int opcode;
 	   
+  /** Scheme Droid Modification
+   * A singleton-like object to return to tell SchemeDroid not to print the
+   * return value.
+   */
+  public static Object DO_NOT_DISPLAY = new Object();
+  /* end Scheme Droid modification */
+
   /** Constructor **/
   public Primitive(String name, int opcode, int minArgs, int maxArgs) {
     this.name = name; 
@@ -207,7 +214,7 @@ public class Primitive extends Procedure {
     case 153 /* eof-object? */: return U.toBool(x == InputPort.EOF);
     // Inessential char-ready?, transcript-on, transcript-off not implemented
     case 154 /* write */: return U.write(x, U.toOutPort(y), true);
-    case 155 /* display */: return U.write(x, U.toOutPort(y), false);
+    case 155 /* display */: U.write(x, U.toOutPort(y), false); return DO_NOT_DISPLAY;
     case 156 /* newline */: U.toOutPort(x).println();
                             U.toOutPort(x).flush(); return U.TRUE;
     case 157 /* write-char */: U.toOutPort(y).print(U.to_char(x)); return U.TRUE;

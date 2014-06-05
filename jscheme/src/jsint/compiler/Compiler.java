@@ -5995,7 +5995,7 @@ if ((numargs== 2)
        ((b== -1) || (_moreApplicable__J2/* Array.newInstance */[ 0][b]))
         &&
        ((args.nth(0) instanceof java.lang.Class) &&
-        (args.nth(1) instanceof java.lang.Integer))) 
+        (args.nth(1) instanceof int[]))) 
        { b = 0;}
    
     if ((numargs== 2)
@@ -6003,7 +6003,7 @@ if ((numargs== 2)
        ((b== -1) || (_moreApplicable__J2/* Array.newInstance */[ 1][b]))
         &&
        ((args.nth(0) instanceof java.lang.Class) &&
-        (args.nth(1) instanceof int[]))) 
+        (args.nth(1) instanceof java.lang.Integer))) 
        { b = 1;}
    
     
@@ -6012,10 +6012,10 @@ switch (b) {
    // jump to the best matching method/constructor
     case 0: return Array.newInstance(
             (java.lang.Class) args.nth(0),
-            (((Integer) (args.nth(1))).intValue()) ); 
+            (int[]) args.nth(1) ); 
     case 1: return Array.newInstance(
             (java.lang.Class) args.nth(0),
-            (int[]) args.nth(1) ); 
+            (((Integer) (args.nth(1))).intValue()) ); 
 
    default: // error
 }
@@ -6159,27 +6159,27 @@ Object
     tmp=null;  // return type, for methods
     int b= -1; // index of best matching method/constructor
 
-if ((numargs== 1)
+if ((numargs== 0)
         &&
        ((b== -1) || (_moreApplicable__J7/* jsint.compiler.CompileReflection.load */[ 0][b]))
         &&
-       ((args.nth(0) instanceof java.lang.String[]))) 
+       (true)) 
        { b = 0;}
    
-    if ((numargs== 0)
+    if ((numargs== 1)
         &&
        ((b== -1) || (_moreApplicable__J7/* jsint.compiler.CompileReflection.load */[ 1][b]))
         &&
-       (true)) 
+       ((args.nth(0) instanceof java.lang.String[]))) 
        { b = 1;}
    
     
 try {
 switch (b) {  
    // jump to the best matching method/constructor
-    case 0: jsint.compiler.CompileReflection.load(
+    case 0: jsint.compiler.CompileReflection.load(); break; 
+    case 1: jsint.compiler.CompileReflection.load(
             (java.lang.String[]) args.nth(0) ); break; 
-    case 1: jsint.compiler.CompileReflection.load(); break; 
 
    default: // error
 }

@@ -2128,19 +2128,19 @@ Object
     tmp=null;  // return type, for methods
     int b= -1; // index of best matching method/constructor
 
-if ((numargs== 1)
+if ((numargs== 2)
         &&
        ((b== -1) || (_moreApplicable__J3/* jsint.E.error */[ 0][b]))
         &&
-       ((args.nth(0) instanceof java.lang.String))) 
+       ((args.nth(0) instanceof java.lang.String) &&
+        (args.nth(1) instanceof java.lang.Object))) 
        { b = 0;}
    
-    if ((numargs== 2)
+    if ((numargs== 1)
         &&
        ((b== -1) || (_moreApplicable__J3/* jsint.E.error */[ 1][b]))
         &&
-       ((args.nth(0) instanceof java.lang.String) &&
-        (args.nth(1) instanceof java.lang.Object))) 
+       ((args.nth(0) instanceof java.lang.String))) 
        { b = 1;}
    
     
@@ -2148,10 +2148,10 @@ try {
 switch (b) {  
    // jump to the best matching method/constructor
     case 0: return jsint.E.error(
-            (java.lang.String) args.nth(0) ); 
-    case 1: return jsint.E.error(
             (java.lang.String) args.nth(0),
             (java.lang.Object) args.nth(1) ); 
+    case 1: return jsint.E.error(
+            (java.lang.String) args.nth(0) ); 
 
    default: // error
 }
@@ -2234,19 +2234,19 @@ Object
     tmp=null;  // return type, for methods
     int b= -1; // index of best matching method/constructor
 
-if ((numargs== 1)
+if ((numargs== 2)
         &&
        ((b== -1) || (_moreApplicable__J5/* E.error */[ 0][b]))
         &&
-       ((args.nth(0) instanceof java.lang.String))) 
+       ((args.nth(0) instanceof java.lang.String) &&
+        (args.nth(1) instanceof java.lang.Object))) 
        { b = 0;}
    
-    if ((numargs== 2)
+    if ((numargs== 1)
         &&
        ((b== -1) || (_moreApplicable__J5/* E.error */[ 1][b]))
         &&
-       ((args.nth(0) instanceof java.lang.String) &&
-        (args.nth(1) instanceof java.lang.Object))) 
+       ((args.nth(0) instanceof java.lang.String))) 
        { b = 1;}
    
     
@@ -2254,10 +2254,10 @@ try {
 switch (b) {  
    // jump to the best matching method/constructor
     case 0: return E.error(
-            (java.lang.String) args.nth(0) ); 
-    case 1: return E.error(
             (java.lang.String) args.nth(0),
             (java.lang.Object) args.nth(1) ); 
+    case 1: return E.error(
+            (java.lang.String) args.nth(0) ); 
 
    default: // error
 }

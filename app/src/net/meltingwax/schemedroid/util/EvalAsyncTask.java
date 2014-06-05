@@ -48,7 +48,11 @@ public class EvalAsyncTask extends AsyncTask<String, Void, String> implements Ca
 
 		try {
 			Object ret = js.eval(code);
-			result = jsint.U.stringify(ret);
+			if (ret == jsint.Primitive.DO_NOT_DISPLAY) {
+				result = "";
+			} else {
+				result = jsint.U.stringify(ret);
+			}
 		} catch (final jscheme.SchemeException e) {
 			result = e.getMessage();
 		} catch (final jsint.BacktraceException e) {

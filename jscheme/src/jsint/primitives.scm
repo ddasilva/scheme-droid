@@ -209,7 +209,7 @@
   (eof-object? 1)          "return U.toBool(x == InputPort.EOF);"
   (// "Inessential char-ready?, transcript-on, transcript-off not implemented")
   (write 1 2)              "return U.write(x, U.toOutPort(y), true);"
-  (display 1 2)            "return U.write(x, U.toOutPort(y), false);"
+  (display 1 2)            "U.write(x, U.toOutPort(y), false); return DO_NOT_DISPLAY;"
   (newline 0 1)            "U.toOutPort(x).println();
                             U.toOutPort(x).flush(); return U.TRUE;"
   (write-char 1 2)         "U.toOutPort(y).print(U.to_char(x)); return U.TRUE;"
@@ -314,6 +314,13 @@ import java.lang.reflect.Array;
 public class Primitive extends Procedure {
   int opcode;
 	   
+  /** Scheme Droid Modification
+   * A singleton-like object to return to tell SchemeDroid not to print the
+   * return value.
+   */
+  public static Object DO_NOT_DISPLAY = new Object();
+  /* end Scheme Droid modification */
+
   /** Constructor **/
   public Primitive(String name, int opcode, int minArgs, int maxArgs) {
     this.name = name; 
