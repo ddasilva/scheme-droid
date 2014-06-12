@@ -23,7 +23,4 @@ debug:
 install:
 	cd app && ant installd
 
-test:
-	./tools/run_tests.py
-
-.PHONY: all clean jscheme debug install test
+.PHONY: all clean jscheme debug install
