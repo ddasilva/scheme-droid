@@ -5,7 +5,7 @@
    android:layout_height="match_parent"
    android:fillViewport="true">
    
-  <RelativeLayout 
+  <LinearLayout 
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:orientation="vertical"
@@ -22,8 +22,6 @@
       
        <ProgressBar
       	  android:id="@+id/progress_running"
-          android:layout_below="@+id/console"
-
       	  android:layout_width="wrap_content"
       	  android:layout_height="wrap_content"
       	  android:layout_gravity="right"
@@ -36,32 +34,24 @@
           android:id="@+id/code_input"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:inputType="text|textNoSuggestions|textMultiLine"
+          android:inputType="text|textNoSuggestions"
           android:imeOptions="actionNone"
           android:imeActionLabel="@string/button_eval"
           android:hint="@string/input_code_hint"
           android:singleLine="true"
-          android:layout_below="@+id/progress_running"
-          android:layout_alignParentLeft="true"
-          android:layout_toLeftOf="@+id/button_eval"
-          android:textSize="14dp"
+          android:gravity="left|center_vertical"
           android:layout_marginTop="10dp"
-          android:scrollHorizontally="false"
-          android:maxLines="100"
-          android:lines="4"
           />
            
       <Button
           android:id="@+id/button_eval"
-          android:text="@string/button_eval"
-          android:layout_width="wrap_content"
-          android:layout_height="40dp"
-          android:textSize="20dp"
-          android:layout_alignParentRight="true"
-          android:layout_alignBottom ="@+id/code_input"
-
+          android:text="@string/button_evaluate"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_marginTop="10dp"
+          android:gravity="center"
           />
   
-  </RelativeLayout>
+  </LinearLayout>
 
 </ScrollView>
