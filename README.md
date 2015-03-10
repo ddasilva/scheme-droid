@@ -6,7 +6,7 @@ Scheme Droid is [available on the Google Play Store](https://market.android.com/
 
 # Building
 
-To build and install onto your device, first set the ``$ANDROID_HOME`` `and ``$PATH`` environmental variable by
+To build and install onto your device, first set the ``$ANDROID_HOME`` and ``$PATH`` environmental variable by
 
     $ export ANDROID_HOME=/<installation_path>/android-sdk-linux/
     $ export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
