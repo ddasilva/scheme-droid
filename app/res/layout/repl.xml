@@ -34,13 +34,16 @@
           android:id="@+id/code_input"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
-          android:inputType="text|textNoSuggestions"
+          android:inputType="text|textNoSuggestions|textMultiLine"
           android:imeOptions="actionNone"
           android:imeActionLabel="@string/button_eval"
           android:hint="@string/input_code_hint"
           android:singleLine="true"
           android:gravity="left|center_vertical"
           android:layout_marginTop="10dp"
+          android:scrollHorizontally="false"
+          android:lines="5"
+          android:maxLines="100"
           />
            
       <Button
