@@ -48,16 +48,19 @@
           android:layout_marginTop="10dp"
           android:scrollHorizontally="false"
           android:maxLines="100"
+          android:lines="4"
           />
            
       <Button
           android:id="@+id/button_eval"
-          android:text="@string/button_evaluate"
+          android:text="@string/button_eval"
           android:layout_width="wrap_content"
           android:layout_height="40dp"
           android:textSize="20dp"
           android:layout_alignParentRight="true"
-          android:layout_alignBottom ="@+id/code_input"/>
+          android:layout_alignBottom ="@+id/code_input"
+
+          />
   
   </RelativeLayout>
 
