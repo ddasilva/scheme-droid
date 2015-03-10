@@ -7,7 +7,7 @@
     <string name="input_code_hint">Write your code here</string>
     <string name="input_code_loading_hint">Loading script&#8230;</string>
     
-    <string name="button_evaluate">Evalute</string>
+    <string name="button_evaluate">Evaluate</string>
     <string name="button_eval">Eval</string>
     <string name="button_repl">REPL</string>
     <string name="button_resources">Resources</string>
