@@ -6,7 +6,12 @@ Scheme Droid is [available on the Google Play Store](https://market.android.com/
 
 # Building
 
-To build and install onto your device, first set the ``$ANDROID_HOME`` environmental variable and then execute the following commands. Building on Windows is not currently supported.
+To build and install onto your device, first set the ``$ANDROID_HOME`` and ``$PATH`` environmental variable by
+
+    $ export ANDROID_HOME=/<installation_path>/android-sdk-linux/
+    $ export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+and then execute the following commands. Building on Windows is not currently supported.
 
     $ make jscheme
     $ make
